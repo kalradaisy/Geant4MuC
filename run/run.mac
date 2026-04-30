@@ -1,0 +1,20 @@
+# Macro file for the "Factory" example
+#
+# To be run preferably in batch, without graphics:
+# % factory -m run.mac
+#
+#
+#/run/numberOfThreads 4
+#
+#/run/reinitializeGeometry
+
+/gun/particle nu_mu
+/gun/energy 2 GeV
+/gun/position 0 0 -100 cm
+/gun/direction 0 0 1
+
+/detector/readGDML output.gdml
+/run/initialize
+#
+/run/printProgress 100
+/run/beamOn 1000
