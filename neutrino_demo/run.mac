@@ -5,7 +5,7 @@
 
 
 # Read your GDML detector description
-/detector/readGDML /workspace/neutrino_demo/output.gdml
+/detector/readGDML neutrino_demo/output.gdml
 
 #/physics_lists/em/addNeutrino
 
