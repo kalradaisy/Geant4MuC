@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<gdml>
+  <solids>
+    <box name="WorldBox" x="1000" y="1000" z="1000" lunit="cm"/>
+    <box name="LArBox" x="500" y="500" z="500" lunit="cm"/>
+  </solids>
+
+  <structure>
+    <!-- LAr volume -->
+    <volume name="LAr">
+      <materialref ref="G4_lAr"/>
+      <solidref ref="LArBox"/>
+    </volume>
+
+    <!-- World volume -->
+    <volume name="World">
+      <materialref ref="G4_AIR"/>
+      <solidref ref="WorldBox"/>
+
+      <!-- Place LAr inside World -->
+      <physvol>
+        <volumeref ref="LAr"/>
+        <position x="0" y="0" z="0"/>
+      </physvol>
+    </volume>
+  </structure>
+
+  <setup name="Default" version="1.0">
+    <world ref="World"/>
+  </setup>
+</gdml>
+
+

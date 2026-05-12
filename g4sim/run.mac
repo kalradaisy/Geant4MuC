@@ -1,0 +1,74 @@
+# ==============================
+# --- Physics list settings ---
+# ==============================
+
+
+
+# Read your GDML detector description
+/detector/readGDML g4sim/output.gdml
+
+#/physics_lists/em/addNeutrino
+
+
+# Set detector name first, BEFORE initializing physics list
+/physics_lists/em/NuDetectorName DefaultRegionForTheWorld
+
+# Activate neutrino physics
+/physics_lists/em/NeutrinoActivation true
+#/physics_lists/em/NuETotXscActivation true
+#/physics_lists/em/NeETotXscActivation true
+
+# Set neutrino bias factors
+/physics_lists/em/NuEleCcBias 5e12
+/physics_lists/em/NuEleNcBias 5e12
+/physics_lists/em/NuNucleusBias 5e12
+
+# ==============================
+# --- Primary particle gun ---
+# ==============================
+/gun/particle e-
+/gun/energy 20 GeV
+#/gun/direction 0 0 1
+/gun/position 0 0 10 cm
+#/run/initialize
+
+
+# ==============================
+# --- Run ---
+# ==============================
+/run/printProgress 100
+#/tracking/storeTrajectory 0
+#/tracking/verbose 2       # Increase tracking verbosity
+#/process/verbose 2        # Process-level verbosity
+#/run/verbose 1
+
+/run/initialize
+/run/beamOn 1000
+
+
+
+
+# EM / other processes
+#/physics_lists/em/SyncRadiation true
+#/physics_lists/em/SyncRadiationAll true
+#/physics_lists/em/GammaNuclear true
+#/physics_lists/em/UseGammaNuclearXS false
+#/physics_lists/em/LENDGammaNuclear false
+#/physics_lists/em/ElectroNuclear true
+#/physics_lists/em/MuonNuclear false
+#/physics_lists/em/GammaToMuons false
+#/physics_lists/em/PositronToMuons true
+#/physics_lists/em/PositronToHadrons true
+
+# Optional conversion factors (uncomment to use)
+#/physics_lists/em/GammaToMuonsFactor 1.0
+#/physics_lists/em/PositronToMuonsFactor 1.0
+#/physics_lists/em/PositronToHadronsFactor 1.0
+
+# ==============================
+# --- Visualization ---
+# ==============================
+#/vis/open OGL
+#/vis/viewer/set/viewpointThetaPhi 90 180
+#/vis/scene/add/trajectories
+#/vis/scene/add/axes 0 0 0 10 cm
