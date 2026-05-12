@@ -3,6 +3,7 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "G4GDMLParser.hh"
+#include "G4VPhysicalVolume.hh"
 
 class DetectorMessenger;   // Forward declaration
 
@@ -16,7 +17,8 @@ public:
     void ReadGDML(const G4String& filename);
 
 private:
-    G4GDMLParser fParser;
+    G4GDMLParser       fParser;
+    G4VPhysicalVolume* fWorld = nullptr;
     DetectorMessenger* fMessenger;
 };
 

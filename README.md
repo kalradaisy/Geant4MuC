@@ -72,9 +72,12 @@ G4TargetPractice/
 │   ├── RunAction.cc/hh              # ROOT output file/tree
 │   ├── EventAction.cc/hh            # Per-event data collection
 │   ├── SteppingAction.cc/hh         # Per-step data collection
-│   ├── output.gdml                  # Example detector geometry (GDML)
-│   ├── simple_det.gdml              # Minimal example GDML
+│   ├── simple_det.gdml              # Minimal example GDML (kept for reference)
 │   └── run_ci.mac                   # Macro used for CI testing
+├── gdml/                    # Example GDML geometry files
+│   ├── MAIA_v0.gdml         # MAIA detector geometry
+│   ├── silicon_slab_1mm.gdml        # 1 mm silicon slab
+│   └── liquid_argon_1m3.gdml        # 1 m³ liquid argon volume
 ├── run/                     # Example user run directory
 │   ├── run.mac              # Example macro file
 │   └── MAIA_260211.gdml     # Example GDML geometry

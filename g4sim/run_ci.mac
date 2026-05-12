@@ -5,7 +5,7 @@
 
 
 # Read your GDML detector description
-/detector/readGDML g4sim/output.gdml
+/detector/readGDML gdml/MAIA_v0.gdml
 
 #/physics_lists/em/addNeutrino
 
