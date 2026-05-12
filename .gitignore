@@ -40,4 +40,3 @@ __pycache__/
 Dockerfile.bak
 
 # Output GDML exports (if generated at runtime)
-# output.gdml is intentionally committed as an example

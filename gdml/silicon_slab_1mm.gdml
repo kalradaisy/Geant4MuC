@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<gdml>
+  <solids>
+    <box name="WorldBox" x="10" y="10" z="10" lunit="cm"/>
+    <box name="SiSlab"   x="10" y="10" z="0.1" lunit="cm"/>
+  </solids>
+
+  <structure>
+    <volume name="SiSlab_vol">
+      <materialref ref="G4_Si"/>
+      <solidref ref="SiSlab"/>
+    </volume>
+
+    <volume name="World">
+      <materialref ref="G4_AIR"/>
+      <solidref ref="WorldBox"/>
+      <physvol>
+        <volumeref ref="SiSlab_vol"/>
+        <position x="0" y="0" z="0"/>
+      </physvol>
+    </volume>
+  </structure>
+
+  <setup name="Default" version="1.0">
+    <world ref="World"/>
+  </setup>
+</gdml>
