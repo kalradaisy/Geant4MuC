@@ -13,7 +13,7 @@
 /gun/position 0 0 -100 cm
 /gun/direction 0 0 1
 
-/detector/readGDML output.gdml
+/detector/readGDML MAIA_260211.gdml
 /run/initialize
 #
 /run/printProgress 100
