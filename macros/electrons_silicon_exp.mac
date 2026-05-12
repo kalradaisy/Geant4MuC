@@ -1,0 +1,37 @@
+# =============================================================================
+# electrons_silicon_exp.mac
+#
+# Shoot an electron beam with an exponentially falling energy spectrum at the
+# 1 mm silicon slab.
+#
+# The energy PDF is  f(E) ∝ exp(-E / E0)  sampled over [Emin, Emax].
+#
+# Detector: gdml/silicon_slab_1mm.gdml
+#   - World:  10×10×10 cm (G4_AIR)
+#   - Target: 10×10 cm silicon slab, 1 mm thick, centred at the origin
+#
+# Beam:
+#   - Particle  : e-  (electron)
+#   - Energy PDF: exponential with E0 = 1 GeV, sampled from 100 MeV to 5 GeV
+#   - Position  : upstream on the beam axis (z = -4 cm)
+#   - Direction : along +z
+# =============================================================================
+
+# --- Load geometry ---
+/detector/readGDML gdml/silicon_slab_1mm.gdml
+
+# --- Physics ---
+/run/initialize
+
+# --- Beam ---
+/gun/particle    e-
+/gun/energyMode  exp
+/gun/energy      1 GeV        # characteristic energy E0 (1/e scale)
+/gun/energyMin   100 MeV      # lower bound of sampling range
+/gun/energyMax   5 GeV        # upper bound of sampling range
+/gun/position    0 0 -4 cm
+/gun/direction   0 0 1
+
+# --- Run ---
+/run/printProgress 100
+/run/beamOn 1000

@@ -1,0 +1,48 @@
+# =============================================================================
+# electrons_silicon_arb.mac
+#
+# Shoot an electron beam with a user-defined arbitrary energy distribution at
+# the 1 mm silicon slab.
+#
+# The distribution is specified as a weighted histogram: each call to
+# /gun/addEnergyBin registers a discrete energy value and its relative
+# probability weight.  The generator picks a bin proportional to its weight
+# and fires the particle at that energy.
+#
+# Detector: gdml/silicon_slab_1mm.gdml
+#   - World:  10×10×10 cm (G4_AIR)
+#   - Target: 10×10 cm silicon slab, 1 mm thick, centred at the origin
+#
+# Beam:
+#   - Particle : e-  (electron)
+#   - Energy   : arbitrary histogram (see bins below)
+#   - Position : upstream on the beam axis (z = -4 cm)
+#   - Direction: along +z
+# =============================================================================
+
+# --- Load geometry ---
+/detector/readGDML gdml/silicon_slab_1mm.gdml
+
+# --- Physics ---
+/run/initialize
+
+# --- Beam ---
+/gun/particle    e-
+/gun/energyMode  arb
+/gun/position    0 0 -4 cm
+/gun/direction   0 0 1
+
+# Define the arbitrary energy histogram.
+# Syntax: /gun/addEnergyBin <energy> <unit> <relativeWeight>
+# Weights need not be normalised; the generator normalises internally.
+/gun/clearEnergyBins
+/gun/addEnergyBin  200 MeV 1.0
+/gun/addEnergyBin  500 MeV 3.0
+/gun/addEnergyBin    1 GeV 5.0
+/gun/addEnergyBin    2 GeV 4.0
+/gun/addEnergyBin    5 GeV 2.0
+/gun/addEnergyBin   10 GeV 1.0
+
+# --- Run ---
+/run/printProgress 100
+/run/beamOn 1000
