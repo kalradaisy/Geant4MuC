@@ -1,0 +1,44 @@
+# =============================================================================
+# neutrinos_lar_exp.mac
+#
+# Shoot a muon-neutrino beam with an exponentially falling energy spectrum at
+# the 1 m³ liquid-argon target.
+#
+# The energy PDF is  f(E) ∝ exp(-E / E0)  sampled over [Emin, Emax].
+#
+# Detector: gdml/liquid_argon_1m3.gdml
+#   - World:  200×200×200 cm (G4_AIR)
+#   - Target: 100×100×100 cm liquid argon, centred at the origin
+#
+# Beam:
+#   - Particle  : nu_mu  (muon neutrino)
+#   - Energy PDF: exponential with E0 = 2 GeV, sampled from 200 MeV to 20 GeV
+#   - Position  : upstream on the beam axis (z = -60 cm)
+#   - Direction : along +z
+# =============================================================================
+
+# --- Load geometry ---
+/detector/readGDML gdml/liquid_argon_1m3.gdml
+
+# --- Neutrino physics ---
+/physics_lists/em/NuDetectorName DefaultRegionForTheWorld
+/physics_lists/em/NeutrinoActivation true
+/physics_lists/em/NuEleCcBias   5e12
+/physics_lists/em/NuEleNcBias   5e12
+/physics_lists/em/NuNucleusBias 5e12
+
+# --- Physics initialise ---
+/run/initialize
+
+# --- Beam ---
+/gun/particle    nu_mu
+/gun/energyMode  exp
+/gun/energy      2 GeV        # characteristic energy E0 (1/e scale)
+/gun/energyMin   200 MeV      # lower bound of sampling range
+/gun/energyMax   20 GeV       # upper bound of sampling range
+/gun/position    0 0 -60 cm
+/gun/direction   0 0 1
+
+# --- Run ---
+/run/printProgress 100
+/run/beamOn 1000

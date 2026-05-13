@@ -5,9 +5,19 @@
 #include "G4ParticleGun.hh"
 #include "G4ThreeVector.hh"
 #include "RunAction.hh"
-//#include "PrimaryGeneratorMessenger.hh"
+
+#include <utility>
+#include <vector>
 
 class PrimaryGeneratorMessenger;
+
+/// Supported energy-sampling modes.
+enum class EnergyMode {
+    kMono,  ///< Fixed (monoenergetic) beam – use /gun/energy
+    kGauss, ///< Gaussian spread        – use /gun/energy (mean) + /gun/gaussSigma
+    kExp,   ///< Exponential spectrum   – use /gun/energy (E0)  + /gun/energyMin/Max
+    kArb    ///< Arbitrary histogram    – defined with /gun/addEnergyBin
+};
 
 class PrimaryGenerator : public G4VUserPrimaryGeneratorAction {
 public:
@@ -16,19 +26,46 @@ public:
 
     void GeneratePrimaries(G4Event* event) override;
 
-    // setters for messenger
+    // Setters used by messenger
     void SetParticleName(const G4String& name) { fParticleName = name; }
-    void SetEnergy(G4double energy) { fEnergy = energy; }
-    void SetPosition(const G4ThreeVector& pos) { fPosition = pos; }
-    void SetDirection(const G4ThreeVector& dir) { fDirection = dir; }
-  
+    void SetEnergy(G4double energy)             { fEnergy = energy; }
+    void SetPosition(const G4ThreeVector& pos)  { fPosition = pos; }
+
+    /// Fix the beam direction; pass (0,0,0) to re-enable isotropic 4π mode.
+    void SetDirection(const G4ThreeVector& dir);
+
+    void SetEnergyMode(const G4String& mode);
+    void SetGaussSigma(G4double sigma) { fGaussSigma = sigma; }
+    void SetEnergyMin(G4double emin)   { fEnergyMin  = emin; }
+    void SetEnergyMax(G4double emax)   { fEnergyMax  = emax; }
+
+    /// Add a histogram bin for the arbitrary-distribution mode.
+    /// @param energy  Representative energy of this bin.
+    /// @param weight  Relative probability weight (need not be normalised).
+    void AddEnergyBin(G4double energy, G4double weight);
+    void ClearEnergyBins() { fEnergyBins.clear(); }
+
 private:
+    G4double SampleEnergy() const;
+    G4double SampleExponential() const;
+    G4double SampleArbitrary()   const;
+
     PrimaryGeneratorMessenger* fMessenger;
-    G4ParticleGun* fParticleGun;
+    G4ParticleGun*             fParticleGun;
+
+    G4String      fParticleName;
+    G4double      fEnergy;
     G4ThreeVector fPosition;
     G4ThreeVector fDirection;
-    G4double fEnergy;
-    G4String fParticleName;
+    G4bool        fUseFixedDirection;
+
+    EnergyMode fEnergyMode;
+    G4double   fGaussSigma;
+    G4double   fEnergyMin;
+    G4double   fEnergyMax;
+
+    /// Discrete histogram for kArb mode: (energy, weight) pairs.
+    std::vector<std::pair<G4double, G4double>> fEnergyBins;
 
     RunAction* fRunAction;
 };
