@@ -20,7 +20,7 @@ These images include Geant4 (with GDML and ROOT support) and the compiled `g4sim
 Place your GDML file and macro file in a local directory (e.g. `myrun/`), then run:
 
 ```bash
-docker run --rm -it \
+docker run --rm -it --init \
   -v $PWD/myrun/:/run/ \
   -w /run/ \
   ghcr.io/lawrenceleejr/g4targetpractice:main \
