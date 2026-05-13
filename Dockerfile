@@ -25,12 +25,12 @@ RUN wget https://root.cern.ch/download/root_v6.28.12.Linux-ubuntu22-x86_64-gcc11
     rm root_v6.28.12.Linux-ubuntu22-x86_64-gcc11.4.tar.gz
     
 # Download Geant4
-RUN wget https://gitlab.cern.ch/geant4/geant4/-/archive/v11.0.4/geant4-v11.0.4.tar.gz \
- && tar -xzf geant4-v11.0.4.tar.gz
+RUN wget https://gitlab.cern.ch/geant4/geant4/-/archive/v11.4.1/geant4-v11.4.1.tar.gz \
+ && tar -xzf geant4-v11.4.1.tar.gz
 
 # Build Geant4
 RUN mkdir geant4-build && cd geant4-build && \
-    cmake ../geant4-v11.0.4 \
+    cmake ../geant4-v11.4.1 \
       -DCMAKE_BUILD_TYPE=Debug \
       -DGEANT4_USE_NEUTRINO=ON \
       -DGEANT4_USE_G4NDL=ON \
