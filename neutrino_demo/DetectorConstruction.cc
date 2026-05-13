@@ -13,8 +13,9 @@
 DetectorConstruction::DetectorConstruction()
 {
     fMessenger = new DetectorMessenger(this);
-    // Load default GDML immediately so Construct() can return a valid world
-    G4String defaultGDML = "neutrino_demo/output.gdml";
+
+    // Load default GDML
+    G4String defaultGDML = "/workspace/neutrino_demo/output.gdml";
     G4cout << "Loading default GDML: " << defaultGDML << G4endl;
 
     fParser.Read(defaultGDML, false); // false disables schema validation
@@ -30,7 +31,6 @@ DetectorConstruction::DetectorConstruction()
 
     G4cout << "Default GDML loaded successfully. World volume: "
            << world->GetName() << G4endl;
-
 }
 
 DetectorConstruction::~DetectorConstruction()

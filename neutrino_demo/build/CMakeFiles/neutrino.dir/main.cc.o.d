@@ -1,8 +1,10 @@
 CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /usr/include/stdc-predef.h \
  /opt/geant4-install/include/Geant4/G4NeutrinoE.hh \
- /opt/geant4-install/include/Geant4/globals.hh \
- /opt/geant4-install/include/Geant4/G4ios.hh \
+ /opt/geant4-install/include/Geant4/G4ParticleDefinition.hh \
+ /opt/geant4-install/include/Geant4/G4PDefManager.hh \
+ /opt/geant4-install/include/Geant4/G4AutoLock.hh \
+ /opt/geant4-install/include/Geant4/G4Threading.hh \
  /opt/geant4-install/include/Geant4/G4Types.hh \
  /opt/geant4-install/include/Geant4/G4GlobalConfig.hh \
  /usr/include/c++/11/complex \
@@ -176,7 +178,9 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /usr/include/c++/11/bits/ostream.tcc \
  /usr/include/c++/11/bits/istream.tcc \
  /usr/include/c++/11/bits/sstream.tcc \
- /opt/geant4-install/include/Geant4/tls.hh /usr/include/c++/11/iostream \
+ /opt/geant4-install/include/Geant4/tls.hh \
+ /opt/geant4-install/include/Geant4/globals.hh \
+ /opt/geant4-install/include/Geant4/G4ios.hh /usr/include/c++/11/iostream \
  /usr/include/c++/11/algorithm /usr/include/c++/11/utility \
  /usr/include/c++/11/bits/stl_relops.h \
  /usr/include/c++/11/bits/stl_algo.h \
@@ -216,7 +220,6 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
  /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
  /opt/geant4-install/include/Geant4/G4Exception.hh \
- /opt/geant4-install/include/Geant4/G4VExceptionHandler.hh \
  /opt/geant4-install/include/Geant4/G4ExceptionSeverity.hh \
  /opt/geant4-install/include/Geant4/G4EnvironmentUtils.hh \
  /usr/include/c++/11/iomanip /usr/include/c++/11/locale \
@@ -234,14 +237,6 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /usr/include/c++/11/bits/parse_numbers.h \
  /usr/include/c++/11/bits/std_mutex.h \
  /usr/include/c++/11/bits/unique_lock.h \
- /opt/geant4-install/include/Geant4/G4ParticleDefinition.hh \
- /opt/geant4-install/include/Geant4/CLHEP/Units/PhysicalConstants.h \
- /opt/geant4-install/include/Geant4/CLHEP/Units/SystemOfUnits.h \
- /opt/geant4-install/include/Geant4/G4PDefManager.hh \
- /usr/include/c++/11/stdlib.h \
- /opt/geant4-install/include/Geant4/pwdefs.hh \
- /opt/geant4-install/include/Geant4/G4AutoLock.hh \
- /opt/geant4-install/include/Geant4/G4Threading.hh \
  /usr/include/c++/11/condition_variable \
  /usr/include/c++/11/bits/shared_ptr.h \
  /usr/include/c++/11/bits/shared_ptr_base.h \
@@ -252,6 +247,10 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /usr/include/c++/11/bits/atomic_futex.h \
  /usr/include/c++/11/bits/std_thread.h /usr/include/c++/11/thread \
  /usr/include/c++/11/bits/this_thread_sleep.h \
+ /opt/geant4-install/include/Geant4/pwdefs.hh \
+ /usr/include/c++/11/stdlib.h \
+ /opt/geant4-install/include/Geant4/CLHEP/Units/PhysicalConstants.h \
+ /opt/geant4-install/include/Geant4/CLHEP/Units/SystemOfUnits.h \
  /opt/geant4-install/include/Geant4/G4ParticleDefinition.icc \
  /opt/geant4-install/include/Geant4/G4AntiNeutrinoE.hh \
  /opt/geant4-install/include/Geant4/G4NeutrinoMu.hh \
@@ -259,40 +258,32 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4NeutrinoTau.hh \
  /opt/geant4-install/include/Geant4/G4AntiNeutrinoTau.hh \
  /opt/geant4-install/include/Geant4/G4RunManager.hh \
- /usr/include/c++/11/list /usr/include/c++/11/bits/stl_list.h \
- /usr/include/c++/11/bits/list.tcc \
- /opt/geant4-install/include/Geant4/rundefs.hh \
- /opt/geant4-install/include/Geant4/G4Event.hh \
+ /opt/geant4-install/include/Geant4/G4Event.hh /usr/include/c++/11/set \
+ /usr/include/c++/11/bits/stl_set.h \
+ /usr/include/c++/11/bits/stl_multiset.h \
  /opt/geant4-install/include/Geant4/evtdefs.hh \
  /opt/geant4-install/include/Geant4/G4Allocator.hh \
  /usr/include/c++/11/cstddef \
  /opt/geant4-install/include/Geant4/G4AllocatorPool.hh \
  /opt/geant4-install/include/Geant4/G4PrimaryVertex.hh \
+ /opt/geant4-install/include/Geant4/G4PrimaryParticle.hh \
  /opt/geant4-install/include/Geant4/G4ThreeVector.hh \
  /opt/geant4-install/include/Geant4/CLHEP/Vector/ThreeVector.h \
  /opt/geant4-install/include/Geant4/CLHEP/Utility/defs.h \
  /opt/geant4-install/include/Geant4/CLHEP/Vector/ThreeVector.icc \
- /opt/geant4-install/include/Geant4/G4PrimaryParticle.hh \
  /opt/geant4-install/include/Geant4/G4HCofThisEvent.hh \
  /opt/geant4-install/include/Geant4/G4VHitsCollection.hh \
  /opt/geant4-install/include/Geant4/G4DCofThisEvent.hh \
  /opt/geant4-install/include/Geant4/G4VDigiCollection.hh \
  /opt/geant4-install/include/Geant4/G4TrajectoryContainer.hh \
  /opt/geant4-install/include/Geant4/G4VTrajectory.hh \
- /opt/geant4-install/include/Geant4/G4VUserEventInformation.hh \
- /opt/geant4-install/include/Geant4/G4Profiler.hh \
- /opt/geant4-install/include/Geant4/G4Profiler.icc \
- /opt/geant4-install/include/Geant4/PTL/Globals.hh \
- /opt/geant4-install/include/Geant4/PTL/Types.hh \
  /usr/include/c++/11/memory \
  /usr/include/c++/11/bits/stl_raw_storage_iter.h \
  /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
  /usr/include/c++/11/bits/shared_ptr_atomic.h \
  /usr/include/c++/11/backward/auto_ptr.h \
  /usr/include/c++/11/pstl/glue_memory_defs.h \
- /opt/geant4-install/include/Geant4/PTL/Utility.hh \
- /usr/include/c++/11/set /usr/include/c++/11/bits/stl_set.h \
- /usr/include/c++/11/bits/stl_multiset.h \
+ /opt/geant4-install/include/Geant4/G4VUserEventInformation.hh \
  /opt/geant4-install/include/Geant4/G4EventManager.hh \
  /opt/geant4-install/include/Geant4/G4StackManager.hh \
  /opt/geant4-install/include/Geant4/G4UserStackingAction.hh \
@@ -300,6 +291,8 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4StackedTrack.hh \
  /opt/geant4-install/include/Geant4/G4TrackStack.hh \
  /opt/geant4-install/include/Geant4/G4SmartTrackStack.hh \
+ /opt/geant4-install/include/Geant4/G4SubEventTrackStack.hh \
+ /opt/geant4-install/include/Geant4/G4SubEvent.hh \
  /opt/geant4-install/include/Geant4/G4Track.hh \
  /opt/geant4-install/include/Geant4/trkdefs.hh \
  /opt/geant4-install/include/Geant4/G4LogicalVolume.hh \
@@ -327,25 +320,46 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4VPhysicalVolume.icc \
  /opt/geant4-install/include/Geant4/G4LogicalVolume.icc \
  /opt/geant4-install/include/Geant4/G4DynamicParticle.hh \
- /opt/geant4-install/include/Geant4/G4LorentzVector.hh \
- /opt/geant4-install/include/Geant4/G4Log.hh \
- /opt/geant4-install/include/Geant4/G4ParticleMomentum.hh \
  /opt/geant4-install/include/Geant4/G4ElectronOccupancy.hh \
+ /opt/geant4-install/include/Geant4/G4Log.hh \
+ /opt/geant4-install/include/Geant4/G4IEEE754.hh \
+ /opt/geant4-install/include/Geant4/G4LorentzVector.hh \
+ /opt/geant4-install/include/Geant4/G4ParticleMomentum.hh \
  /opt/geant4-install/include/Geant4/G4DynamicParticle.icc \
  /opt/geant4-install/include/Geant4/G4TrackStatus.hh \
  /opt/geant4-install/include/Geant4/G4TouchableHandle.hh \
  /opt/geant4-install/include/Geant4/G4VTouchable.hh \
- /opt/geant4-install/include/Geant4/G4VTouchable.icc \
+ /opt/geant4-install/include/Geant4/G4TouchableHistory.hh \
+ /opt/geant4-install/include/Geant4/G4NavigationHistory.hh \
+ /usr/include/assert.h \
+ /opt/geant4-install/include/Geant4/G4AffineTransform.hh \
+ /opt/geant4-install/include/Geant4/G4Transform3D.hh \
+ /opt/geant4-install/include/Geant4/CLHEP/Geometry/Transform3D.h \
+ /opt/geant4-install/include/Geant4/CLHEP/Geometry/Transform3D.icc \
+ /opt/geant4-install/include/Geant4/CLHEP/Geometry/Point3D.h \
+ /opt/geant4-install/include/Geant4/CLHEP/Geometry/BasicVector3D.h \
+ /opt/geant4-install/include/Geant4/CLHEP/Geometry/Vector3D.h \
+ /opt/geant4-install/include/Geant4/CLHEP/Geometry/Normal3D.h \
+ /opt/geant4-install/include/Geant4/G4AffineTransform.icc \
+ /opt/geant4-install/include/Geant4/G4NavigationLevel.hh \
+ /opt/geant4-install/include/Geant4/G4NavigationLevelRep.hh \
+ /opt/geant4-install/include/Geant4/G4NavigationLevelRep.icc \
+ /opt/geant4-install/include/Geant4/G4NavigationLevel.icc \
+ /opt/geant4-install/include/Geant4/G4NavigationHistoryPool.hh \
+ /opt/geant4-install/include/Geant4/G4NavigationHistory.icc \
+ /opt/geant4-install/include/Geant4/G4TouchableHistory.icc \
  /opt/geant4-install/include/Geant4/G4ReferenceCountedHandle.hh \
  /opt/geant4-install/include/Geant4/G4VUserTrackInformation.hh \
  /opt/geant4-install/include/Geant4/G4PhysicsModelCatalog.hh \
  /opt/geant4-install/include/Geant4/G4Material.hh \
  /opt/geant4-install/include/Geant4/G4Element.hh \
- /opt/geant4-install/include/Geant4/G4Isotope.hh \
- /opt/geant4-install/include/Geant4/G4IonisParamElm.hh \
- /opt/geant4-install/include/Geant4/G4IsotopeVector.hh \
  /opt/geant4-install/include/Geant4/G4ElementTable.hh \
  /opt/geant4-install/include/Geant4/G4ElementVector.hh \
+ /opt/geant4-install/include/Geant4/G4IonisParamElm.hh \
+ /opt/geant4-install/include/Geant4/G4Isotope.hh \
+ /opt/geant4-install/include/Geant4/G4IsotopeVector.hh \
+ /opt/geant4-install/include/Geant4/G4IonisParamMat.hh \
+ /opt/geant4-install/include/Geant4/G4DensityEffectCalculator.hh \
  /opt/geant4-install/include/Geant4/G4MaterialPropertiesTable.hh \
  /opt/geant4-install/include/Geant4/G4MaterialPropertiesIndex.hh \
  /opt/geant4-install/include/Geant4/G4MaterialPropertyVector.hh \
@@ -357,14 +371,11 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /usr/include/c++/11/bits/fstream.tcc \
  /opt/geant4-install/include/Geant4/G4PhysicsVectorType.hh \
  /opt/geant4-install/include/Geant4/G4PhysicsVector.icc \
- /opt/geant4-install/include/Geant4/G4IonisParamMat.hh \
- /opt/geant4-install/include/Geant4/G4Exp.hh \
+ /opt/geant4-install/include/Geant4/G4MaterialTable.hh \
  /opt/geant4-install/include/Geant4/G4SandiaTable.hh \
  /opt/geant4-install/include/Geant4/G4OrderedTable.hh \
  /opt/geant4-install/include/Geant4/G4DataVector.hh \
  /opt/geant4-install/include/Geant4/G4DataVector.icc \
- /usr/include/assert.h \
- /opt/geant4-install/include/Geant4/G4MaterialTable.hh \
  /opt/geant4-install/include/Geant4/G4Track.icc \
  /opt/geant4-install/include/Geant4/G4Step.hh \
  /opt/geant4-install/include/Geant4/G4StepPoint.hh \
@@ -379,6 +390,36 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4ParticleTable.icc \
  /opt/geant4-install/include/Geant4/G4TrackingManager.hh \
  /opt/geant4-install/include/Geant4/G4SteppingManager.hh \
+ /opt/geant4-install/include/Geant4/G4Navigator.hh \
+ /opt/geant4-install/include/Geant4/G4NormalNavigation.hh \
+ /opt/geant4-install/include/Geant4/G4VNavigation.hh \
+ /opt/geant4-install/include/Geant4/G4VSolid.hh \
+ /opt/geant4-install/include/Geant4/G4VSolid.icc \
+ /opt/geant4-install/include/Geant4/G4AuxiliaryNavServices.hh \
+ /opt/geant4-install/include/Geant4/G4AuxiliaryNavServices.icc \
+ /opt/geant4-install/include/Geant4/G4NormalNavigation.icc \
+ /opt/geant4-install/include/Geant4/G4VoxelNavigation.hh \
+ /opt/geant4-install/include/Geant4/G4NavigationLogger.hh \
+ /opt/geant4-install/include/Geant4/G4BlockingList.hh \
+ /opt/geant4-install/include/Geant4/G4BlockingList.icc \
+ /opt/geant4-install/include/Geant4/G4SmartVoxelProxy.hh \
+ /opt/geant4-install/include/Geant4/G4SmartVoxelProxy.icc \
+ /opt/geant4-install/include/Geant4/G4SmartVoxelNode.hh \
+ /opt/geant4-install/include/Geant4/G4SmartVoxelNode.icc \
+ /opt/geant4-install/include/Geant4/G4SmartVoxelHeader.hh \
+ /opt/geant4-install/include/Geant4/G4SmartVoxelHeader.icc \
+ /opt/geant4-install/include/Geant4/G4VoxelNavigation.icc \
+ /opt/geant4-install/include/Geant4/G4ParameterisedNavigation.hh \
+ /opt/geant4-install/include/Geant4/G4VPVParameterisation.hh \
+ /opt/geant4-install/include/Geant4/G4VVolumeMaterialScanner.hh \
+ /opt/geant4-install/include/Geant4/G4ParameterisedNavigation.icc \
+ /opt/geant4-install/include/Geant4/G4ReplicaNavigation.hh \
+ /opt/geant4-install/include/Geant4/G4ReplicaNavigation.icc \
+ /opt/geant4-install/include/Geant4/G4RegularNavigation.hh \
+ /opt/geant4-install/include/Geant4/G4VExternalNavigation.hh \
+ /opt/geant4-install/include/Geant4/G4Navigator.icc \
+ /opt/geant4-install/include/Geant4/G4NoProcess.hh \
+ /opt/geant4-install/include/Geant4/G4VProcess.hh \
  /opt/geant4-install/include/Geant4/Randomize.hh \
  /opt/geant4-install/include/Geant4/CLHEP/Random/Randomize.h \
  /opt/geant4-install/include/Geant4/CLHEP/Random/DualRand.h \
@@ -426,73 +467,19 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/CLHEP/Random/RandPoissonQ.icc \
  /opt/geant4-install/include/Geant4/CLHEP/Random/RandStudentT.h \
  /opt/geant4-install/include/Geant4/CLHEP/Random/RandStudentT.icc \
- /opt/geant4-install/include/Geant4/G4Navigator.hh \
- /opt/geant4-install/include/Geant4/G4AffineTransform.hh \
- /opt/geant4-install/include/Geant4/G4Transform3D.hh \
- /opt/geant4-install/include/Geant4/CLHEP/Geometry/Transform3D.h \
- /opt/geant4-install/include/Geant4/CLHEP/Geometry/Transform3D.icc \
- /opt/geant4-install/include/Geant4/CLHEP/Geometry/Point3D.h \
- /opt/geant4-install/include/Geant4/CLHEP/Geometry/BasicVector3D.h \
- /opt/geant4-install/include/Geant4/CLHEP/Geometry/Vector3D.h \
- /opt/geant4-install/include/Geant4/CLHEP/Geometry/Normal3D.h \
- /opt/geant4-install/include/Geant4/G4AffineTransform.icc \
- /opt/geant4-install/include/Geant4/G4GRSVolume.hh \
- /opt/geant4-install/include/Geant4/G4GRSVolume.icc \
- /opt/geant4-install/include/Geant4/G4GRSSolid.hh \
- /opt/geant4-install/include/Geant4/G4GRSSolid.icc \
- /opt/geant4-install/include/Geant4/G4TouchableHistoryHandle.hh \
- /opt/geant4-install/include/Geant4/G4TouchableHistory.hh \
- /opt/geant4-install/include/Geant4/G4NavigationHistory.hh \
- /opt/geant4-install/include/Geant4/G4NavigationLevel.hh \
- /opt/geant4-install/include/Geant4/G4NavigationLevelRep.hh \
- /opt/geant4-install/include/Geant4/G4NavigationLevelRep.icc \
- /opt/geant4-install/include/Geant4/G4NavigationLevel.icc \
- /opt/geant4-install/include/Geant4/G4NavigationHistoryPool.hh \
- /opt/geant4-install/include/Geant4/G4NavigationHistory.icc \
- /opt/geant4-install/include/Geant4/G4TouchableHistory.icc \
- /opt/geant4-install/include/Geant4/G4NormalNavigation.hh \
- /opt/geant4-install/include/Geant4/G4VSolid.hh \
- /opt/geant4-install/include/Geant4/G4VSolid.icc \
- /opt/geant4-install/include/Geant4/G4AuxiliaryNavServices.hh \
- /opt/geant4-install/include/Geant4/G4AuxiliaryNavServices.icc \
- /opt/geant4-install/include/Geant4/G4NormalNavigation.icc \
- /opt/geant4-install/include/Geant4/G4VoxelNavigation.hh \
- /opt/geant4-install/include/Geant4/G4NavigationLogger.hh \
- /opt/geant4-install/include/Geant4/G4BlockingList.hh \
- /opt/geant4-install/include/Geant4/G4BlockingList.icc \
- /opt/geant4-install/include/Geant4/G4SmartVoxelProxy.hh \
- /opt/geant4-install/include/Geant4/G4SmartVoxelProxy.icc \
- /opt/geant4-install/include/Geant4/G4SmartVoxelNode.hh \
- /opt/geant4-install/include/Geant4/G4SmartVoxelNode.icc \
- /opt/geant4-install/include/Geant4/G4SmartVoxelHeader.hh \
- /opt/geant4-install/include/Geant4/G4SmartVoxelHeader.icc \
- /opt/geant4-install/include/Geant4/G4VoxelNavigation.icc \
- /opt/geant4-install/include/Geant4/G4ParameterisedNavigation.hh \
- /opt/geant4-install/include/Geant4/G4VPVParameterisation.hh \
- /opt/geant4-install/include/Geant4/G4VVolumeMaterialScanner.hh \
- /opt/geant4-install/include/Geant4/G4ParameterisedNavigation.icc \
- /opt/geant4-install/include/Geant4/G4ReplicaNavigation.hh \
- /opt/geant4-install/include/Geant4/G4ReplicaNavigation.icc \
- /opt/geant4-install/include/Geant4/G4RegularNavigation.hh \
- /opt/geant4-install/include/Geant4/G4VExternalNavigation.hh \
- /opt/geant4-install/include/Geant4/G4Navigator.icc \
- /opt/geant4-install/include/Geant4/G4ProcessManager.hh \
- /opt/geant4-install/include/Geant4/G4VProcess.hh \
  /opt/geant4-install/include/Geant4/G4PhysicsTable.hh \
  /opt/geant4-install/include/Geant4/G4PhysicsTable.icc \
  /opt/geant4-install/include/Geant4/G4VParticleChange.hh \
- /opt/geant4-install/include/Geant4/G4TrackFastVector.hh \
- /opt/geant4-install/include/Geant4/G4FastVector.hh \
  /opt/geant4-install/include/Geant4/G4VParticleChange.icc \
  /opt/geant4-install/include/Geant4/G4ForceCondition.hh \
  /opt/geant4-install/include/Geant4/G4GPILSelection.hh \
  /opt/geant4-install/include/Geant4/G4ParticleChange.hh \
  /opt/geant4-install/include/Geant4/G4ParticleChange.icc \
  /opt/geant4-install/include/Geant4/G4ProcessType.hh \
+ /opt/geant4-install/include/Geant4/G4ProcessManager.hh \
  /opt/geant4-install/include/Geant4/G4ProcessVector.hh \
  /opt/geant4-install/include/Geant4/G4ProcessVector.icc \
  /opt/geant4-install/include/Geant4/G4ProcessManager.icc \
- /opt/geant4-install/include/Geant4/G4NoProcess.hh \
  /opt/geant4-install/include/Geant4/G4UserSteppingAction.hh \
  /opt/geant4-install/include/Geant4/G4VSteppingVerbose.hh \
  /opt/geant4-install/include/Geant4/trkgdefs.hh \
@@ -500,15 +487,16 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4UImessenger.hh \
  /opt/geant4-install/include/Geant4/G4UIdirectory.hh \
  /opt/geant4-install/include/Geant4/G4UIcommand.hh \
- /opt/geant4-install/include/Geant4/G4UIparameter.hh \
- /opt/geant4-install/include/Geant4/G4UItokenNum.hh \
  /opt/geant4-install/include/Geant4/G4ApplicationState.hh \
+ /opt/geant4-install/include/Geant4/G4UIparameter.hh \
  /opt/geant4-install/include/Geant4/G4UserTrackingAction.hh \
  /opt/geant4-install/include/Geant4/G4RunManagerKernel.hh \
+ /opt/geant4-install/include/Geant4/rundefs.hh /usr/include/c++/11/list \
+ /usr/include/c++/11/bits/stl_list.h /usr/include/c++/11/bits/list.tcc \
  /opt/geant4-install/include/Geant4/G4UImanager.hh \
- /opt/geant4-install/include/Geant4/icomsdefs.hh \
- /opt/geant4-install/include/Geant4/G4VStateDependent.hh \
  /opt/geant4-install/include/Geant4/G4UIcommandStatus.hh \
+ /opt/geant4-install/include/Geant4/G4VStateDependent.hh \
+ /opt/geant4-install/include/Geant4/icomsdefs.hh \
  /opt/geant4-install/include/Geant4/G4VisExecutive.hh \
  /opt/geant4-install/include/Geant4/G4VisManager.hh \
  /opt/geant4-install/include/Geant4/G4VVisManager.hh \
@@ -531,10 +519,13 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4VGraphicsScene.hh \
  /opt/geant4-install/include/Geant4/G4ViewerList.hh \
  /opt/geant4-install/include/Geant4/G4VViewer.hh \
+ /opt/geant4-install/include/Geant4/G4SceneTreeItem.hh \
+ /opt/geant4-install/include/Geant4/G4AttDef.hh \
+ /opt/geant4-install/include/Geant4/G4TypeKey.hh \
+ /opt/geant4-install/include/Geant4/G4AttValue.hh \
  /opt/geant4-install/include/Geant4/G4ViewParameters.hh \
  /opt/geant4-install/include/Geant4/G4Vector3D.hh \
  /opt/geant4-install/include/Geant4/G4Plane3D.hh \
- /opt/geant4-install/include/Geant4/G4Normal3D.hh \
  /opt/geant4-install/include/Geant4/CLHEP/Geometry/Plane3D.h \
  /opt/geant4-install/include/Geant4/G4VMarker.hh \
  /opt/geant4-install/include/Geant4/G4Visible.hh \
@@ -542,6 +533,53 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4VMarker.icc \
  /opt/geant4-install/include/Geant4/G4ViewParameters.icc \
  /opt/geant4-install/include/Geant4/G4PhysicalVolumeModel.hh \
+ /opt/geant4-install/include/Geant4/G4PseudoScene.hh \
+ /opt/geant4-install/include/Geant4/G4Box.hh \
+ /opt/geant4-install/include/Geant4/G4GeomTypes.hh \
+ /opt/geant4-install/include/Geant4/G4GeomConfig.hh \
+ /opt/geant4-install/include/Geant4/G4CSGSolid.hh \
+ /opt/geant4-install/include/Geant4/G4Polyhedron.hh \
+ /opt/geant4-install/include/Geant4/HepPolyhedron.h \
+ /opt/geant4-install/include/Geant4/G4TwoVector.hh \
+ /opt/geant4-install/include/Geant4/CLHEP/Vector/TwoVector.h \
+ /opt/geant4-install/include/Geant4/CLHEP/Vector/TwoVector.icc \
+ /opt/geant4-install/include/Geant4/G4Normal3D.hh \
+ /opt/geant4-install/include/Geant4/G4Box.icc \
+ /opt/geant4-install/include/Geant4/G4Cons.hh \
+ /opt/geant4-install/include/Geant4/G4Cons.icc \
+ /opt/geant4-install/include/Geant4/G4Orb.hh \
+ /opt/geant4-install/include/Geant4/G4Orb.icc \
+ /opt/geant4-install/include/Geant4/G4Para.hh \
+ /opt/geant4-install/include/Geant4/G4Para.icc \
+ /opt/geant4-install/include/Geant4/G4Sphere.hh \
+ /opt/geant4-install/include/Geant4/G4Sphere.icc \
+ /opt/geant4-install/include/Geant4/G4Torus.hh \
+ /opt/geant4-install/include/Geant4/G4Torus.icc \
+ /opt/geant4-install/include/Geant4/G4Trap.hh \
+ /opt/geant4-install/include/Geant4/G4Trap.icc \
+ /opt/geant4-install/include/Geant4/G4Trd.hh \
+ /opt/geant4-install/include/Geant4/G4Trd.icc \
+ /opt/geant4-install/include/Geant4/G4Tubs.hh \
+ /opt/geant4-install/include/Geant4/G4Tubs.icc \
+ /opt/geant4-install/include/Geant4/G4Ellipsoid.hh \
+ /opt/geant4-install/include/Geant4/G4Ellipsoid.icc \
+ /opt/geant4-install/include/Geant4/G4Polycone.hh \
+ /opt/geant4-install/include/Geant4/G4VCSGfaceted.hh \
+ /opt/geant4-install/include/Geant4/G4PolyconeSide.hh \
+ /opt/geant4-install/include/Geant4/G4VCSGface.hh \
+ /opt/geant4-install/include/Geant4/G4PolyconeHistorical.hh \
+ /opt/geant4-install/include/Geant4/G4Polycone.icc \
+ /opt/geant4-install/include/Geant4/G4Polyhedra.hh \
+ /opt/geant4-install/include/Geant4/G4PolyhedraSide.hh \
+ /opt/geant4-install/include/Geant4/G4PolyhedraHistorical.hh \
+ /opt/geant4-install/include/Geant4/G4Polyhedra.icc \
+ /opt/geant4-install/include/Geant4/G4TessellatedSolid.hh \
+ /opt/geant4-install/include/Geant4/G4Voxelizer.hh \
+ /opt/geant4-install/include/Geant4/G4SurfBits.hh \
+ /opt/geant4-install/include/Geant4/G4SurfBits.icc \
+ /opt/geant4-install/include/Geant4/G4VFacet.hh \
+ /opt/geant4-install/include/Geant4/windefs.hh \
+ /opt/geant4-install/include/Geant4/G4Voxelizer.icc \
  /opt/geant4-install/include/Geant4/G4VViewer.icc \
  /opt/geant4-install/include/Geant4/G4THitsMap.hh \
  /opt/geant4-install/include/Geant4/G4THitsCollection.hh \
@@ -552,12 +590,6 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4TrajectoriesModel.hh \
  /opt/geant4-install/include/Geant4/G4VisManager.icc \
  /opt/geant4-install/include/Geant4/G4VisExecutive.icc \
- /opt/geant4-install/include/Geant4/G4ASCIITree.hh \
- /opt/geant4-install/include/Geant4/G4VTree.hh \
- /opt/geant4-install/include/Geant4/G4DAWNFILE.hh \
- /opt/geant4-install/include/Geant4/G4HepRepFile.hh \
- /opt/geant4-install/include/Geant4/G4HepRepFileXMLWriter.hh \
- /opt/geant4-install/include/Geant4/G4RayTracer.hh \
  /opt/geant4-install/include/Geant4/G4HitFilterFactories.hh \
  /opt/geant4-install/include/Geant4/G4VFilter.hh \
  /opt/geant4-install/include/Geant4/G4VModelFactory.hh \
@@ -567,8 +599,17 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4TrajectoryFilterFactories.hh \
  /opt/geant4-install/include/Geant4/G4TrajectoryModelFactories.hh \
  /opt/geant4-install/include/Geant4/G4VTrajectoryModel.hh \
+ /opt/geant4-install/include/Geant4/G4ASCIITree.hh \
+ /opt/geant4-install/include/Geant4/G4VTree.hh \
+ /opt/geant4-install/include/Geant4/G4DAWNFILE.hh \
+ /opt/geant4-install/include/Geant4/G4RayTracer.hh \
  /opt/geant4-install/include/Geant4/G4VRML2File.hh \
  /opt/geant4-install/include/Geant4/G4GMocrenFile.hh \
+ /opt/geant4-install/include/Geant4/G4ToolsSGOffscreen.hh \
+ /opt/geant4-install/include/Geant4/G4UImanager.hh \
+ /opt/geant4-install/include/Geant4/G4UIsession.hh \
+ /opt/geant4-install/include/Geant4/G4coutDestination.hh \
+ /opt/geant4-install/include/Geant4/G4UIbatch.hh \
  /opt/geant4-install/include/Geant4/G4UIExecutive.hh \
  /opt/geant4-install/include/Geant4/G4VUIshell.hh \
  /opt/geant4-install/include/Geant4/G4PhysListFactory.hh \
@@ -579,57 +620,6 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4ThreadLocalSingleton.hh \
  /opt/geant4-install/include/Geant4/G4Cache.hh \
  /opt/geant4-install/include/Geant4/G4CacheDetails.hh \
- /opt/geant4-install/include/Geant4/G4Backtrace.hh \
- /usr/include/c++/11/cxxabi.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
- /usr/include/execinfo.h /usr/include/unistd.h \
- /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
- /usr/include/x86_64-linux-gnu/bits/environments.h \
- /usr/include/x86_64-linux-gnu/bits/confname.h \
- /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
- /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
- /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
- /usr/include/linux/close_range.h /usr/include/c++/11/cfenv \
- /usr/include/c++/11/fenv.h /usr/include/fenv.h \
- /usr/include/x86_64-linux-gnu/bits/fenv.h /usr/include/c++/11/csignal \
- /usr/include/signal.h \
- /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
- /usr/include/x86_64-linux-gnu/bits/signum-arch.h \
- /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-consts.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
- /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h \
- /usr/include/x86_64-linux-gnu/bits/sigaction.h \
- /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
- /usr/include/x86_64-linux-gnu/bits/types/stack_t.h \
- /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigstack.h \
- /usr/include/x86_64-linux-gnu/bits/sigstksz.h \
- /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
- /usr/include/c++/11/regex /usr/include/c++/11/bitset \
- /usr/include/c++/11/iterator /usr/include/c++/11/bits/stream_iterator.h \
- /usr/include/c++/11/stack /usr/include/c++/11/deque \
- /usr/include/c++/11/bits/stl_deque.h /usr/include/c++/11/bits/deque.tcc \
- /usr/include/c++/11/bits/stl_stack.h \
- /usr/include/c++/11/bits/regex_constants.h \
- /usr/include/c++/11/bits/regex_error.h \
- /usr/include/c++/11/bits/regex_automaton.h \
- /usr/include/c++/11/bits/regex_automaton.tcc \
- /usr/include/c++/11/bits/regex_scanner.h \
- /usr/include/c++/11/bits/regex_scanner.tcc \
- /usr/include/c++/11/bits/regex_compiler.h \
- /usr/include/c++/11/bits/regex_compiler.tcc \
- /usr/include/c++/11/bits/regex.h /usr/include/c++/11/bits/regex.tcc \
- /usr/include/c++/11/bits/regex_executor.h \
- /usr/include/c++/11/bits/regex_executor.tcc \
  /opt/geant4-install/include/Geant4/G4VUPLSplitter.hh \
  /opt/geant4-install/include/Geant4/G4VUserPhysicsList.hh \
  /opt/geant4-install/include/Geant4/G4ProductionCutsTable.hh \
@@ -789,55 +779,12 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/CLHEP/Evaluator/Evaluator.h \
  /opt/geant4-install/include/Geant4/G4GDMLAuxStructType.hh \
  /opt/geant4-install/include/Geant4/G4ExtrudedSolid.hh \
- /opt/geant4-install/include/Geant4/G4GeomTypes.hh \
- /opt/geant4-install/include/Geant4/G4GeomConfig.hh \
- /opt/geant4-install/include/Geant4/G4TwoVector.hh \
- /opt/geant4-install/include/Geant4/CLHEP/Vector/TwoVector.h \
- /opt/geant4-install/include/Geant4/CLHEP/Vector/TwoVector.icc \
- /opt/geant4-install/include/Geant4/G4TessellatedSolid.hh \
- /opt/geant4-install/include/Geant4/G4Voxelizer.hh \
- /opt/geant4-install/include/Geant4/G4SurfBits.hh \
- /opt/geant4-install/include/Geant4/G4Box.hh \
- /opt/geant4-install/include/Geant4/G4CSGSolid.hh \
- /opt/geant4-install/include/Geant4/G4Polyhedron.hh \
- /opt/geant4-install/include/Geant4/HepPolyhedron.h \
- /opt/geant4-install/include/Geant4/G4Box.icc \
- /opt/geant4-install/include/Geant4/G4VFacet.hh \
- /opt/geant4-install/include/Geant4/windefs.hh \
- /opt/geant4-install/include/Geant4/G4Voxelizer.icc \
  /opt/geant4-install/include/Geant4/G4ExtrudedSolid.icc \
  /opt/geant4-install/include/Geant4/G4MultiUnion.hh \
+ /opt/geant4-install/include/Geant4/G4MultiUnion.icc \
  /opt/geant4-install/include/Geant4/G4GDMLParameterisation.hh \
- /opt/geant4-install/include/Geant4/G4Trd.hh \
- /opt/geant4-install/include/Geant4/G4Trd.icc \
- /opt/geant4-install/include/Geant4/G4Trap.hh \
- /opt/geant4-install/include/Geant4/G4Trap.icc \
- /opt/geant4-install/include/Geant4/G4Cons.hh \
- /opt/geant4-install/include/Geant4/G4Cons.icc \
- /opt/geant4-install/include/Geant4/G4Sphere.hh \
- /opt/geant4-install/include/Geant4/G4Sphere.icc \
- /opt/geant4-install/include/Geant4/G4Orb.hh \
- /opt/geant4-install/include/Geant4/G4Orb.icc \
- /opt/geant4-install/include/Geant4/G4Ellipsoid.hh \
- /opt/geant4-install/include/Geant4/G4Ellipsoid.icc \
- /opt/geant4-install/include/Geant4/G4Polycone.hh \
- /opt/geant4-install/include/Geant4/G4VCSGfaceted.hh \
- /opt/geant4-install/include/Geant4/G4PolyconeSide.hh \
- /opt/geant4-install/include/Geant4/G4VCSGface.hh \
- /opt/geant4-install/include/Geant4/G4PolyconeHistorical.hh \
- /opt/geant4-install/include/Geant4/G4Polycone.icc \
- /opt/geant4-install/include/Geant4/G4Polyhedra.hh \
- /opt/geant4-install/include/Geant4/G4PolyhedraSide.hh \
- /opt/geant4-install/include/Geant4/G4PolyhedraHistorical.hh \
- /opt/geant4-install/include/Geant4/G4Polyhedra.icc \
- /opt/geant4-install/include/Geant4/G4Torus.hh \
- /opt/geant4-install/include/Geant4/G4Torus.icc \
- /opt/geant4-install/include/Geant4/G4Para.hh \
- /opt/geant4-install/include/Geant4/G4Para.icc \
  /opt/geant4-install/include/Geant4/G4Hype.hh \
  /opt/geant4-install/include/Geant4/G4Hype.icc \
- /opt/geant4-install/include/Geant4/G4Tubs.hh \
- /opt/geant4-install/include/Geant4/G4Tubs.icc \
  /opt/geant4-install/include/Geant4/G4GDMLWriteStructure.hh \
  /opt/geant4-install/include/Geant4/G4GDMLWriteParamvol.hh \
  /opt/geant4-install/include/Geant4/G4GDMLWriteSetup.hh \
@@ -851,6 +798,7 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4GDMLMessenger.hh \
  /opt/geant4-install/include/Geant4/G4TransportationManager.hh \
  /opt/geant4-install/include/Geant4/G4SafetyHelper.hh \
+ /opt/geant4-install/include/Geant4/G4SafetyHelper.icc \
  /opt/geant4-install/include/Geant4/G4TransportationManager.icc \
  /opt/geant4-install/include/Geant4/G4GDMLParser.icc \
  /workspace/neutrino_demo/PrimaryGenerator.hh \
@@ -867,12 +815,18 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/root/include/TDirectory.h /opt/root/include/TNamed.h \
  /opt/root/include/TObject.h /opt/root/include/Rtypes.h \
  /opt/root/include/strtok.h /opt/root/include/strlcpy.h \
- /opt/root/include/snprintf.h /opt/root/include/TGenericClassInfo.h \
- /opt/root/include/TSchemaHelper.h /opt/root/include/TIsAProxy.h \
- /opt/root/include/TVirtualIsAProxy.h /opt/root/include/TStorage.h \
- /opt/root/include/TVersionCheck.h /opt/root/include/RVersion.h \
- /opt/root/include/TString.h /opt/root/include/TMathBase.h \
- /opt/root/include/ROOT/RStringView.hxx \
+ /usr/include/unistd.h /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
+ /usr/include/x86_64-linux-gnu/bits/environments.h \
+ /usr/include/x86_64-linux-gnu/bits/confname.h \
+ /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+ /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
+ /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
+ /usr/include/linux/close_range.h /opt/root/include/snprintf.h \
+ /opt/root/include/TGenericClassInfo.h /opt/root/include/TSchemaHelper.h \
+ /opt/root/include/TIsAProxy.h /opt/root/include/TVirtualIsAProxy.h \
+ /opt/root/include/TStorage.h /opt/root/include/TVersionCheck.h \
+ /opt/root/include/RVersion.h /opt/root/include/TString.h \
+ /opt/root/include/TMathBase.h /opt/root/include/ROOT/RStringView.hxx \
  /opt/root/include/ROOT/TypeTraits.hxx /usr/include/c++/11/cstdarg \
  /opt/root/include/TClass.h /opt/root/include/TDictionary.h \
  /opt/root/include/ESTLType.h /opt/root/include/TObjArray.h \
@@ -880,6 +834,7 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/root/include/TIterator.h /opt/root/include/TVirtualRWMutex.h \
  /opt/root/include/TVirtualMutex.h /opt/root/include/ROOT/RRangeCast.hxx \
  /opt/root/include/ROOT/RSpan.hxx /opt/root/include/ROOT/span.hxx \
+ /usr/include/c++/11/iterator /usr/include/c++/11/bits/stream_iterator.h \
  /usr/include/c++/11/cassert /usr/include/c++/11/unordered_set \
  /usr/include/c++/11/bits/unordered_set.h /opt/root/include/TUUID.h \
  /opt/root/include/TList.h /opt/root/include/TBuffer.h \
@@ -893,18 +848,20 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/root/include/TAttFill.h /opt/root/include/TAttLine.h \
  /opt/root/include/TAttMarker.h /opt/root/include/TVirtualTreePlayer.h \
  /opt/root/include/TBranch.h /opt/root/include/TBranchCacheInfo.h \
- /opt/root/include/TBits.h \
+ /opt/root/include/TBits.h /opt/geant4-install/include/Geant4/globals.hh \
+ /workspace/neutrino_demo/EventAction.hh \
+ /opt/geant4-install/include/Geant4/G4UserEventAction.hh \
+ /opt/geant4-install/include/Geant4/G4Event.hh \
  /workspace/neutrino_demo/PrimaryGeneratorMessenger.hh \
  /opt/geant4-install/include/Geant4/G4UImessenger.hh \
  /opt/geant4-install/include/Geant4/G4UIcmdWithAString.hh \
  /opt/geant4-install/include/Geant4/G4UIcmdWithADoubleAndUnit.hh \
  /opt/geant4-install/include/Geant4/G4UIcmdWith3Vector.hh \
- /workspace/neutrino_demo/EventAction.hh \
- /opt/geant4-install/include/Geant4/G4UserEventAction.hh \
- /opt/geant4-install/include/Geant4/G4Event.hh \
- /opt/geant4-install/include/Geant4/globals.hh \
- /workspace/neutrino_demo/MyNeutrinoPhysics.hh \
- /opt/geant4-install/include/Geant4/G4VPhysicsConstructor.hh \
+ /opt/geant4-install/include/Geant4/G4NeutrinoPhysics.hh \
+ /opt/geant4-install/include/Geant4/G4NeutrinoPhysicsMessenger.hh \
+ /opt/geant4-install/include/Geant4/G4UIcmdWithABool.hh \
+ /opt/geant4-install/include/Geant4/G4UIcmdWithADouble.hh \
+ /opt/geant4-install/include/Geant4/G4UIcmdWithAString.hh \
  /workspace/neutrino_demo/MyPhysicsList.hh \
  /opt/geant4-install/include/Geant4/G4VModularPhysicsList.hh \
  /workspace/neutrino_demo/SteppingAction.hh \
@@ -912,7 +869,5 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4Step.hh \
  /opt/geant4-install/include/Geant4/G4EmExtraPhysics.hh \
  /opt/geant4-install/include/Geant4/G4EmMessenger.hh \
- /opt/geant4-install/include/Geant4/G4UIcmdWithABool.hh \
- /opt/geant4-install/include/Geant4/G4UIcmdWithADouble.hh \
- /opt/geant4-install/include/Geant4/G4UIcmdWithAString.hh \
- /opt/geant4-install/include/Geant4/G4UIcmdWithADoubleAndUnit.hh
+ /opt/geant4-install/include/Geant4/G4UIcmdWithADoubleAndUnit.hh \
+ /opt/geant4-install/include/Geant4/G4ParticleTable.hh

@@ -201,54 +201,6 @@ EventAction.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/EventAction.cc.s
 .PHONY : EventAction.cc.s
 
-MyNeutrinoPhysics.o: MyNeutrinoPhysics.cc.o
-.PHONY : MyNeutrinoPhysics.o
-
-# target to build an object file
-MyNeutrinoPhysics.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/MyNeutrinoPhysics.cc.o
-.PHONY : MyNeutrinoPhysics.cc.o
-
-MyNeutrinoPhysics.i: MyNeutrinoPhysics.cc.i
-.PHONY : MyNeutrinoPhysics.i
-
-# target to preprocess a source file
-MyNeutrinoPhysics.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/MyNeutrinoPhysics.cc.i
-.PHONY : MyNeutrinoPhysics.cc.i
-
-MyNeutrinoPhysics.s: MyNeutrinoPhysics.cc.s
-.PHONY : MyNeutrinoPhysics.s
-
-# target to generate assembly for a file
-MyNeutrinoPhysics.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/MyNeutrinoPhysics.cc.s
-.PHONY : MyNeutrinoPhysics.cc.s
-
-MyPhysicsList.o: MyPhysicsList.cc.o
-.PHONY : MyPhysicsList.o
-
-# target to build an object file
-MyPhysicsList.cc.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/MyPhysicsList.cc.o
-.PHONY : MyPhysicsList.cc.o
-
-MyPhysicsList.i: MyPhysicsList.cc.i
-.PHONY : MyPhysicsList.i
-
-# target to preprocess a source file
-MyPhysicsList.cc.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/MyPhysicsList.cc.i
-.PHONY : MyPhysicsList.cc.i
-
-MyPhysicsList.s: MyPhysicsList.cc.s
-.PHONY : MyPhysicsList.s
-
-# target to generate assembly for a file
-MyPhysicsList.cc.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/MyPhysicsList.cc.s
-.PHONY : MyPhysicsList.cc.s
-
 PrimaryGenerator.o: PrimaryGenerator.cc.o
 .PHONY : PrimaryGenerator.o
 
@@ -387,12 +339,6 @@ help:
 	@echo "... EventAction.o"
 	@echo "... EventAction.i"
 	@echo "... EventAction.s"
-	@echo "... MyNeutrinoPhysics.o"
-	@echo "... MyNeutrinoPhysics.i"
-	@echo "... MyNeutrinoPhysics.s"
-	@echo "... MyPhysicsList.o"
-	@echo "... MyPhysicsList.i"
-	@echo "... MyPhysicsList.s"
 	@echo "... PrimaryGenerator.o"
 	@echo "... PrimaryGenerator.i"
 	@echo "... PrimaryGenerator.s"

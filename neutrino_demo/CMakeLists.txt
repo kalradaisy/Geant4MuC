@@ -21,8 +21,6 @@ set(SOURCES
     DetectorMessenger.cc
     PrimaryGenerator.cc
     PrimaryGeneratorMessenger.cc
-    MyNeutrinoPhysics.cc
-    MyPhysicsList.cc
     RunAction.cc
     EventAction.cc
     SteppingAction.cc
@@ -31,6 +29,7 @@ set(SOURCES
 #set(HEADERS
 #  MyPhysicsList.hh
 #  )
+  
 
 # --------------------
 # Executable

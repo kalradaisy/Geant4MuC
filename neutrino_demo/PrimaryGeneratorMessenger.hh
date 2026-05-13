@@ -7,7 +7,6 @@
 
 class PrimaryGeneratorMessenger : public G4UImessenger {
 public:
-
     PrimaryGeneratorMessenger(PrimaryGenerator* gun);
     ~PrimaryGeneratorMessenger() override {}
 

@@ -27,10 +27,10 @@ PrimaryGenerator::PrimaryGenerator(RunAction* runAction)
   fMessenger = new PrimaryGeneratorMessenger(this);
   fParticleGun = new G4ParticleGun(1);
 
-  fParticleName = "nu_mu";          // default particle
-  fEnergy = 1.0 * CLHEP::GeV;       // use CLHEP::GeV
-  //    fPosition = G4ThreeVector(0, 0, -1 * CLHEP::cm);
+  fParticleName = "e-";          // default particle
+  fEnergy = 1.0 * CLHEP::GeV;      
   fPosition = G4ThreeVector(0, 0,0);
+
   // Initialize particle gun
   G4ParticleDefinition* particle
     = G4ParticleTable::GetParticleTable()->FindParticle(fParticleName);

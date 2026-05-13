@@ -11,8 +11,6 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/workspace/neutrino_demo/DetectorConstruction.cc" "CMakeFiles/neutrino.dir/DetectorConstruction.cc.o" "gcc" "CMakeFiles/neutrino.dir/DetectorConstruction.cc.o.d"
   "/workspace/neutrino_demo/DetectorMessenger.cc" "CMakeFiles/neutrino.dir/DetectorMessenger.cc.o" "gcc" "CMakeFiles/neutrino.dir/DetectorMessenger.cc.o.d"
   "/workspace/neutrino_demo/EventAction.cc" "CMakeFiles/neutrino.dir/EventAction.cc.o" "gcc" "CMakeFiles/neutrino.dir/EventAction.cc.o.d"
-  "/workspace/neutrino_demo/MyNeutrinoPhysics.cc" "CMakeFiles/neutrino.dir/MyNeutrinoPhysics.cc.o" "gcc" "CMakeFiles/neutrino.dir/MyNeutrinoPhysics.cc.o.d"
-  "/workspace/neutrino_demo/MyPhysicsList.cc" "CMakeFiles/neutrino.dir/MyPhysicsList.cc.o" "gcc" "CMakeFiles/neutrino.dir/MyPhysicsList.cc.o.d"
   "/workspace/neutrino_demo/PrimaryGenerator.cc" "CMakeFiles/neutrino.dir/PrimaryGenerator.cc.o" "gcc" "CMakeFiles/neutrino.dir/PrimaryGenerator.cc.o.d"
   "/workspace/neutrino_demo/PrimaryGeneratorMessenger.cc" "CMakeFiles/neutrino.dir/PrimaryGeneratorMessenger.cc.o" "gcc" "CMakeFiles/neutrino.dir/PrimaryGeneratorMessenger.cc.o.d"
   "/workspace/neutrino_demo/RunAction.cc" "CMakeFiles/neutrino.dir/RunAction.cc.o" "gcc" "CMakeFiles/neutrino.dir/RunAction.cc.o.d"
