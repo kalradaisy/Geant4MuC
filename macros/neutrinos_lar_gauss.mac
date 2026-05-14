@@ -1,0 +1,41 @@
+# =============================================================================
+# neutrinos_lar_gauss.mac
+#
+# Shoot a muon-neutrino beam with a Gaussian energy spread at the 1 m³
+# liquid-argon target.
+#
+# Detector: gdml/liquid_argon_1m3.gdml
+#   - World:  200×200×200 cm (G4_AIR)
+#   - Target: 100×100×100 cm liquid argon, centred at the origin
+#
+# Beam:
+#   - Particle : nu_mu  (muon neutrino)
+#   - Energy   : Gaussian, mean = 3 GeV, sigma = 500 MeV
+#   - Position : upstream on the beam axis (z = -60 cm)
+#   - Direction: along +z
+# =============================================================================
+
+# --- Load geometry ---
+/detector/readGDML gdml/liquid_argon_1m3.gdml
+
+# --- Neutrino physics ---
+/physics_lists/em/NuDetectorName DefaultRegionForTheWorld
+/physics_lists/em/NeutrinoActivation true
+/physics_lists/em/NuEleCcBias   5e12
+/physics_lists/em/NuEleNcBias   5e12
+/physics_lists/em/NuNucleusBias 5e12
+
+# --- Physics initialise ---
+/run/initialize
+
+# --- Beam ---
+/gun/particle    nu_mu
+/gun/energyMode  gauss
+/gun/energy      3 GeV        # mean energy
+/gun/gaussSigma  500 MeV      # 1-sigma spread
+/gun/position    0 0 -60 cm
+/gun/direction   0 0 1
+
+# --- Run ---
+/run/printProgress 100
+/run/beamOn 1000

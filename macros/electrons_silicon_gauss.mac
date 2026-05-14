@@ -1,0 +1,33 @@
+# =============================================================================
+# electrons_silicon_gauss.mac
+#
+# Shoot an electron beam with a Gaussian energy spread at the 1 mm silicon slab.
+#
+# Detector: gdml/silicon_slab_1mm.gdml
+#   - World:  10×10×10 cm (G4_AIR)
+#   - Target: 10×10 cm silicon slab, 1 mm thick, centred at the origin
+#
+# Beam:
+#   - Particle : e-  (electron)
+#   - Energy   : Gaussian, mean = 1 GeV, sigma = 200 MeV
+#   - Position : upstream on the beam axis (z = -4 cm)
+#   - Direction: along +z
+# =============================================================================
+
+# --- Load geometry ---
+/detector/readGDML gdml/silicon_slab_1mm.gdml
+
+# --- Physics ---
+/run/initialize
+
+# --- Beam ---
+/gun/particle    e-
+/gun/energyMode  gauss
+/gun/energy      1 GeV        # mean energy
+/gun/gaussSigma  200 MeV      # 1-sigma spread
+/gun/position    0 0 -4 cm
+/gun/direction   0 0 1
+
+# --- Run ---
+/run/printProgress 100
+/run/beamOn 1000
