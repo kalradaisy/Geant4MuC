@@ -7,7 +7,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/lobis/root-geant4-garfield:cpp17_root-v6-26-10_geant4-v11.1.0_garfield-e0a9f171
+      image: ghcr.io/lawrenceleejr/root-geant4-garfield:cpp17_root-v6-26-10_geant4-v11.4.1_garfield-e0a9f171
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
       - name: Create Dockerfile
         run: |
           cat > Dockerfile << 'EOF'
-          FROM ghcr.io/lobis/root-geant4-garfield:cpp17_root-v6-26-10_geant4-v11.1.0_garfield-e0a9f171
+          FROM ghcr.io/lawrenceleejr/root-geant4-garfield:cpp17_root-v6-26-10_geant4-v11.4.1_garfield-e0a9f171
           
           # Set working directory
           WORKDIR /app
