@@ -3,7 +3,7 @@
 
 #include "G4VModularPhysicsList.hh"
 #include "G4PhysListFactory.hh"
-#include "MyNeutrinoPhysics.hh"
+#include "G4NeutrinoPhysics.hh"
 
 class MyPhysicsList : public G4VModularPhysicsList {
 public:

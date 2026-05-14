@@ -15,14 +15,14 @@
 #include "RunAction.hh"
 #include "PrimaryGeneratorMessenger.hh"
 #include "EventAction.hh"
-//#include "G4NeutrinoPhysics.hh"
-#include "MyNeutrinoPhysics.hh"
+#include "G4NeutrinoPhysics.hh"
 #include "MyPhysicsList.hh"
 #include "G4PhysListFactory.hh"
 #include "G4VModularPhysicsList.hh"
 #include "SteppingAction.hh"
 //#include "ActionInitialization.hh"
 #include "G4EmExtraPhysics.hh"
+#include "G4ParticleTable.hh"
 
 
 int main(int argc, char** argv) {
@@ -36,43 +36,27 @@ int main(int argc, char** argv) {
   // Create the run manager
     G4RunManager* runManager = new G4RunManager;
 
-    // Detector construction
     auto detector = new DetectorConstruction();
     runManager->SetUserInitialization(detector);
 
-    // 3. Physics list (QGSP_BERT + neutrino physics)
-    //    G4PhysListFactory factory;
-    G4VModularPhysicsList* physics = factory.GetReferencePhysList("FTFP_BERT"); // FTFP_BERT"); //NuBeam");
-    physics->RegisterPhysics(new G4EmExtraPhysics());
+    G4VModularPhysicsList* physics = factory.GetReferencePhysList("FTFP_BERT");
+    physics->RegisterPhysics(new G4NeutrinoPhysics());
     runManager->SetUserInitialization(physics);
 
-    //  runManager->SetUserInitialization(
-    //   new ActionInitialization()
-    //);
-
-
-    
-    // Run action (must be created before PrimaryGenerator if PG uses its TTree)
      auto runAction = new RunAction();
     runManager->SetUserAction(runAction);
 
      auto eventAction = new EventAction(runAction);
     runManager->SetUserAction(eventAction);
 
-    
-    // Primary generator, pass runAction pointer
-    auto primary = new PrimaryGenerator(runAction);
-    //auto messenger = new PrimaryGeneratorMessenger(primary);
-    runManager->SetUserAction(primary);
+     auto primary = new PrimaryGenerator(runAction);
+     runManager->SetUserAction(primary);
 
-    //    auto messenger = new PrimaryGeneratorMessenger(primary);
-    //runManager->SetUserAction(new EventAction(runAction));
-    runManager->SetUserAction(new SteppingAction(eventAction, runAction));
+     runManager->SetUserAction(new SteppingAction(eventAction, runAction));
 
     // UI / macro execution
     G4UImanager* uiManager = G4UImanager::GetUIpointer();
-    //uiManager->ApplyCommand("/tracking/storeTrajectory 1");
- 
+    
     if (argc == 2) {
         uiManager->ApplyCommand("/control/execute " + std::string(argv[1]));
     }
