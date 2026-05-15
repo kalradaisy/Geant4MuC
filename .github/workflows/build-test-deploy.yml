@@ -81,6 +81,11 @@ jobs:
           # Set working directory
           WORKDIR /app
           
+          # Install Qt6 runtime libraries required by the Geant4 visualization drivers
+          RUN apt-get update && apt-get install -y --no-install-recommends \
+              libqt6core6 libqt6gui6 libqt6widgets6 libqt6opengl6 \
+              && rm -rf /var/lib/apt/lists/*
+
           # Copy and build
           COPY g4sim/ /app/g4sim/
           RUN mkdir -p /app/build && cd /app/build && cmake /app/g4sim/ && cmake --build .
