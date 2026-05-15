@@ -84,7 +84,7 @@ jobs:
           # Copy and build
           COPY g4sim/ /app/g4sim/
           RUN mkdir -p /app/build && cd /app/build && cmake /app/g4sim/ && cmake --build .
-          RUN strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5
+          RUN if [ -f /usr/lib/x86_64-linux-gnu/libQt5Core.so.5 ]; then strip --remove-section=.note.ABI-tag /usr/lib/x86_64-linux-gnu/libQt5Core.so.5; fi
 
           # Set the entrypoint to the executable
           ENTRYPOINT ["/app/build/g4sim"]
