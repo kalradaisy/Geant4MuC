@@ -8,13 +8,15 @@
 #include "G4Region.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4UserLimits.hh"
+#include "G4RegionStore.hh"
 
 
 DetectorConstruction::DetectorConstruction()
 {
     fMessenger = new DetectorMessenger(this);
-    // Load default GDML immediately so Construct() can return a valid world
-    G4String defaultGDML = "neutrino_demo/output.gdml";
+
+    // Load default GDML
+    G4String defaultGDML = "/workspace/neutrino_demo/output.gdml";
     G4cout << "Loading default GDML: " << defaultGDML << G4endl;
 
     fParser.Read(defaultGDML, false); // false disables schema validation
@@ -30,7 +32,6 @@ DetectorConstruction::DetectorConstruction()
 
     G4cout << "Default GDML loaded successfully. World volume: "
            << world->GetName() << G4endl;
-
 }
 
 DetectorConstruction::~DetectorConstruction()
@@ -76,13 +77,13 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
     G4LogicalVolume* worldLogical = world->GetLogicalVolume();
     if (worldLogical) {
-             G4double minStep = 1.0*mm;  // you can reduce if needed
-      G4UserLimits* stepLimits = new G4UserLimits(minStep);
-      worldLogical->SetUserLimits(stepLimits);
+      //            G4double minStep = 1.0*mm;  // you can reduce if needed
+      // G4UserLimits* stepLimits = new G4UserLimits(minStep);
+      //worldLogical->SetUserLimits(stepLimits);
       G4double maxStep = 10*cm;  // limit max step to 10 cm
       worldLogical->SetUserLimits(new G4UserLimits(maxStep));
  
-      G4cout << "Minimum step size set for world: " << minStep/mm << " mm" << G4endl;
+      //G4cout << "Minimum step size set for world: " << minStep/mm << " mm" << G4endl;
     } else {
         G4cerr << "World logical volume not found!" << G4endl;
     }
@@ -91,8 +92,17 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     // -----------------------------------------
     // Create neutrino target region
     // -----------------------------------------
-    auto targetRegion = new G4Region("target");
+    //    auto targetRegion = new G4Region("target");
 
+    auto regionStore = G4RegionStore::GetInstance();
+
+G4Region* targetRegion = regionStore->GetRegion("target", false);
+
+if (!targetRegion) {
+    targetRegion = new G4Region("target");
+}
+
+ 
     auto lvStore = G4LogicalVolumeStore::GetInstance();
 
     G4cout << "\n=== Assigning Neutrino Region ===" << G4endl;
@@ -103,15 +113,19 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 
         // Select your detector volume
 	//        if (lv->GetName() == "VertexBarrel_layer0_sens") {
-        if (lv->GetName().find("_sens") != std::string::npos) {
-	  // if (lv == world->GetLogicalVolume()){
-	  //continue;   // Skip world
-	  // }
-            targetRegion->AddRootLogicalVolume(lv);
+        //if (lv->GetName().find("_sens") != std::string::npos) {
+
+      if (lv == worldLogical) {
+        G4cout << "Skipping world logical volume: "
+               << lv->GetName() << G4endl;
+        continue;
+    }
+
+      targetRegion->AddRootLogicalVolume(lv);
 
             G4cout << ">>> Neutrino target set on: "
                    << lv->GetName() << G4endl;
-	     }
+	    //   }
     }
 
     G4cout << "===============================\n" << G4endl;

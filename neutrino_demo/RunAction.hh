@@ -50,6 +50,10 @@ public:
   std::vector<double> secEndZ;
   std::string interactionType;
 
+double trackWeight;
+double nuEleTotXscBias;
+double eventWeight;
+  
   // Secondary info                                                                                                                                                                                                                  
 
     int targetZ = -1;
@@ -94,12 +98,14 @@ int eventID;
 int primaryPDG;
 
 std::string nuInteractionProcess;
-
+  
+std::vector<std::string> allInteractionProcess;
 bool isCC;
 bool isNC;
 
 int outgoingLeptonPDG;
 double outgoingLeptonE;
+double outgoingHadronE;
 double outgoingLeptonPx;
 double outgoingLeptonPy;
 double outgoingLeptonPz;

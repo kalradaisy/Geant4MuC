@@ -39,7 +39,7 @@ int main(int argc, char** argv) {
     auto detector = new DetectorConstruction();
     runManager->SetUserInitialization(detector);
 
-    G4VModularPhysicsList* physics = factory.GetReferencePhysList("FTFP_BERT");
+    G4VModularPhysicsList* physics = factory.GetReferencePhysList("QGSP_BERT");
     physics->RegisterPhysics(new G4NeutrinoPhysics());
     runManager->SetUserInitialization(physics);
 

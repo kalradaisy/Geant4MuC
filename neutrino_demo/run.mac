@@ -5,17 +5,18 @@
 
 
 # Read your GDML detector description
-/detector/readGDML neutrino_demo/output.gdml
+/detector/readGDML /workspace/neutrino_demo/output.gdml
 
 #/physics_lists/em/addNeutrino
 
-/physics_lists/nu/NuDetectorName DefaultRegionForTheWorld
+/physics_lists/nu/NuDetectorName target
+#DefaultRegionForTheWorld
 /physics_lists/nu/NeutrinoActivation true
 /physics_lists/nu/NuETotXscActivation true
 /physics_lists/nu/NuOscDistanceBias 1
-/physics_lists/nu/NuEleCcBias 1e12
+/physics_lists/nu/NuEleCcBias 1
 /physics_lists/nu/NuEleNcBias 1
-/physics_lists/nu/NuNucleusBias 1
+/physics_lists/nu/NuNucleusBias 1e10
 
 # ==============================
 # --- Primary particle gun ---
@@ -31,14 +32,13 @@
 # ==============================
 # --- Run ---
 # ==============================
-/run/printProgress 1
+/run/printProgress 100
 #/tracking/verbose 2       # Increase tracking verbosity
 #/process/verbose 2        
 #/run/verbose 1
 
 /run/initialize
-/run/beamOn 10
-
+/run/beamOn 1
 
 
 

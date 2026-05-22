@@ -61,13 +61,16 @@ public:
 int primaryPDG;
 
 std::string nuInteractionProcess;
-
+  
+std::vector<std::string> allInteractionProcess;
 bool isCC;
 bool isNC;
 
 int outgoingLeptonPDG;
 double outgoingLeptonE;
-double outgoingLeptonPx;
+double outgoingHadronE;
+
+  double outgoingLeptonPx;
 double outgoingLeptonPy;
 double outgoingLeptonPz;
 
@@ -76,7 +79,11 @@ double Q2;
 double W;
 double xBj;
 double yBj;
+double trackWeight;
+double nuEleTotXscBias;
+double eventWeight;
 
+void SetNeutrinoWeight(double trackWeightIn, double biasFactorIn);
   int primaryTrackID;
   int PDG;
   std::vector<StepInfo> steps;
@@ -144,7 +151,7 @@ double yBj;
   double finalE, finalX, finalY, finalZ;
   double finalPx, finalPy, finalPz;
   double finalTheta, finalPhi, finalCosth, finalPhiDeg;
-
+  
 private:
     RunAction* fRunAction;
  // Per-event accumulators                                                                                                                                                                                                           

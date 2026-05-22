@@ -19,17 +19,26 @@ RunAction::~RunAction() {}
 void RunAction::BeginOfRunAction(const G4Run*) {
 fFile = new TFile("neutrino.root", "RECREATE");
     fTree = new TTree("tree", "Neutrino data");
-fTree->Branch("eventID", &eventID, "eventID/I");
+
+
+    fTree->Branch("trackWeight", &trackWeight);
+fTree->Branch("nuEleTotXscBias", &nuEleTotXscBias);
+fTree->Branch("eventWeight", &eventWeight);
+ 
+    fTree->Branch("eventID", &eventID, "eventID/I");
 fTree->Branch("primaryPDG", &primaryPDG, "primaryPDG/I");
 
 fTree->Branch("nuInteractionProcess", &nuInteractionProcess);
+fTree->Branch("allInteractionProcess", &allInteractionProcess);
 
 fTree->Branch("isCC", &isCC, "isCC/O");
 fTree->Branch("isNC", &isNC, "isNC/O");
 
 fTree->Branch("outgoingLeptonPDG", &outgoingLeptonPDG, "outgoingLeptonPDG/I");
 fTree->Branch("outgoingLeptonE", &outgoingLeptonE, "outgoingLeptonE/D");
-fTree->Branch("outgoingLeptonPx", &outgoingLeptonPx, "outgoingLeptonPx/D");
+fTree->Branch("outgoingHadronE", &outgoingHadronE, "outgoingHadronE/D");
+
+ fTree->Branch("outgoingLeptonPx", &outgoingLeptonPx, "outgoingLeptonPx/D");
 fTree->Branch("outgoingLeptonPy", &outgoingLeptonPy, "outgoingLeptonPy/D");
 fTree->Branch("outgoingLeptonPz", &outgoingLeptonPz, "outgoingLeptonPz/D");
 

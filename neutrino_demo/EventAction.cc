@@ -10,7 +10,10 @@
 EventAction::EventAction(RunAction* runAction)
   : fRunAction(runAction),
      totalEdep_(0),
-    nSteps_(0)
+    nSteps_(0),
+    trackWeight(1.0),
+    nuEleTotXscBias(1.0e9),
+    eventWeight(1.0e-9)
 {}
 
 EventAction::~EventAction() {}
@@ -22,13 +25,17 @@ eventID = event->GetEventID();
 
 primaryPDG = 0;
 nuInteractionProcess = "None";
+ allInteractionProcess.clear();
+
 
 isCC = false;
 isNC = false;
 
 outgoingLeptonPDG = 0;
 outgoingLeptonE = 0.0;
-outgoingLeptonPx = 0.0;
+outgoingHadronE = 0.0;
+
+ outgoingLeptonPx = 0.0;
 outgoingLeptonPy = 0.0;
 outgoingLeptonPz = 0.0;
 
@@ -37,7 +44,10 @@ Q2 = 0.0;
 W = 0.0;
 xBj = 0.0;
 yBj = 0.0;
-
+trackWeight = 1.0;
+nuEleTotXscBias =  1.0e9;
+eventWeight = trackWeight / nuEleTotXscBias;
+ 
     E=0; x=0; y=0; z=0; px=0; py=0; pz=0;
     finalX=0; finalY=0; finalZ=0;
     theta=0; phi=0; costh=0;
@@ -149,6 +159,8 @@ if(isCC && outgoingLeptonPDG != 0 && E > 0.0) {
     G4ThreeVector pNu(px, py, pz);
 
     double Elep = outgoingLeptonE;
+        double Ehad = outgoingHadronE;
+
     G4ThreeVector pLep(outgoingLeptonPx, outgoingLeptonPy, outgoingLeptonPz);
 
     double qEnergy = Enu - Elep;
@@ -171,12 +183,14 @@ fRunAction->eventID = eventID;
 fRunAction->primaryPDG = primaryPDG;
 
 fRunAction->nuInteractionProcess = nuInteractionProcess;
-
+fRunAction->allInteractionProcess = allInteractionProcess;
+ 
 fRunAction->isCC = isCC;
 fRunAction->isNC = isNC;
 
 fRunAction->outgoingLeptonPDG = outgoingLeptonPDG;
 fRunAction->outgoingLeptonE = outgoingLeptonE;
+fRunAction->outgoingHadronE = outgoingHadronE;
 fRunAction->outgoingLeptonPx = outgoingLeptonPx;
 fRunAction->outgoingLeptonPy = outgoingLeptonPy;
 fRunAction->outgoingLeptonPz = outgoingLeptonPz;
@@ -249,7 +263,11 @@ for(int pdg : finalStatePDG) {
     fRunAction->secEndY = secEndY;
     fRunAction->secEndZ = secEndZ;
 
-    //fRunAction->totalEdep = totalEdep_;                                                                                                                                                                                            
+    //fRunAction->totalEdep = totalEdep_;
+    fRunAction->trackWeight = trackWeight;
+fRunAction->nuEleTotXscBias = nuEleTotXscBias;
+fRunAction->eventWeight = eventWeight;
+ 
     fRunAction->nSteps = nSteps_;
     fRunAction->nSecondaries = nSecondaries;
   fRunAction->FillEvent(this);
