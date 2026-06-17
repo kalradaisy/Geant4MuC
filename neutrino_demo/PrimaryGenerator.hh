@@ -11,7 +11,7 @@ class PrimaryGeneratorMessenger;
 
 class PrimaryGenerator : public G4VUserPrimaryGeneratorAction {
 public:
-    PrimaryGenerator(RunAction* runAction);
+  PrimaryGenerator(RunAction* runAction);
     ~PrimaryGenerator() override;
 
     void GeneratePrimaries(G4Event* event) override;
@@ -31,6 +31,7 @@ private:
     G4String fParticleName;
 
     RunAction* fRunAction;
+  
 };
 
 #endif

@@ -273,6 +273,30 @@ RunAction.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/RunAction.cc.s
 .PHONY : RunAction.cc.s
 
+StackingAction.o: StackingAction.cc.o
+.PHONY : StackingAction.o
+
+# target to build an object file
+StackingAction.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/StackingAction.cc.o
+.PHONY : StackingAction.cc.o
+
+StackingAction.i: StackingAction.cc.i
+.PHONY : StackingAction.i
+
+# target to preprocess a source file
+StackingAction.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/StackingAction.cc.i
+.PHONY : StackingAction.cc.i
+
+StackingAction.s: StackingAction.cc.s
+.PHONY : StackingAction.s
+
+# target to generate assembly for a file
+StackingAction.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/StackingAction.cc.s
+.PHONY : StackingAction.cc.s
+
 SteppingAction.o: SteppingAction.cc.o
 .PHONY : SteppingAction.o
 
@@ -296,6 +320,30 @@ SteppingAction.s: SteppingAction.cc.s
 SteppingAction.cc.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/SteppingAction.cc.s
 .PHONY : SteppingAction.cc.s
+
+TrackingAction.o: TrackingAction.cc.o
+.PHONY : TrackingAction.o
+
+# target to build an object file
+TrackingAction.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/TrackingAction.cc.o
+.PHONY : TrackingAction.cc.o
+
+TrackingAction.i: TrackingAction.cc.i
+.PHONY : TrackingAction.i
+
+# target to preprocess a source file
+TrackingAction.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/TrackingAction.cc.i
+.PHONY : TrackingAction.cc.i
+
+TrackingAction.s: TrackingAction.cc.s
+.PHONY : TrackingAction.s
+
+# target to generate assembly for a file
+TrackingAction.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/TrackingAction.cc.s
+.PHONY : TrackingAction.cc.s
 
 main.o: main.cc.o
 .PHONY : main.o
@@ -348,9 +396,15 @@ help:
 	@echo "... RunAction.o"
 	@echo "... RunAction.i"
 	@echo "... RunAction.s"
+	@echo "... StackingAction.o"
+	@echo "... StackingAction.i"
+	@echo "... StackingAction.s"
 	@echo "... SteppingAction.o"
 	@echo "... SteppingAction.i"
 	@echo "... SteppingAction.s"
+	@echo "... TrackingAction.o"
+	@echo "... TrackingAction.i"
+	@echo "... TrackingAction.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

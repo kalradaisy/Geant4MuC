@@ -6,5 +6,5 @@ CXX_DEFINES = -DG4LIB_BUILD_DLL -DPTL_BUILD_DLL
 
 CXX_INCLUDES = -I/opt/root/include -isystem /opt/geant4-install/include/Geant4
 
-CXX_FLAGS = -g -Wno-shadow
+CXX_FLAGS = -Wno-shadow
 

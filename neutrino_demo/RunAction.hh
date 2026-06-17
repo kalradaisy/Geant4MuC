@@ -48,7 +48,8 @@ public:
   std::vector<double> secEndX;
   std::vector<double> secEndY;
   std::vector<double> secEndZ;
-  std::string interactionType;
+  //  std::string interactionType;
+  //std::string interactionModel;
 
 double trackWeight;
 double nuEleTotXscBias;
@@ -96,28 +97,63 @@ int nBackward;
 
 int eventID;
 int primaryPDG;
+int particleType;  // 11=electron, -11=positron, 2212=proton, etc.
+int primaryFinalPDG;
+bool primaryOscillationProcessInvoked;
+bool primaryOscillationFlavorChanged;
+int primaryOscillationPDGBefore;
+int primaryOscillationPDGAfter;
+int nOscillationSteps;
 
 std::string nuInteractionProcess;
-  
 std::vector<std::string> allInteractionProcess;
 bool isCC;
 bool isNC;
 
+// ========== LEPTON PROPERTIES (NEUTRINO & ELECTRON SCATTERING) ==========
 int outgoingLeptonPDG;
 double outgoingLeptonE;
-double outgoingHadronE;
 double outgoingLeptonPx;
 double outgoingLeptonPy;
 double outgoingLeptonPz;
+double leptonScatteringAngle;  // theta_l in radians
+double leptonCosTheta;         // cos(theta_l)
+double inelasticity;           // y = 1 - E_l / E_nu
 
-double q0;
-double Q2;
-double W;
-double xBj;
-double yBj;
-std::vector<double> step_time;
+// ========== HADRONIC SYSTEM ==========
+double outgoingHadronE;
+double hadronicEnergy;         // Total E_had
+double hadronicVisibleEnergy;  // Sum of visible hadron energies
+int hadronicMultiplicity;      // Total number of hadrons
+
+  
+// ========== NEUTRINO KINEMATICS ==========
+double q0;         // Energy transfer
+double Q2;         // Four-momentum transfer squared
+double W;          // Invariant mass
+double xBj;        // Bjorken-x
+double yBj;        // Inelasticity
+
+// ========== SHOWER PROPERTIES (ELECTRONS) ==========
+int showerNSecondaries;        // Number of shower secondaries
+double showerLongitudinalProfile;
+double showerLateralSpread;
+
+// ========== PARTICLE PRODUCTION COUNTERS ==========
+int nPhotonsProduced;
+int nElectronsProduced;
+int nPositronsProduced;
+int nGammasProduced;
+int nPionsProduced;
+int nProtonSecondaries;
+int nNeutronSecondaries;
+int nKaonsProduced;
+
+  
+std::string interactionType;
+std::string interactionModel;
 std::vector<double> step_stepLength;
-
+  std::vector<double> step_time;
 std::vector<double> step_preMomX;
 std::vector<double> step_preMomY;
 std::vector<double> step_preMomZ;

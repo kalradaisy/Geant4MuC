@@ -24,6 +24,8 @@ set(SOURCES
     RunAction.cc
     EventAction.cc
     SteppingAction.cc
+    StackingAction.cc
+    TrackingAction.cc
     main.cc
 )
 #set(HEADERS

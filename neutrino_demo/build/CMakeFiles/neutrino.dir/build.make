@@ -167,10 +167,38 @@ CMakeFiles/neutrino.dir/SteppingAction.cc.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/neutrino.dir/SteppingAction.cc.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/neutrino_demo/SteppingAction.cc -o CMakeFiles/neutrino.dir/SteppingAction.cc.s
 
+CMakeFiles/neutrino.dir/StackingAction.cc.o: CMakeFiles/neutrino.dir/flags.make
+CMakeFiles/neutrino.dir/StackingAction.cc.o: StackingAction.cc
+CMakeFiles/neutrino.dir/StackingAction.cc.o: CMakeFiles/neutrino.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspace/neutrino_demo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/neutrino.dir/StackingAction.cc.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/neutrino.dir/StackingAction.cc.o -MF CMakeFiles/neutrino.dir/StackingAction.cc.o.d -o CMakeFiles/neutrino.dir/StackingAction.cc.o -c /workspace/neutrino_demo/build/StackingAction.cc
+
+CMakeFiles/neutrino.dir/StackingAction.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/neutrino.dir/StackingAction.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/neutrino_demo/build/StackingAction.cc > CMakeFiles/neutrino.dir/StackingAction.cc.i
+
+CMakeFiles/neutrino.dir/StackingAction.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/neutrino.dir/StackingAction.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/neutrino_demo/build/StackingAction.cc -o CMakeFiles/neutrino.dir/StackingAction.cc.s
+
+CMakeFiles/neutrino.dir/TrackingAction.cc.o: CMakeFiles/neutrino.dir/flags.make
+CMakeFiles/neutrino.dir/TrackingAction.cc.o: ../TrackingAction.cc
+CMakeFiles/neutrino.dir/TrackingAction.cc.o: CMakeFiles/neutrino.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspace/neutrino_demo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/neutrino.dir/TrackingAction.cc.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/neutrino.dir/TrackingAction.cc.o -MF CMakeFiles/neutrino.dir/TrackingAction.cc.o.d -o CMakeFiles/neutrino.dir/TrackingAction.cc.o -c /workspace/neutrino_demo/TrackingAction.cc
+
+CMakeFiles/neutrino.dir/TrackingAction.cc.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/neutrino.dir/TrackingAction.cc.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /workspace/neutrino_demo/TrackingAction.cc > CMakeFiles/neutrino.dir/TrackingAction.cc.i
+
+CMakeFiles/neutrino.dir/TrackingAction.cc.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/neutrino.dir/TrackingAction.cc.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /workspace/neutrino_demo/TrackingAction.cc -o CMakeFiles/neutrino.dir/TrackingAction.cc.s
+
 CMakeFiles/neutrino.dir/main.cc.o: CMakeFiles/neutrino.dir/flags.make
 CMakeFiles/neutrino.dir/main.cc.o: ../main.cc
 CMakeFiles/neutrino.dir/main.cc.o: CMakeFiles/neutrino.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspace/neutrino_demo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/neutrino.dir/main.cc.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/workspace/neutrino_demo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/neutrino.dir/main.cc.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/neutrino.dir/main.cc.o -MF CMakeFiles/neutrino.dir/main.cc.o.d -o CMakeFiles/neutrino.dir/main.cc.o -c /workspace/neutrino_demo/main.cc
 
 CMakeFiles/neutrino.dir/main.cc.i: cmake_force
@@ -190,6 +218,8 @@ neutrino_OBJECTS = \
 "CMakeFiles/neutrino.dir/RunAction.cc.o" \
 "CMakeFiles/neutrino.dir/EventAction.cc.o" \
 "CMakeFiles/neutrino.dir/SteppingAction.cc.o" \
+"CMakeFiles/neutrino.dir/StackingAction.cc.o" \
+"CMakeFiles/neutrino.dir/TrackingAction.cc.o" \
 "CMakeFiles/neutrino.dir/main.cc.o"
 
 # External object files for target neutrino
@@ -202,6 +232,8 @@ neutrino: CMakeFiles/neutrino.dir/PrimaryGeneratorMessenger.cc.o
 neutrino: CMakeFiles/neutrino.dir/RunAction.cc.o
 neutrino: CMakeFiles/neutrino.dir/EventAction.cc.o
 neutrino: CMakeFiles/neutrino.dir/SteppingAction.cc.o
+neutrino: CMakeFiles/neutrino.dir/StackingAction.cc.o
+neutrino: CMakeFiles/neutrino.dir/TrackingAction.cc.o
 neutrino: CMakeFiles/neutrino.dir/main.cc.o
 neutrino: CMakeFiles/neutrino.dir/build.make
 neutrino: /opt/root/lib/libCore.so
@@ -259,7 +291,7 @@ neutrino: /opt/geant4-install/lib/libG4clhep.so
 neutrino: /opt/geant4-install/lib/libG4ptl.so.3.0.0
 neutrino: /opt/geant4-install/lib/libG4zlib.so
 neutrino: CMakeFiles/neutrino.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/workspace/neutrino_demo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable neutrino"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/workspace/neutrino_demo/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable neutrino"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/neutrino.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

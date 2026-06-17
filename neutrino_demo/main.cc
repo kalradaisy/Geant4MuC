@@ -23,6 +23,8 @@
 //#include "ActionInitialization.hh"
 #include "G4EmExtraPhysics.hh"
 #include "G4ParticleTable.hh"
+#include "TrackingAction.hh"
+//#include "StackingAction.hh"
 
 
 int main(int argc, char** argv) {
@@ -39,7 +41,7 @@ int main(int argc, char** argv) {
     auto detector = new DetectorConstruction();
     runManager->SetUserInitialization(detector);
 
-    G4VModularPhysicsList* physics = factory.GetReferencePhysList("QGSP_BERT");
+    G4VModularPhysicsList* physics = factory.GetReferencePhysList("FTFP_BERT");
     physics->RegisterPhysics(new G4NeutrinoPhysics());
     runManager->SetUserInitialization(physics);
 
@@ -49,9 +51,15 @@ int main(int argc, char** argv) {
      auto eventAction = new EventAction(runAction);
     runManager->SetUserAction(eventAction);
 
-     auto primary = new PrimaryGenerator(runAction);
+    auto primary = new PrimaryGenerator(runAction);
      runManager->SetUserAction(primary);
 
+runManager->SetUserAction(
+    new TrackingAction(eventAction));
+
+//runManager->SetUserAction(
+//  new StackingAction(eventAction, runAction));
+ 
      runManager->SetUserAction(new SteppingAction(eventAction, runAction));
 
     // UI / macro execution

@@ -1,3 +1,4 @@
+
 #include "SteppingAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
@@ -16,6 +17,8 @@
 #include "G4Element.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4RunManager.hh"
+#include "G4EventManager.hh"
+
 SteppingAction::SteppingAction(EventAction* eventAction, RunAction* runAction)
 : fEventAction(eventAction), fRunAction(runAction) {}
 
@@ -46,74 +49,96 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         fEventAction->y  = track->GetPosition().y();
         fEventAction->z  = track->GetPosition().z();
 
+	auto dir = track->GetVertexMomentumDirection();
+
+	fEventAction->phi   = std::atan2(dir.y(),dir.x());
+	fEventAction->costh = dir.z();
+	
         fEventAction->px    = track->GetMomentum().x();
-        fEventAction->py    = track->GetMomentum().y();
+	fEventAction->py    = track->GetMomentum().y();
         fEventAction->pz    = track->GetMomentum().z();
-        fEventAction->theta  = track->GetMomentumDirection().theta();
-        fEventAction->phi    = track->GetMomentumDirection().phi();
-        fEventAction->costh  = track->GetMomentumDirection().z();
       }
     }
-     // Update final info only at track end                                                                                                                             \
-     // when primary particle track ends as a result of some kind of interaction or if it exists World vlume 
-          if(track->GetParentID() == 0 && track->GetTrackStatus() == fStopAndKill) {
-	    G4cout << "Primary particle interacted or died " << G4endl;
-	
-            fEventAction->finalE  = track->GetKineticEnergy();
-            auto p = track->GetMomentum();
-            double pMag = p.mag();
-            fEventAction->finalPx = p.x();
-            fEventAction->finalPy = p.y();
-            fEventAction->finalPz = p.z();
-            fEventAction->finalCosth = p.z()/pMag;
-	    
-            fEventAction->finalPhi = std::atan2(p.y(), p.x());
-            fEventAction->finalPhiDeg = fEventAction->finalPhi * 180.0 / CLHEP::pi;
-
-
-            fEventAction->finalX  = track->GetPosition().x();
-            fEventAction->finalY  = track->GetPosition().y();
-            fEventAction->finalZ  = track->GetPosition().z();
-
-          }
-
-
-
       //First particle interaction to save interaction vertices
       auto process = step->GetPostStepPoint()->GetProcessDefinedStep();
       int pdg = track->GetDefinition()->GetPDGEncoding();
-      G4String procName = process->GetProcessName();
+      std::string procName = process ? std::string(process->GetProcessName()) : "None";
+      
       bool isPrimaryNeutrino =
 	track->GetParentID() == 0 &&
 	(std::abs(pdg) == 12 || std::abs(pdg) == 14 || std::abs(pdg) == 16);
+      bool isOscillationProcess = process && procName.find("Oscillation") != std::string::npos;
       
-      if(track->GetParentID() == 0 && process && process->GetProcessName()!= "Transportation"  && !fEventAction->interactionRecorded)
+      if(isPrimaryNeutrino && isOscillationProcess) {
+          fEventAction->nOscillationSteps++;
+          if(!fEventAction->primaryOscillationProcessInvoked) {
+              fEventAction->primaryOscillationProcessInvoked = true;
+              fEventAction->primaryOscillationPDGBefore = fEventAction->PDG;
+              fEventAction->primaryOscillationPDGAfter = pdg;
+              fEventAction->primaryOscillationFlavorChanged = (pdg != fEventAction->PDG);
+          }
+      }
+
+      if(track->GetParentID() == 0 && process && procName != "Transportation"  && !fEventAction->interactionRecorded)
 	{
 	  fEventAction->vertexX = step->GetPostStepPoint()->GetPosition().x();
           fEventAction->vertexY = step->GetPostStepPoint()->GetPosition().y();
           fEventAction->vertexZ = step->GetPostStepPoint()->GetPosition().z();
           fEventAction->vertexT = step->GetPostStepPoint()->GetGlobalTime();
 
-	  if(isPrimaryNeutrino)	{
+	  if(isPrimaryNeutrino) {
             fEventAction->nuInteractionProcess = procName;
+            
+            // ========== CAPTURE OUTGOING LEPTON FOR NEUTRINO CC ==========
+            // Look for the lepton produced in the first interaction
+            const auto* secondaries = step->GetSecondaryInCurrentStep();
+            if (secondaries) {
+              int nuPDG = fEventAction->primaryNuPDG;
+              int expectedLeptonPDG = nuPDG - (nuPDG > 0 ? 1 : -1);
+              
+              for (auto sec : *secondaries) {
+                int secPDG = sec->GetDefinition()->GetPDGEncoding();
+                
+                // ========== CAPTURE CC LEPTON (e, mu, tau) ==========
+                if (secPDG == expectedLeptonPDG && !fEventAction->decisionMade) {
+                  fEventAction->outgoingLeptonPDG = secPDG;
+                  fEventAction->outgoingLeptonE = sec->GetKineticEnergy() 
+                                                + sec->GetDefinition()->GetPDGMass();
+                  fEventAction->outgoingLeptonPx = sec->GetMomentum().x();
+                  fEventAction->outgoingLeptonPy = sec->GetMomentum().y();
+                  fEventAction->outgoingLeptonPz = sec->GetMomentum().z();
+                  fEventAction->decisionMade = true;
+                }
+                
+                // ========== COUNT HADRONIC CONTENT ==========
+                int absPDG = std::abs(secPDG);
+                if (absPDG == 2212 || absPDG == 2112 ||
+                    absPDG == 211  || absPDG == 111  ||
+                    absPDG == 321  || absPDG == 311) {
+                  fEventAction->outgoingHadronE += sec->GetKineticEnergy() 
+                                                 + sec->GetDefinition()->GetPDGMass();
+                }
+              }
+            }
 	  }
 	  fEventAction->interactionRecorded = true;
-
 	}
 
 
-      	// Update final info only at track end                                                                                                                                         
+	// Update final info only at track end                                                                                                                                         
           if(track->GetTrackStatus() == fStopAndKill) {
-
+            if(track->GetParentID() == 0) {
+              fEventAction->primaryFinalPDG = track->GetDefinition()->GetPDGEncoding();
+            }
             fEventAction->finalE  = track->GetKineticEnergy();
             auto p = track->GetMomentum();
             double pMag = p.mag();
-            fEventAction->finalPx = p.x();
-            fEventAction->finalPy = p.y();
-            fEventAction->finalPz = p.z();
-            fEventAction->finalCosth = p.z()/pMag; // correct cos(theta)                                                                                                               
-            fEventAction->finalPhi = std::atan2(p.y(), p.x());
-            fEventAction->finalPhiDeg = fEventAction->finalPhi * 180.0 / CLHEP::pi;
+	    //            fEventAction->finalPx = p.x();
+            //fEventAction->finalPy = p.y();
+            //fEventAction->finalPz = p.z();
+            //fEventAction->finalCosth = p.z()/pMag; // correct cos(theta)                                                                                                               
+            //fEventAction->finalPhi = std::atan2(p.y(), p.x());
+            //fEventAction->finalPhiDeg = fEventAction->finalPhi * 180.0 / CLHEP::pi;
 
 
             fEventAction->finalX  = track->GetPosition().x();
@@ -170,19 +195,54 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             {
               G4String creatorName =
                 track->GetCreatorProcess()->GetProcessName();
-              G4cout << "Secondary particle production " <<  fEventAction->nSecondaries << " secondaries with creator process "<< creatorName <<G4endl;
+              //G4cout << "Secondary particle production " <<  fEventAction->nSecondaries << " secondaries with creator process "<< creatorName <<G4endl;
 
               fEventAction->nSecondaries++;
 
               double Esec = track->GetKineticEnergy();
-              if(Esec > 1*keV) {
+              if(Esec > 0.01*keV) {
                 fEventAction->totalSecondaryE += Esec;
-              }//fRunAction->secTotalE += Esec;                                                                                                                       
+              }//fRunAction->secTotalE += Esec;
 
+	      
               fEventAction->secEnergies.push_back(Esec);
 
               int pdg = track->GetDefinition()->GetPDGEncoding();
+              
+              // ========== ELECTRON/PHOTON SHOWER ANALYSIS ==========
+              // Count electromagnetic processes
+              G4String procName(creatorName);
+              if(procName.find("eBrem") != std::string::npos) {
+                fRunAction->nBremsstrahlung++;
+                fEventAction->nBremstrahlungProcesses++;
+              }
+              if(procName.find("eIoni") != std::string::npos) {
+                fRunAction->nIonisation++;
+                fEventAction->nIonizationProcesses++;
+              }
+              if(procName.find("compt") != std::string::npos || 
+                 procName.find("Compton") != std::string::npos) {
+                fRunAction->nCompton++;
+                fEventAction->nComptonScatters++;
+              }
+              if(procName.find("conv") != std::string::npos ||
+                 procName.find("PairProd") != std::string::npos) {
+                fRunAction->nPairProd++;
+                fEventAction->nPairProductions++;
+              }
+              if(procName.find("phot") != std::string::npos ||
+                 procName.find("PhotoElec") != std::string::npos) {
+                fRunAction->nPhotoElectric++;
+                fEventAction->nPhotoElectricEvents++;
+              }
+              if(procName.find("annihil") != std::string::npos) {
+                fRunAction->nAnnihilation++;
+              }
+              if(procName.find("Decay") != std::string::npos) {
+                fRunAction->nDecay++;
+              }
 
+              // ========== PARTICLE PRODUCTION COUNTING ==========
               if(pdg == 22)    fRunAction->nGamma++;
 
               if(pdg == 11)    fRunAction->nElectron++;
@@ -282,6 +342,37 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 	  //Neutrino interaction debugging : if only one interaction or multiple interactions
 	  if(isPrimaryNeutrino &&  process && process->GetProcessName()!= "Transportation")
 	    {
+
+	      //   if(track->GetParentID() > 0) {
+	      auto creator = track->GetCreatorProcess();
+	      
+	      if (process->GetProcessName() == "nuVacOscillation"){ // || creator->GetProcessName() == "nuVacOscillation")          {
+		G4cout << "nuvacosc." << G4endl;
+		track->SetTrackStatus(fStopAndKill);
+
+		//if(track->GetKineticEnergy()==0) {
+		G4EventManager::GetEventManager()->AbortCurrentEvent();
+		//	}
+		G4cout
+		  << "Track "
+		  << track->GetTrackID()
+		  << " PDG "
+		  << track->GetDefinition()->GetPDGEncoding()
+		  << " KE "
+		  << track->GetKineticEnergy()/eV
+		  << " eV"
+		  << G4endl;
+		if (track->GetKineticEnergy() < 1.0 * eV)
+		  {
+		    G4cout << "\n*** TrackingAction: Fixing broken oscillation secondary ***"
+			   << "\n    PDG = " << track->GetDefinition()->GetPDGEncoding()
+			   << "\n    KE  = " << track->GetKineticEnergy() / GeV << " GeV (before fix)"
+			   << G4endl;
+		    track->SetTrackStatus(fStopAndKill);
+		  }
+		
+		return;
+	      }
 	      G4cout << "\n=== Neutrino interaction ===\n";
 	      G4cout << "Event ID: "
 		     << G4RunManager::GetRunManager()
@@ -291,13 +382,13 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 	      G4cout << "Neutrino PDG: " << pdg << G4endl;
 	      G4cout << "Process: " << procName << G4endl;
 	      
-	      G4cout << "Vertex (mm): "
-		     << fEventAction->vertexX << " "
-		     << fEventAction->vertexY << " "
-		     << fEventAction->vertexZ << G4endl;
+	      	      G4cout << "Vertex (mm): "
+	           << fEventAction->vertexX << " "
+	           << fEventAction->vertexY << " "
+	           << fEventAction->vertexZ << G4endl;
 	      
-	       G4cout << "Time (ns): "
-	           << fEventAction->vertexT/ns << G4endl;
+		      // G4cout << "Time (ns): "
+		      //<< fEventAction->vertexT/ns << G4endl;
 	    }
 
 
@@ -323,141 +414,58 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 	      G4cout << "Number of secondaries = " << secondaries->size() << G4endl;
 	      */
 	    } 
-	  //Classify Neutrino CC and NC primary interaction
-	  bool hasCCLepton = false;
-	  bool hasOutNeutrino = false;
-	  bool hasHadron = false;
-	  bool decisionMade = false;
-	  int expectedLepton = 0;
-	  
-	  if (std::abs(pdg) == 12) expectedLepton = (pdg > 0) ? -11 : 11;
-	  if (std::abs(pdg) == 14) expectedLepton = (pdg > 0) ? -13 : 13;
-	  if (std::abs(pdg) == 16) expectedLepton = (pdg > 0) ? -15 : 15;
-	  G4double Eout = -1.0;    // leptonic system
-	  G4double Ehadr = 0.0;     // hadronic system
-	  G4ThreeVector pout;
-	  int outgoingPDG = 0;
-
-	  std::vector<int> secPDGs;
-	  int primaryTrackID = track->GetTrackID();
-  
-	  for (auto sec : *secondaries)
+	  	  // Collect first-interaction outgoing kinematics; classify later in EventAction
+	  if (!fEventAction->decisionMade && isPrimaryNeutrino && process && procName != "Transportation")
 	    {
-	      
-	      if (sec->GetParentID() != primaryTrackID)
-		continue;
-	      
-	      int secPDG = sec->GetDefinition()->GetPDGEncoding();
-	      secPDGs.push_back(secPDG);
-	      auto def = sec->GetDefinition();
-	      if (!decisionMade)
-		{
-		  
-		  if(secPDG == expectedLepton)
-		    {
-		      hasCCLepton = true;
-		      G4cout << "First relevant secondary: "
-			     << secPDG << " "
-			     << sec->GetDefinition()->GetParticleName()
-			     << G4endl;
-		      decisionMade == true;
-		    }
-		  else if (secPDG == pdg)
-		    {
-		  hasOutNeutrino = true;
-		  G4cout << "First relevant secondary: "
-                             << secPDG << " "
-                             << sec->GetDefinition()->GetParticleName()
-                             << G4endl;
-                      decisionMade == true;
-		      
-		    }
-		  	}
+	      int expectedLepton = 0;
+	      if (std::abs(pdg) == 12 || std::abs(pdg) == 14 || std::abs(pdg) == 16)
+	        {
+	          expectedLepton = pdg - (pdg > 0 ? 1 : -1);
+	        }
 
-	      
-	      // if (firstSec){
-	      /*  G4cout << "  secondary: "
-		     << " PDG=" << def->GetPDGEncoding()
-		     << " name=" << def->GetParticleName()
-		     << " KE=" << sec->GetKineticEnergy()/MeV << " MeV"
-		     << " E=" << (sec->GetKineticEnergy() + def->GetPDGMass())/MeV << " MeV"
-		     << " parentID=" << sec->GetParentID()
-		     << G4endl;
-	      */
-	      //}
-	      
-	      // CC lepton
-	      if ( secPDG == expectedLepton)
-		{
-		  //  hasCCLepton = true;
-		  // decisionMade = true;
+	      int primaryTrackID = track->GetTrackID();
+	      int outgoingPDG = 0;
+	      G4double outgoingLeptonE = 0.0;
+	      G4ThreeVector outgoingLeptonP(0, 0, 0);
+	      G4double outgoingHadronE = 0.0;
+	      //	      std::vector<int> secPDGs;
 
-		  outgoingPDG = secPDG;
-		  Eout = sec->GetKineticEnergy()
-		    + sec->GetDefinition()->GetPDGMass();
-		  pout = sec->GetMomentum();
-		  //  break;
-		}
-	      
-	      // outgoing neutrino
-	      // if ( secPDG == pdg) {
-		//hasOutNeutrino = true;
-		//decisionMade = true;
-		//break;
-	      //	}
-	      
-	      int apdg = std::abs(secPDG);
-	      if (apdg == 2212 || apdg == 2112 ||
-		  apdg == 211  || apdg == 321 ||
-		  apdg == 111)
-		{
-	      hasHadron = true;
-	      Ehadr += sec->GetKineticEnergy()
-		+ sec->GetDefinition()->GetPDGMass();
-		}
+	      if (secondaries)
+	        {
+	          for (auto sec : *secondaries)
+	            {
+	              if (sec->GetParentID() != primaryTrackID)
+	                continue;
+
+	              int secPDG1 = sec->GetDefinition()->GetPDGEncoding();
+	              int absSecPDG1 = std::abs(secPDG1);
+		      //      secPDGs.push_back(secPDG);
+	              G4double secE = sec->GetKineticEnergy() + sec->GetDefinition()->GetPDGMass();
+
+	              if (secPDG1 == expectedLepton)
+	                {
+	                  outgoingPDG = secPDG1;
+	                  outgoingLeptonE = secE;
+	                  outgoingLeptonP = sec->GetMomentum();
+	                }
+
+	              if (absSecPDG1 == 2212 || absSecPDG1 == 2112 || absSecPDG1 == 211 ||
+	                  absSecPDG1 == 321 || absSecPDG1 == 111 || absSecPDG1 == 311 ||
+	                  absSecPDG1 == 310 || absSecPDG1 == 130)
+	                {
+	                  outgoingHadronE += secE;
+	                }
+	            }
+	        }
+
+	      fEventAction->outgoingLeptonPDG = outgoingPDG;
+	      fEventAction->outgoingLeptonE = outgoingLeptonE;
+	      fEventAction->outgoingLeptonPx = outgoingLeptonP.x();
+	      fEventAction->outgoingLeptonPy = outgoingLeptonP.y();
+	      fEventAction->outgoingLeptonPz = outgoingLeptonP.z();
+	      fEventAction->outgoingHadronE = outgoingHadronE;
+	      // fEventAction->finalStatePDG = secPDGs;
+	      fEventAction->decisionMade = true;
 	    }
-	  
-	  
-	  bool foundCC = isPrimaryNeutrino && hasCCLepton;
-	  bool foundNC = isPrimaryNeutrino && (!hasCCLepton && hasOutNeutrino);
-	  
-	  // ********* Neutrino NC/CC Classification Done
-	  
-	  // some neutrino specific variables
-	  
-	  if(foundCC || foundNC) {
-	    fEventAction->isCC = foundCC;
-	    fEventAction->isNC = foundNC;
-	    
-	    fEventAction->outgoingLeptonPDG = outgoingPDG;
-	    fEventAction->outgoingLeptonE = Eout;
-            fEventAction->outgoingHadronE = Ehadr;
-	    fEventAction->outgoingLeptonPx = pout.x();
-	    fEventAction->outgoingLeptonPy = pout.y();
-	    fEventAction->outgoingLeptonPz = pout.z();
-	    fEventAction->finalStatePDG = secPDGs;
-
-	    fEventAction->q0 = Ein - Eout;
-	    
-	    G4ThreeVector qvec = pin - pout;
-	    fEventAction->Q2 = qvec.mag2() - fEventAction->q0 * fEventAction->q0;
-	    
-	    if(Ein > 0.0) {
-	      fEventAction->yBj = fEventAction->q0 / Ein;
-	    }
-	    
-	    G4double M = 939.565; // MeV
-	    if(fEventAction->q0 > 0.0) {
-	      fEventAction->xBj = fEventAction->Q2 / (2.0 * M * fEventAction->q0);
-	      
-	      G4double W2 = M*M + 2.0*M*fEventAction->q0 - fEventAction->Q2;
-	      fEventAction->W = (W2 > 0.0) ? std::sqrt(W2) : -999.0;
-	    }
-	  }	  
-
-                                                                              
-
-
-	  
 
 }

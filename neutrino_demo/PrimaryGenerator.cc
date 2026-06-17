@@ -3,6 +3,7 @@
 #include "G4Event.hh"
 #include "G4SystemOfUnits.hh"
 #include "RunAction.hh"
+#include "EventAction.hh"
 #include "TTree.h"
 #include "PrimaryGeneratorMessenger.hh"
 #include "G4RunManager.hh"
@@ -22,7 +23,7 @@ mu+
 kaon+
 */
 PrimaryGenerator::PrimaryGenerator(RunAction* runAction)
-: fRunAction(runAction)
+  : fRunAction(runAction)
 {
   fMessenger = new PrimaryGeneratorMessenger(this);
   fParticleGun = new G4ParticleGun(1);
@@ -37,20 +38,6 @@ PrimaryGenerator::PrimaryGenerator(RunAction* runAction)
   fParticleGun->SetParticleDefinition(particle);
   fParticleGun->SetParticleEnergy(fEnergy);
   fParticleGun->SetParticlePosition(fPosition);
-
-    
-  //auto particle = G4ParticleTable::GetParticleTable()->FindParticle("e-");
-  //fParticleGun->SetParticleDefinition(particle);
-  // fParticleGun->SetParticleEnergy(1.0*GeV);
-  //fParticleGun->SetParticlePosition(G4ThreeVector(0,0,0));
-  
-  //fMessenger = new PrimaryGeneratorMessenger(this);
-  
-  // Default values (can be overridden by macro)
-  //fParticleName = "e-";             
-  //fEnergy = 1.0*GeV;
-  //fPosition = G4ThreeVector(0,0,0*cm);
-  //fDirection = G4ThreeVector(0,0,0);
 }
 
 PrimaryGenerator::~PrimaryGenerator() {
@@ -73,12 +60,6 @@ void PrimaryGenerator::GeneratePrimaries(G4Event* event)
        G4Exception("PrimaryGenerator","NoParticle",FatalException,
                   ("Particle not found: "+fParticleName).c_str());
    }
-
-    // Update gun from current variables
-  //       fParticleGun->SetParticleDefinition(particle);
-  //  fParticleGun->SetParticleEnergy(fEnergy);
-  //  fParticleGun->SetParticlePosition(fPosition);
-
     
     // -----------------------------
     // 1) Random direction (4pi)
@@ -134,6 +115,7 @@ void PrimaryGenerator::GeneratePrimaries(G4Event* event)
      fParticleGun->SetParticleMomentumDirection(dir);
 
      fParticleGun->GeneratePrimaryVertex(event);
+
 
 
      // ---- Print info ----

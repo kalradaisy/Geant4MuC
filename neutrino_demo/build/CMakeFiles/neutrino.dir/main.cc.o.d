@@ -870,4 +870,6 @@ CMakeFiles/neutrino.dir/main.cc.o: /workspace/neutrino_demo/main.cc \
  /opt/geant4-install/include/Geant4/G4EmExtraPhysics.hh \
  /opt/geant4-install/include/Geant4/G4EmMessenger.hh \
  /opt/geant4-install/include/Geant4/G4UIcmdWithADoubleAndUnit.hh \
- /opt/geant4-install/include/Geant4/G4ParticleTable.hh
+ /opt/geant4-install/include/Geant4/G4ParticleTable.hh \
+ /workspace/neutrino_demo/TrackingAction.hh \
+ /opt/geant4-install/include/Geant4/G4UserTrackingAction.hh

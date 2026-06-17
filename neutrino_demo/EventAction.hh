@@ -28,6 +28,7 @@ struct StepInfo {
   G4ThreeVector birthPos;
   G4double birthKE;
 };
+
 struct SecondaryInfo {
     int trackID;
     int parentID;
@@ -66,10 +67,13 @@ std::vector<std::string> allInteractionProcess;
 bool isCC;
 bool isNC;
 
-int outgoingLeptonPDG;
+  int outgoingLeptonPDG;
 double outgoingLeptonE;
 double outgoingHadronE;
-
+  bool decisionMade = false;
+  bool hasCCLepton = false;
+  bool hasOutNeutrino = false;
+  bool hasHadron = false;
   double outgoingLeptonPx;
 double outgoingLeptonPy;
 double outgoingLeptonPz;
@@ -83,8 +87,8 @@ double trackWeight;
 double nuEleTotXscBias;
 double eventWeight;
 
-void SetNeutrinoWeight(double trackWeightIn, double biasFactorIn);
-  int primaryTrackID;
+  void SetNeutrinoWeight(double trackWeightIn, double biasFactorIn);
+int primaryTrackID;
   int PDG;
   std::vector<StepInfo> steps;
    // Step info                                                                                                                                                                                                                      
@@ -97,8 +101,6 @@ void SetNeutrinoWeight(double trackWeightIn, double biasFactorIn);
                  double stepLength, const std::string& processName, const std::string& creatorprocessName,G4ThreeVector birthPos,
                    G4double birthKE);
 
-    //    steps.push_back({trackID, prePos, postPos, kineticE, edep, processName});                                                                                                                                                  
-    //}
   //to reconstruct CC vs NC
   std::vector<int> finalStatePDG;
   int primaryNuPDG = 0;
@@ -118,6 +120,12 @@ void SetNeutrinoWeight(double trackWeightIn, double biasFactorIn);
   std::vector<std::string> stepProcessNames;
     std::vector<std::string> stepcreatorProcessNames;
 
+  int primaryFinalPDG = 0;
+  bool primaryOscillationProcessInvoked = false;
+  bool primaryOscillationFlavorChanged = false;
+  int primaryOscillationPDGBefore = 0;
+  int primaryOscillationPDGAfter = 0;
+  int nOscillationSteps = 0;
 
   void AddEdep(double edep) { totalEdep_ += edep; }
   void AddSecondaryE(double e) { totalSecondaryE += e; }
@@ -129,10 +137,8 @@ void SetNeutrinoWeight(double trackWeightIn, double biasFactorIn);
   int nSteps_;
   double totalSecondaryE;
   int nSecondaries;
-  //G4ThreeVector vertex;                                                                                                                                                                                                            
-  //  std::vector<std::string> secNames;                                                                                                                                                                                             
-  //  std::vector<double> secEnergies;                                                                                                                                                                                               
   std::string interactionType;
+  std::string interactionModel;
   std::vector<double> secStartX;
   std::vector<double> secStartY;
   std::vector<double> secStartZ;
@@ -151,8 +157,55 @@ void SetNeutrinoWeight(double trackWeightIn, double biasFactorIn);
   double finalE, finalX, finalY, finalZ;
   double finalPx, finalPy, finalPz;
   double finalTheta, finalPhi, finalCosth, finalPhiDeg;
+
+ // ========== UNIVERSAL VALIDATION VARIABLES ==========
+  // Applicable to electrons, protons, and neutrinos
   
-private:
+  // Particle classification
+  int particleType; // 11=electron, -11=positron, 2212=proton, 2112=neutron, neutrino=12/14/16
+
+  // Lepton scattering angle (for neutrino CC and electron scattering)
+  double leptonScatteringAngle;      // theta_l in radians
+  double leptonCosTheta;             // cos(theta_l)
+  
+  // Inelasticity (y) - applicable to neutrino interactions
+  double inelasticity;               // y = 1 - E_l / E_nu
+  
+// Shower properties (electrons, photons, protons)
+    double showerLongitudinalProfile;  // For depth analysis
+  double showerLateralSpread; // For Moliere radius
+  int showerNSecondaries;            // Shower secondary count
+  
+  // Process analysis
+  std::vector<std::string> interactionProcesses;  // All processes in event
+  int nBremstrahlungProcesses;       // For electron showers
+  int nIonizationProcesses;
+  int nComptonScatters;
+  int nPairProductions;
+  int nPhotoElectricEvents;
+  // Particle-specific counters
+  int nGammasProduced;               // From brem, pair production, pion decay
+  int nElectronsProduced;            // From pair production, ionization
+  int nPositronsProduced;            // From pair production
+  int nPhotonsProduced;              // All photons
+  
+  // Hadronic interaction analysis (protons, neutrinos)
+  int nPionsProduced;
+  int nProtonSecondaries;
+  int nNeutronSecondaries;
+  int nKaonsProduced;
+  //  double meanSecondaryEnergy;        // Average energy per secondary
+  //double maxSecondaryEnergy;         // Highest secondary energy
+  
+  // Vertex and propagation
+  double transverseVertexDistance;   // sqrt(x_v^2 + y_v^2)
+  double vertexDepth;                // z_v (interaction depth)
+  
+  // Radiation length and interaction length tracking
+  double radiationLengthTraversed;
+  double interactionLengthTraversed;
+
+  private:
     RunAction* fRunAction;
  // Per-event accumulators                                                                                                                                                                                                           
   //    double totalEdep_ = 0;                                                                                                                                                                                                       
@@ -160,6 +213,4 @@ private:
 };
 
 #endif
-
-
 

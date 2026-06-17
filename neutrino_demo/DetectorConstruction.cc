@@ -102,6 +102,12 @@ if (!targetRegion) {
     targetRegion = new G4Region("target");
 }
 
+ G4Region* oscRegion = regionStore->GetRegion("tgtosc", false);
+
+if (!oscRegion) {
+    oscRegion = new G4Region("tgtosc");
+}
+
  
     auto lvStore = G4LogicalVolumeStore::GetInstance();
 
@@ -109,23 +115,35 @@ if (!targetRegion) {
 
     for (auto lv : *lvStore) {
 
-      //G4cout << "Logical volume: " << lv->GetName() << G4endl;
+      //      G4cout << "Logical volume: " << lv->GetName() << G4endl;
 
         // Select your detector volume
 	//        if (lv->GetName() == "VertexBarrel_layer0_sens") {
-        //if (lv->GetName().find("_sens") != std::string::npos) {
+      //            if (lv->GetName().find("_sens") != std::string::npos) {
+      ///if (lv->GetName().find("ecal") != std::string::npos) {  
+	if (lv == worldLogical) {
+	  G4cout << "Skipping world logical volume: "
+		 << lv->GetName() << G4endl;
+	  continue;
+	}
 
-      if (lv == worldLogical) {
-        G4cout << "Skipping world logical volume: "
-               << lv->GetName() << G4endl;
-        continue;
-    }
-
-      targetRegion->AddRootLogicalVolume(lv);
-
-            G4cout << ">>> Neutrino target set on: "
-                   << lv->GetName() << G4endl;
-	    //   }
+	if (lv->GetName().find("Nozzle") != std::string::npos) {
+	  
+	  oscRegion->AddRootLogicalVolume(lv);
+	  
+	  G4cout << ">>> Oscillation region set on: "
+		 << lv->GetName() << G4endl;
+	  
+	  continue;  
+	}
+	
+	//             	if (lv->GetName().find("Vertex") != std::string::npos) {
+		  //	  if (lv->GetName().find("ECal") != std::string::npos) {
+      
+	  targetRegion->AddRootLogicalVolume(lv);
+	         G4cout << ">>> Neutrino target set on: "
+                 << lv->GetName() << G4endl;
+		 //       }
     }
 
     G4cout << "===============================\n" << G4endl;
