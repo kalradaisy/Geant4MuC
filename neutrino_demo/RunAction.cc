@@ -101,7 +101,8 @@ void RunAction::BeginOfRunAction(const G4Run*) {
 
 
   fTree->Branch("step_stepLength", &step_stepLength);
-  
+    fTree->Branch("step_time", &step_time);
+
   fTree->Branch("step_preMomX", &step_preMomX);
   fTree->Branch("step_preMomY", &step_preMomY);
   fTree->Branch("step_preMomZ", &step_preMomZ);

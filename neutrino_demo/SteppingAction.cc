@@ -1,4 +1,3 @@
-
 #include "SteppingAction.hh"
 #include "RunAction.hh"
 #include "EventAction.hh"
@@ -79,6 +78,8 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
           }
       }
 
+
+      
       if(track->GetParentID() == 0 && process && procName != "Transportation"  && !fEventAction->interactionRecorded)
 	{
 	  fEventAction->vertexX = step->GetPostStepPoint()->GetPosition().x();
@@ -87,44 +88,107 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
           fEventAction->vertexT = step->GetPostStepPoint()->GetGlobalTime();
 
 	  if(isPrimaryNeutrino) {
+	    
+	    G4cout << "******Primary Neutrino: " << G4endl;
             fEventAction->nuInteractionProcess = procName;
             
             // ========== CAPTURE OUTGOING LEPTON FOR NEUTRINO CC ==========
             // Look for the lepton produced in the first interaction
-            const auto* secondaries = step->GetSecondaryInCurrentStep();
+	  }
+	    const auto* secondaries = step->GetSecondaryInCurrentStep();
             if (secondaries) {
-              int nuPDG = fEventAction->primaryNuPDG;
-              int expectedLeptonPDG = nuPDG - (nuPDG > 0 ? 1 : -1);
-              
+
+	      // Reset flags for this interaction
+	      bool foundCCLepton   = false;
+	      bool foundOutNu      = false;
+	      bool foundHadron     = false;
+	      int expectedLeptonPDG = 0;
+	
+	      int nuPDG = fEventAction->primaryNuPDG;
+	      //	    	      int expectedLeptonPDG = nuPDG - (nuPDG > 0 ? 1 : -1);
+               if(std::abs(pdg) == 12) expectedLeptonPDG = (pdg > 0) ? 11 : -11;
+	      if(std::abs(pdg) == 14) expectedLeptonPDG = (pdg > 0) ? 13 : -13;
+	      if(std::abs(pdg) == 16) expectedLeptonPDG = (pdg > 0) ? 15 : -15;
+
               for (auto sec : *secondaries) {
                 int secPDG = sec->GetDefinition()->GetPDGEncoding();
-                
+		//		G4cout << "NuPDG: " << pdg << ", Expected: "<< expectedLeptonPDG << ", secondart pdg: "<< secPDG << G4endl;
                 // ========== CAPTURE CC LEPTON (e, mu, tau) ==========
-                if (secPDG == expectedLeptonPDG && !fEventAction->decisionMade) {
-                  fEventAction->outgoingLeptonPDG = secPDG;
-                  fEventAction->outgoingLeptonE = sec->GetKineticEnergy() 
-                                                + sec->GetDefinition()->GetPDGMass();
-                  fEventAction->outgoingLeptonPx = sec->GetMomentum().x();
-                  fEventAction->outgoingLeptonPy = sec->GetMomentum().y();
-                  fEventAction->outgoingLeptonPz = sec->GetMomentum().z();
-                  fEventAction->decisionMade = true;
-                }
-                
-                // ========== COUNT HADRONIC CONTENT ==========
-                int absPDG = std::abs(secPDG);
-                if (absPDG == 2212 || absPDG == 2112 ||
-                    absPDG == 211  || absPDG == 111  ||
-                    absPDG == 321  || absPDG == 311) {
-                  fEventAction->outgoingHadronE += sec->GetKineticEnergy() 
-                                                 + sec->GetDefinition()->GetPDGMass();
-                }
-              }
+
+		if(secPDG == expectedLeptonPDG)
+		  {
+		    foundCCLepton = true;
+		    
+		    fEventAction->outgoingLeptonPDG = secPDG;
+		    fEventAction->outgoingLeptonE =
+		      sec->GetKineticEnergy() +
+		      sec->GetDefinition()->GetPDGMass();
+		    
+		    fEventAction->outgoingLeptonPx =
+		      sec->GetMomentum().x();
+		    
+		    fEventAction->outgoingLeptonPy =
+		      sec->GetMomentum().y();
+		    
+		    fEventAction->outgoingLeptonPz =
+		      sec->GetMomentum().z();
+		    
+		    //  G4cout << "Found CC lepton: "
+		    //	   << secPDG << G4endl;
+		  }
+		if(secPDG == pdg)
+		  {
+		    foundOutNu = true;
+		    
+		    //G4cout << "Found outgoing neutrino"
+		    //	   << G4endl;
+		  }
+		int absPDG = std::abs(secPDG);
+
+            if(absPDG == 2212 ||   // proton
+               absPDG == 2112 ||   // neutron
+               absPDG == 211  ||   // pi+/-
+               absPDG == 111  ||   // pi0
+               absPDG == 321  ||   // K+/-
+               absPDG == 311)      // K0
+            {
+                foundHadron = true;
+
+                fEventAction->outgoingHadronE +=
+                    sec->GetKineticEnergy() +
+                    sec->GetDefinition()->GetPDGMass();
+
+		// G4cout << "Found hadron: "
+		//     << secPDG << G4endl;
             }
-	  }
-	  fEventAction->interactionRecorded = true;
-	}
+        }
+	       fEventAction->foundCCLepton   = foundCCLepton;
+        fEventAction->foundOutNeutrino = foundOutNu;
+        fEventAction->foundHadron      = foundHadron;
 
+        // CC: charged lepton observed
+	/*        fEventAction->isCC = foundCCLepton;
 
+        // NC: no charged lepton, outgoing neutrino + hadronic activity
+        fEventAction->isNC =
+            (!foundCCLepton &&
+             foundOutNu &&
+             foundHadron);
+
+        fEventAction->interactionType =
+            fEventAction->isCC ? "CC" :
+            fEventAction->isNC ? "NC" :
+                                 "Unknown";
+
+        G4cout << "Interaction classified as: "
+               << fEventAction->interactionType
+               << G4endl;
+	*/
+	    }
+
+    fEventAction->interactionRecorded = true;
+}
+      
 	// Update final info only at track end                                                                                                                                         
           if(track->GetTrackStatus() == fStopAndKill) {
             if(track->GetParentID() == 0) {

@@ -34,7 +34,15 @@ void EventAction::BeginOfEventAction(const G4Event* event)
   hasCCLepton = false;
   hasOutNeutrino = false;
   hasHadron = false;
+  foundOutgoingNeutrino = false;
+  foundOtherNonNeutrino = false;
   
+  foundCC = false;
+  foundNC = false;
+  foundCCLepton = false;
+  foundOutNeutrino = false;
+  foundHadron = false;
+  foundLepton = false;
   // ========== LEPTON PROPERTIES (NEUTRINO CC) ==========
   outgoingLeptonPDG = 0;
   outgoingLeptonE = 0.0;
@@ -249,10 +257,10 @@ void EventAction::EndOfEventAction(const G4Event* event)
     }
   }
     
-  bool foundLepton = false;
-  bool foundOutgoingNeutrino = false;
-  bool foundHadron = false;
-  bool foundOtherNonNeutrino = false;
+  // bool foundLepton = false;
+  // bool foundOutgoingNeutrino = false;
+  // bool foundHadron = false;
+  // bool foundOtherNonNeutrino = false;
   int nPions = 0;
   int nNucleons = 0;
   
@@ -262,27 +270,49 @@ void EventAction::EndOfEventAction(const G4Event* event)
     int pdg  = secPDG[i];
     int apdg = std::abs(pdg);
     
-    //    G4cout << "PDG and expected PDG: " << pdg << ", " << expectedLepton << " , " << nuPDG << G4endl;
+    //     G4cout << "PDG and expected PDG: " << pdg << ", " << expectedLepton << " , " << nuPDG << G4endl;
     // ========== NEUTRINO CC/NC CLASSIFICATION ==========
     if (pdg == expectedLepton) {
       foundLepton = true;
+      //G4cout << "CC Event" << ", " << foundLepton << G4endl;
     }
     if (pdg == nuPDG) {
       foundOutgoingNeutrino = true;
+      //G4cout << "May be NC Event" << G4endl;
 
     }
 
     if (apdg != 12 && apdg != 14 && apdg != 16) {
       foundOtherNonNeutrino = true;
     }
-  }
 
+     if(apdg == 2212 ||   // proton                                                                                                              
+	apdg == 2112 ||   // neutron                                                                                                             
+	apdg == 211  ||   // pi+/-                                                                                                               
+	apdg == 111  ||   // pi0                                                                                                                 
+	apdg == 321  ||   // K+/-                                                                                                                
+	apdg == 311  ||
+	apdg == 22)    // K0
+       {
+	 foundHadron = true;
+
+	 // G4cout << "Not Ass lepton: May be NC Event , " << foundHadron <<  G4endl;
+	 
+	 //foundHadron = true;
+       }
+  }
   // ========== SET INTERACTION TYPE ==========
   isCC = foundLepton;
-  isNC = (!foundLepton && (foundOutgoingNeutrino || foundOtherNonNeutrino));// || foundHadron || foundOtherNonNeutrino));
-  //  interactionType = isCC ? "CC" : (isNC ? "NC" : "Unknown");
-  interactionType = isCC ? "CC" : "NC";
+  isNC = (!foundLepton && (foundOutgoingNeutrino || foundHadron)); // because sometimes neutrinos are not registered among secondaries // foundOtherNonNeutrino);// || foundHadron || foundOtherNonNeutrino));
+  interactionType = isCC ? "CC" : (isNC ? "NC" : "Unknown");
+
+   G4cout << "prefinal check: " << foundLepton << " , CC " << isCC << G4endl;
+  G4cout << "prefinal check NC : " << !foundLepton  << " && " << foundOutgoingNeutrino << " , ||" << foundHadron << "is NC: " << isNC << G4endl;
+
+
+  // interactionType = isCC ? "CC" : "NC";
   //  hasCCLepton = foundLepton;
+
   //hasOutNeutrino = foundOutgoingNeutrino;
   //hasHadron = foundHadron || foundOtherNonNeutrino;
   
@@ -388,6 +418,14 @@ void EventAction::EndOfEventAction(const G4Event* event)
   fRunAction->leptonScatteringAngle = leptonScatteringAngle;
   fRunAction->leptonCosTheta = leptonCosTheta;
   fRunAction->inelasticity = inelasticity;
+
+  G4cout << "FINAL: "
+       << "foundLepton=" << foundLepton
+       << " foundOutgoingNeutrino=" << foundOutgoingNeutrino
+       << " foundHadron=" << foundHadron
+       << " interactionType=" << interactionType
+       << G4endl;
+  
   
   fRunAction->interactionType = interactionType;
   fRunAction->interactionModel = interactionModel;

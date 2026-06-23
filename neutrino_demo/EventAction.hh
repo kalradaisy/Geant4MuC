@@ -78,6 +78,14 @@ double outgoingHadronE;
 double outgoingLeptonPy;
 double outgoingLeptonPz;
 
+   bool foundCC = false;
+  bool foundNC = false;
+  bool foundCCLepton = false;
+  bool foundOutNeutrino = false;
+  bool foundHadron = false;
+  bool foundLepton = false;
+  bool foundOtherNonNeutrino = false;
+  bool foundOutgoingNeutrino = false;
 double q0;
 double Q2;
 double W;
