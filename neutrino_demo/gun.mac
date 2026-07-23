@@ -1,0 +1,40 @@
+# information for running the gun but also for naming the file!
+/control/alias PARTICLE anti_nu_mu
+/control/alias ENERGY 100 #GeV
+/control/alias NSHOTS 1000 # How many times the gun is fired in a run
+/control/alias DETECTOR MuColl_v1,0,1 # name the geoemtry you'd like to use
+# NB: Root gets upset by dots, so version names need to use commas. Sorry.
+
+# This doesn't name the file, but it is useful for controlling the biasing
+/control/alias MUNUNUCBIAS 5e11
+/control/alias ELNUNUCBIAS 5e9
+/control/alias NUELECBIAS 5e14
+
+#______________________________________________________________________________
+/physics_lists/nu/NuDetectorName target
+# Still need to define where the detector is so that we can define where the
+# biasing is to happen. 
+
+/detector/readGDML ../{DETECTOR}.gdml
+
+/run/initialize
+# Initializing the gun allows the worker threads to build the gun
+# NB: Have to put gun commands after the initialize to run in multithreaded mode
+/gun/particle {PARTICLE}
+# sets our particle as a muon neutrino
+/gun/energy {ENERGY} GeV
+# energy of the particles from the gun
+/gun/position 0 0 10 cm
+# gun position
+
+# Allows dynamic filenaming, meaning we can assign unique runs unique names
+# automatically based on their run parameters
+/analysis/setFileName {PARTICLE}_{ENERGY}GeV_{NSHOTS}_{DETECTOR}
+
+/custom/biasing/MuNuNucleusBias {MUNUNUCBIAS}
+/custom/biasing/ElNuNucleusBias {ELNUNUCBIAS}
+/custom/biasing/NuElectronBias {NUELECBIAS}
+# This allows us to set biasing at runtime without the need to recompile the
+# simulation code. It must be after the initialization of the run, otherwise the
+# script will attempt to bias before the command to do so has been created.
+/run/beamOn {NSHOTS}

@@ -1,0 +1,25 @@
+/run/numberOfThreads 1
+/detector/readGDML ../output.gdml
+/run/initialize
+
+# Set file name and generator mode
+/analysis/setFileName genie_tracks
+/generator/mode genie
+/generator/fluxFile ../output_GENIE.root
+
+# Visualization commands
+/vis/open OGLIQt
+/vis/viewer/set/viewpointVector 1 1 1
+/vis/viewer/set/autoRefresh true
+/vis/drawVolume
+
+# Create a charge filter that excludes neutral particles (charge = 0)
+/vis/filtering/trajectories/create/chargeFilter neutralFilter
+/vis/filtering/trajectories/neutralFilter/add 0
+/vis/filtering/trajectories/neutralFilter/invert true
+
+/vis/scene/add/trajectories smooth
+/vis/scene/add/axes
+
+# Run 1 event
+/run/beamOn 1

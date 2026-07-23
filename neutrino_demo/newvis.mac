@@ -1,0 +1,29 @@
+# macro file containing all relevant visualization information in one place
+# useful because it allows you to change some visualization settings without
+# the need to recompile the entire program, saving time.
+# FORCE SINGLE THREAD (otherwise things'll take forever)
+/run/numberOfThreads 1
+/detector/readGDML ../MuColl_v1,0,1.gdml
+/run/initialize
+/vis/open OGLIQt
+# necessary always
+/vis/viewer/set/viewpointVector 1 1 1
+# sets the view origin x,y,z coords
+/vis/viewer/set/autoRefresh true
+# tells the GUI to redraw particle tracks when you run the action again
+/vis/drawVolume
+# draw the volume you coded
+/vis/scene/add/trajectories smooth
+# adds in the particle trajectories
+# gun/position 0 0 -500 cm
+# /gun/direction 1 0 0
+# /vis/scene/add/scale 10 cm
+# adds in a scale that is 10 cm long into the display for visual reference
+/vis/scene/add/axes
+# adds in some coordinate axes
+# /vis/scene/add/eventID
+# adds a constant diplay of the current event ID
+# /vis/scene/endOfEventAction accumulate
+# optional that tells the detector not to erase old particle tracks
+# each time the action is performed, leading to an accumulation of tracks
+# /vis/viewer/flush
