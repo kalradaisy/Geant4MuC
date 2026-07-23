@@ -9,7 +9,8 @@ public:
     ActionInitialization() = default;
     ~ActionInitialization() override = default;
 
-    void Build() const override;
+    void BuildForMaster() const override; // For the master thread
+    void Build() const override; // For the worker threads
 };
 
 #endif

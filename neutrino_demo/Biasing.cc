@@ -52,49 +52,6 @@ void Biasing::SetBiasFactor(const G4String& processName, G4double factor)
 
 void Biasing::StartRun()
 {
-    /*if (!fSetup) return;
-
-    G4cout
-        << "[Biasing] StartRun setup"
-        << G4endl;
-
-    const G4ProcessManager* processManager =
-        fParticleToBias->GetProcessManager();
-
-    const G4BiasingProcessSharedData* sharedData =
-        G4BiasingProcessInterface::GetSharedData(processManager);
-
-    if (!sharedData)
-    {
-        G4cout << "[Biasing] No shared biasing data found." << G4endl;
-
-        return;
-    }
-
-    const auto& wrappedProcesses =
-        sharedData->GetPhysicsBiasingProcessInterfaces();
-
-    for (auto wrapper : wrappedProcesses)
-    {
-        auto processName =
-            wrapper->GetWrappedProcess()->GetProcessName();
-
-        G4cout << "[Biasing] Found wrapped process: " << processName << G4endl;
-
-        if (fProcessesToBias.count(processName))
-        {
-            auto operation =
-                new G4BOptnChangeCrossSection(
-                    "XSBias-" + processName);
-
-            fOperations[wrapper] = operation;
-
-            G4cout << "[Biasing] Created XS operation for " << processName
-            << G4endl;
-        }
-    }
-    */
-   // Gemini says to do this to get multi particle biasing working
     fSetup = false;
 }
 
@@ -147,12 +104,12 @@ const G4Track* track, const G4BiasingProcessInterface* callingProcess)
 
     auto operation = operationIter->second;*/
 
-    // Gemini says to do this to get multi-particle biasing working
+    //  multi-particle biasing 
     // ---- LAZY INITIALIZATION ----
     if (operationIter == fOperations.end())
     {
         // If the operation doesn't exist for this process yet, create it!
-        G4cout << "[Biasing] Lazily creating XS operation for " << processName << G4endl;
+        G4cout << "[Biasing] Creating XS operation for " << processName << G4endl;
         auto newOperation = new G4BOptnChangeCrossSection("XSBias-" + processName);
         
         fOperations[callingProcess] = newOperation;

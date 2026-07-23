@@ -27,6 +27,9 @@ set(SOURCES
     EventAction.cc
     SteppingAction.cc
     main.cc
+    Biasing.cc
+    BiasingMessenger.cc
+    ActionInitialization.cc
 )
 #set(HEADERS
 #  MyPhysicsList.hh

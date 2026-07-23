@@ -2,7 +2,6 @@
 #include "G4UImanager.hh"
 #include "MyNeutrinoPhysics.hh"
 
-
 MyPhysicsList::MyPhysicsList() {
     // --- 1. Get base physics list from factory ---
     G4PhysListFactory factory;

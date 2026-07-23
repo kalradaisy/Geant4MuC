@@ -3,26 +3,178 @@
 
 #include "G4UserEventAction.hh"
 #include "G4Event.hh"
-#include "RunAction.hh"       // if you use RunAction inside EventAction
 #include "globals.hh"
+#include "G4ThreeVector.hh"
+#include "CLHEP/Units/PhysicalConstants.h"
 
 
 class EventAction : public G4UserEventAction {
 public:
-    EventAction(RunAction* runAction);   // pass pointer to RunAction if needed
+    EventAction();
     ~EventAction() override;
 
-    // Override correct function
-  void BeginOfEventAction(const G4Event*) override;
-  void EndOfEventAction(const G4Event* event) override;
+    void BeginOfEventAction(const G4Event*) override;
+    void EndOfEventAction(const G4Event* event) override;
 
-  void AddEdep(double edep) { totalEdep_ += edep; }
-  void IncrementStep() { nSteps_++; }
-  G4bool neutrinoInteractionPrinted = false;
+    void AddEdep(double edep) { totalEdep_ += edep; }
+    void IncrementStep() { nSteps_++; }
+    /* Updated Setter methods below*/
+    // Process & Particle Counters
+    void AddNuInteraction() { fNuInteractions++; }
+    void AddCompton()       { nCompton++; }
+    void AddPairProd()      { nPairProd++; }
+    void AddIonisation()    { nIonisation++; }
+    void AddBrem()          { nBremsstrahlung++; }
+    void AddPhotoEl()       { nPhotoElectric++; }
+    void AddAnnihilation()  { nAnnihilation++; }
+    void AddDecay()         { nDecay++; }
+    void AddSecondary()     { nSecondaries++; }
+    void AddSecE(double Esec)     { secTotalE += Esec; }
+
+    void SetTargetZ(int Z)     { targetZ = Z; }
+    void SetTargetA(int A)     { targetA = A; }
+    void SetTargetPDG(int PDG_val)     { targetPDG = PDG_val; }
+
+    
+    // Track length accumulator
+    void AddSecTrackLength(double len) { secTrackLength += len; }
+
+    void SetFirstLastXYZ(const G4ThreeVector& pos){
+        double x = pos.x();
+        double y = pos.y();
+        double z = pos.z();
+        if(secFirstX > x) secFirstX = x;
+        if(secLastX  < x) secLastX = x;
+        if(secFirstY > y) secFirstY = y;
+        if(secLastY  < y) secLastY = y;
+        if(secFirstZ > z) secFirstZ = z;
+        if(secLastZ  < z) secLastZ = z;
+    }
+
+    void CountBackTracks(const G4ThreeVector& p){
+        if(p.z() < 0) nBackward++;
+    }
+
+    double ReadE() {return E;}
+
+    // Initial Kinematics Setters
+    void SetInitialKinematics(double e, double p_x, double p_y, double p_z, double th, double ph, double c_th) {
+        E = e; px = p_x; py = p_y; pz = p_z; theta = th; phi = ph; costh = c_th;
+    }
+    void SetInitialKinematics(double e, const G4ThreeVector& pos, const G4ThreeVector& p) {
+        E = e; 
+        px = pos.x(); 
+        py = pos.y(); 
+        pz = pos.z();
+        theta = p.theta();
+        phi = p.phi();
+        costh = p.cosTheta();
+    }
+
+    // Final Kinematics Setters
+    void SetFinalKinematics(double e, const G4ThreeVector& pos) {
+        finalE = e; 
+        finalX = pos.x(); 
+        finalY = pos.y(); 
+        finalZ = pos.z();
+    }
+    void SetFinalMomentum(const G4ThreeVector& p) {
+        finalPx = p.x(); 
+        finalPy = p.y(); 
+        finalPz = p.z();
+        finalCosth = p.cosTheta();
+        finalPhi = p.phi();
+        finalPhiDeg = finalPhi * 180.0 / CLHEP::pi;
+    }
+
+    void AddGamma() { nGamma++; }       // gamma
+    void AddElectron() { nElectron++; }   // e-
+    void AddPositron() { nPositron++; }   // e+
+    void AddProtonSec() { nProtonSec++; }  // proton
+    void AddNeutron() { nNeutron++; }    // neutron
+    void AddPionPlus() { nPionPlus++; }   // pi+
+    void AddPionMinus() { nPionMinus++; }  // pi-
+    void AddPionZero() { nPionZero++; }   // pi0
+    void AddMuonMinus() { nMuonMinus++; }  // mu-
+    void AddTauPlus() { nTauPlus++; } // tau+
+    void AddTauMinus() { nTauMinus++; }	// tau-
+    void AddKaonPlus() { nKaonPlus++; } // kaon+
+    void AddKaonMinus() { nKaonMinus++; } // kaon-
+    void AddKaonZero() { nKaonZero++; } // kaon0
+    void AddKaonZeroL() { nKaonZeroL++; } // kaon0 Long
+    void AddKaonZeroS() { nKaonZeroS++; } // kaon0 short
+    void AddMuonPlus() { nMuonPlus++; } // mu+
+
+    // Quick getter so SteppingAction can check if E is 0
+    double GetInitialE() const { return E; }
+
+    G4bool neutrinoInteractionPrinted = false; //idk where this is used
   
 private:
-    RunAction* fRunAction;
- // Per-event accumulators
+    // --------------------------------------------------------
+    // NEW: We moved these from RunAction to EventAction!
+    // --------------------------------------------------------
+    double E, x, y, z;
+    double finalE, finalX, finalY, finalZ;
+    double px, py, pz;
+    double theta, phi, finalPhi, finalPhiDeg;
+
+    double totalEdep;
+    int nSteps;
+    int nSecondaries;
+    double costh;  
+
+    double finalPx, finalPy, finalPz;
+    double finalCosth;
+
+    // Secondary info
+
+    int targetZ = -1;
+    int targetA = -1;
+    int targetPDG = -1;   // optional
+
+    int nGamma;
+    int nElectron;
+    int nPositron;
+
+    double secTotalE;
+    double secMeanE;
+    double secTrackLength;
+
+    double secFirstZ;
+    double secLastZ;
+    double secFirstX;
+    double secLastX;
+    double secFirstY;
+    double secLastY;
+
+    int nBackward;
+
+    // Process counters (optional but recommended)
+    int nCompton =0 ;
+    int nPairProd=0;
+    int nIonisation=0;
+    int nBremsstrahlung=0;
+    int nDecay=0;
+    int nProtonSec=0;
+    int nNeutron=0;
+    int nPionPlus=0;
+    int nPionMinus=0;
+    int nMuonPlus=0;
+    int nMuonMinus=0;
+    int nTauPlus=0;
+    int nTauMinus=0;
+    int nPionZero=0;
+    int nPhotoElectric   = 0;
+    int nAnnihilation    = 0;
+    int nKaonPlus = 0;
+    int nKaonMinus=0;
+    int nKaonZero=0;
+    int nKaonZeroL=0;
+    int nKaonZeroS=0;
+    int fNuInteractions = 0;
+
+    // Per-event accumulators
     double totalEdep_ = 0;
     int nSteps_ = 0;
 };

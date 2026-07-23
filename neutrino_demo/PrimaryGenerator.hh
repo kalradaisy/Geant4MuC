@@ -5,9 +5,15 @@
 #include "G4ParticleGun.hh"
 #include "G4ThreeVector.hh"
 #include "RunAction.hh"
-//#include "PrimaryGeneratorMessenger.hh"
+#include <atomic>
+
+// Forward declarations for ROOT
+class TFile;
+class TTree;
+class PrimaryGeneratorMessenger;
 
 class PrimaryGeneratorMessenger;
+// Could the above be removed?
 
 class PrimaryGenerator : public G4VUserPrimaryGeneratorAction {
 public:
@@ -21,14 +27,41 @@ public:
     void SetEnergy(G4double energy) { fEnergy = energy; }
     void SetPosition(const G4ThreeVector& pos) { fPosition = pos; }
     void SetDirection(const G4ThreeVector& dir) { fDirection = dir; }
+
+    // setters for dual mode system
+    void SetMode(const G4String& mode) { fMode = mode; }
+    void SetFluxFile(const G4String& file) { fFluxFileName = file; }
   
 private:
     PrimaryGeneratorMessenger* fMessenger;
     G4ParticleGun* fParticleGun;
+
+    // Gun variables
     G4ThreeVector fPosition;
     G4ThreeVector fDirection;
     G4double fEnergy;
     G4String fParticleName;
+
+    // Dual-Mode Variables
+    G4String fMode;
+    G4String fFluxFileName;
+    
+    // Flux Variables
+    TFile* fFluxFile;
+    TTree* fFluxTree;
+    int fTotalEntries;
+    // Variables to hold current row data from ROOT for flux
+    int fPDG;
+    double fE_GeV, fX_mm, fY_mm, fPx, fPy, fPz;
+    double fZ_mm; // just for positioning the flux in the appropriate place
+    
+    // --- GENIE Summary Tree (gst) Variables ---
+    Int_t fNF{0};
+    Int_t fPDG_arr[250]{0};
+    Double_t fPx_arr[250]{0.0};
+    Double_t fPy_arr[250]{0.0};
+    Double_t fPz_arr[250]{0.0};
+    Double_t fVtxX{0.0}, fVtxY{0.0}, fVtxZ{0.0};
 
     RunAction* fRunAction;
 };

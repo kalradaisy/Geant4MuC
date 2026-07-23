@@ -1,4 +1,10 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/neutrino.dir/ActionInitialization.cc.o"
+  "CMakeFiles/neutrino.dir/ActionInitialization.cc.o.d"
+  "CMakeFiles/neutrino.dir/Biasing.cc.o"
+  "CMakeFiles/neutrino.dir/Biasing.cc.o.d"
+  "CMakeFiles/neutrino.dir/BiasingMessenger.cc.o"
+  "CMakeFiles/neutrino.dir/BiasingMessenger.cc.o.d"
   "CMakeFiles/neutrino.dir/DetectorConstruction.cc.o"
   "CMakeFiles/neutrino.dir/DetectorConstruction.cc.o.d"
   "CMakeFiles/neutrino.dir/DetectorMessenger.cc.o"

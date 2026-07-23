@@ -1,8 +1,17 @@
 CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
- /workspace/neutrino_demo/MyPhysicsList.cc /usr/include/stdc-predef.h \
- /workspace/neutrino_demo/MyPhysicsList.hh \
- /opt/geant4-install/include/Geant4/G4VModularPhysicsList.hh \
- /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_algobase.h \
+ /home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/MyPhysicsList.cc \
+ /usr/include/stdc-predef.h \
+ /home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/MyPhysicsList.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4VModularPhysicsList.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4VPhysicsConstructor.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ParticleTable.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ParticleDefinition.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4PDefManager.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4AutoLock.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4Threading.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4Types.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4GlobalConfig.hh \
+ /usr/include/c++/11/complex \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/os_defines.h \
  /usr/include/features.h /usr/include/features-time64.h \
@@ -14,40 +23,8 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/x86_64-linux-gnu/gnu/stubs-64.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/cpu_defines.h \
  /usr/include/c++/11/pstl/pstl_config.h \
- /usr/include/c++/11/bits/functexcept.h \
- /usr/include/c++/11/bits/exception_defines.h \
  /usr/include/c++/11/bits/cpp_type_traits.h \
- /usr/include/c++/11/ext/type_traits.h \
- /usr/include/c++/11/ext/numeric_traits.h \
- /usr/include/c++/11/bits/stl_pair.h /usr/include/c++/11/bits/move.h \
- /usr/include/c++/11/type_traits \
- /usr/include/c++/11/bits/stl_iterator_base_types.h \
- /usr/include/c++/11/bits/stl_iterator_base_funcs.h \
- /usr/include/c++/11/bits/concept_check.h \
- /usr/include/c++/11/debug/assertions.h \
- /usr/include/c++/11/bits/stl_iterator.h \
- /usr/include/c++/11/bits/ptr_traits.h /usr/include/c++/11/debug/debug.h \
- /usr/include/c++/11/bits/predefined_ops.h \
- /usr/include/c++/11/bits/allocator.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h \
- /usr/include/c++/11/ext/new_allocator.h /usr/include/c++/11/new \
- /usr/include/c++/11/bits/exception.h \
- /usr/include/c++/11/bits/memoryfwd.h \
- /usr/include/c++/11/bits/stl_construct.h \
- /usr/include/c++/11/bits/stl_uninitialized.h \
- /usr/include/c++/11/ext/alloc_traits.h \
- /usr/include/c++/11/bits/alloc_traits.h \
- /usr/include/c++/11/bits/stl_vector.h \
- /usr/include/c++/11/initializer_list \
- /usr/include/c++/11/bits/stl_bvector.h \
- /usr/include/c++/11/bits/functional_hash.h \
- /usr/include/c++/11/bits/hash_bytes.h \
- /usr/include/c++/11/bits/range_access.h \
- /usr/include/c++/11/bits/vector.tcc \
- /opt/geant4-install/include/Geant4/G4ios.hh \
- /opt/geant4-install/include/Geant4/G4Types.hh \
- /opt/geant4-install/include/Geant4/G4GlobalConfig.hh \
- /usr/include/c++/11/complex /usr/include/c++/11/cmath \
+ /usr/include/c++/11/ext/type_traits.h /usr/include/c++/11/cmath \
  /usr/include/math.h \
  /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
  /usr/include/x86_64-linux-gnu/bits/types.h \
@@ -93,7 +70,20 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/x86_64-linux-gnu/bits/struct_mutex.h \
  /usr/include/x86_64-linux-gnu/bits/struct_rwlock.h /usr/include/alloca.h \
  /usr/include/x86_64-linux-gnu/bits/stdlib-float.h \
- /usr/include/c++/11/bits/specfun.h /usr/include/c++/11/limits \
+ /usr/include/c++/11/bits/specfun.h \
+ /usr/include/c++/11/bits/stl_algobase.h \
+ /usr/include/c++/11/bits/functexcept.h \
+ /usr/include/c++/11/bits/exception_defines.h \
+ /usr/include/c++/11/ext/numeric_traits.h \
+ /usr/include/c++/11/bits/stl_pair.h /usr/include/c++/11/bits/move.h \
+ /usr/include/c++/11/type_traits \
+ /usr/include/c++/11/bits/stl_iterator_base_types.h \
+ /usr/include/c++/11/bits/stl_iterator_base_funcs.h \
+ /usr/include/c++/11/bits/concept_check.h \
+ /usr/include/c++/11/debug/assertions.h \
+ /usr/include/c++/11/bits/stl_iterator.h \
+ /usr/include/c++/11/bits/ptr_traits.h /usr/include/c++/11/debug/debug.h \
+ /usr/include/c++/11/bits/predefined_ops.h /usr/include/c++/11/limits \
  /usr/include/c++/11/tr1/gamma.tcc \
  /usr/include/c++/11/tr1/special_function_util.h \
  /usr/include/c++/11/tr1/bessel_function.tcc \
@@ -108,17 +98,20 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/c++/11/sstream \
  /usr/include/c++/11/istream /usr/include/c++/11/ios \
  /usr/include/c++/11/iosfwd /usr/include/c++/11/bits/stringfwd.h \
- /usr/include/c++/11/bits/postypes.h /usr/include/c++/11/cwchar \
- /usr/include/wchar.h /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
+ /usr/include/c++/11/bits/memoryfwd.h /usr/include/c++/11/bits/postypes.h \
+ /usr/include/c++/11/cwchar /usr/include/wchar.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
  /usr/include/x86_64-linux-gnu/bits/wchar.h \
  /usr/include/x86_64-linux-gnu/bits/types/wint_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__FILE.h \
  /usr/include/x86_64-linux-gnu/bits/types/FILE.h \
- /usr/include/c++/11/exception /usr/include/c++/11/bits/exception_ptr.h \
+ /usr/include/c++/11/exception /usr/include/c++/11/bits/exception.h \
+ /usr/include/c++/11/bits/exception_ptr.h \
  /usr/include/c++/11/bits/cxxabi_init_exception.h \
- /usr/include/c++/11/typeinfo /usr/include/c++/11/bits/nested_exception.h \
+ /usr/include/c++/11/typeinfo /usr/include/c++/11/bits/hash_bytes.h \
+ /usr/include/c++/11/new /usr/include/c++/11/bits/nested_exception.h \
  /usr/include/c++/11/bits/char_traits.h /usr/include/c++/11/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h /usr/include/stdint.h \
  /usr/include/x86_64-linux-gnu/bits/stdint-uintn.h \
@@ -144,11 +137,20 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/x86_64-linux-gnu/c++/11/bits/atomic_word.h \
  /usr/include/x86_64-linux-gnu/sys/single_threaded.h \
  /usr/include/c++/11/bits/locale_classes.h /usr/include/c++/11/string \
+ /usr/include/c++/11/bits/allocator.h \
+ /usr/include/x86_64-linux-gnu/c++/11/bits/c++allocator.h \
+ /usr/include/c++/11/ext/new_allocator.h \
  /usr/include/c++/11/bits/ostream_insert.h \
  /usr/include/c++/11/bits/cxxabi_forced.h \
  /usr/include/c++/11/bits/stl_function.h \
  /usr/include/c++/11/backward/binders.h \
- /usr/include/c++/11/bits/basic_string.h /usr/include/c++/11/string_view \
+ /usr/include/c++/11/bits/range_access.h \
+ /usr/include/c++/11/initializer_list \
+ /usr/include/c++/11/bits/basic_string.h \
+ /usr/include/c++/11/ext/alloc_traits.h \
+ /usr/include/c++/11/bits/alloc_traits.h \
+ /usr/include/c++/11/bits/stl_construct.h /usr/include/c++/11/string_view \
+ /usr/include/c++/11/bits/functional_hash.h \
  /usr/include/c++/11/bits/string_view.tcc \
  /usr/include/c++/11/ext/string_conversions.h /usr/include/c++/11/cstdlib \
  /usr/include/c++/11/cstdio /usr/include/stdio.h \
@@ -180,10 +182,11 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/c++/11/bits/ostream.tcc \
  /usr/include/c++/11/bits/istream.tcc \
  /usr/include/c++/11/bits/sstream.tcc \
- /opt/geant4-install/include/Geant4/tls.hh /usr/include/c++/11/iostream \
- /opt/geant4-install/include/Geant4/globals.hh \
- /usr/include/c++/11/algorithm /usr/include/c++/11/utility \
- /usr/include/c++/11/bits/stl_relops.h \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/tls.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/globals.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ios.hh \
+ /usr/include/c++/11/iostream /usr/include/c++/11/algorithm \
+ /usr/include/c++/11/utility /usr/include/c++/11/bits/stl_relops.h \
  /usr/include/c++/11/bits/stl_algo.h \
  /usr/include/c++/11/bits/algorithmfwd.h \
  /usr/include/c++/11/bits/stl_heap.h \
@@ -201,12 +204,16 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/c++/11/bits/enable_special_members.h \
  /usr/include/c++/11/bits/node_handle.h \
  /usr/include/c++/11/bits/unordered_map.h \
- /usr/include/c++/11/bits/erase_if.h \
+ /usr/include/c++/11/bits/erase_if.h /usr/include/c++/11/vector \
+ /usr/include/c++/11/bits/stl_uninitialized.h \
+ /usr/include/c++/11/bits/stl_vector.h \
+ /usr/include/c++/11/bits/stl_bvector.h \
+ /usr/include/c++/11/bits/vector.tcc \
  /usr/include/c++/11/pstl/execution_defs.h \
- /opt/geant4-install/include/Geant4/G4String.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4String.hh \
  /usr/include/c++/11/cstring /usr/include/string.h /usr/include/strings.h \
- /opt/geant4-install/include/Geant4/G4String.icc \
- /opt/geant4-install/include/Geant4/templates.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4String.icc \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/templates.hh \
  /usr/include/c++/11/climits \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/limits.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/syslimits.h \
@@ -216,10 +223,9 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/x86_64-linux-gnu/bits/posix2_lim.h \
  /usr/include/x86_64-linux-gnu/bits/xopen_lim.h \
  /usr/include/x86_64-linux-gnu/bits/uio_lim.h \
- /opt/geant4-install/include/Geant4/G4Exception.hh \
- /opt/geant4-install/include/Geant4/G4VExceptionHandler.hh \
- /opt/geant4-install/include/Geant4/G4ExceptionSeverity.hh \
- /opt/geant4-install/include/Geant4/G4EnvironmentUtils.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4Exception.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ExceptionSeverity.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4EnvironmentUtils.hh \
  /usr/include/c++/11/iomanip /usr/include/c++/11/locale \
  /usr/include/c++/11/bits/locale_facets_nonio.h /usr/include/c++/11/ctime \
  /usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h \
@@ -235,10 +241,6 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/c++/11/bits/parse_numbers.h \
  /usr/include/c++/11/bits/std_mutex.h \
  /usr/include/c++/11/bits/unique_lock.h \
- /opt/geant4-install/include/Geant4/rundefs.hh \
- /opt/geant4-install/include/Geant4/G4VPhysicsConstructor.hh \
- /opt/geant4-install/include/Geant4/G4ParticleTable.hh \
- /opt/geant4-install/include/Geant4/G4Threading.hh \
  /usr/include/c++/11/condition_variable \
  /usr/include/c++/11/bits/shared_ptr.h \
  /usr/include/c++/11/bits/shared_ptr_base.h \
@@ -249,101 +251,42 @@ CMakeFiles/neutrino.dir/MyPhysicsList.cc.o: \
  /usr/include/c++/11/bits/atomic_futex.h \
  /usr/include/c++/11/bits/std_thread.h /usr/include/c++/11/thread \
  /usr/include/c++/11/bits/this_thread_sleep.h \
- /opt/geant4-install/include/Geant4/G4ParticleDefinition.hh \
- /opt/geant4-install/include/Geant4/CLHEP/Units/PhysicalConstants.h \
- /opt/geant4-install/include/Geant4/CLHEP/Units/SystemOfUnits.h \
- /opt/geant4-install/include/Geant4/G4PDefManager.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/pwdefs.hh \
  /usr/include/c++/11/stdlib.h \
- /opt/geant4-install/include/Geant4/pwdefs.hh \
- /opt/geant4-install/include/Geant4/G4AutoLock.hh \
- /opt/geant4-install/include/Geant4/G4ParticleDefinition.icc \
- /opt/geant4-install/include/Geant4/G4ParticleTableIterator.hh \
- /opt/geant4-install/include/Geant4/G4ParticleTable.icc \
- /opt/geant4-install/include/Geant4/G4PhysicsListHelper.hh \
- /opt/geant4-install/include/Geant4/G4PhysicsListOrderingParameter.hh \
- /opt/geant4-install/include/Geant4/G4ThreadLocalSingleton.hh \
- /opt/geant4-install/include/Geant4/G4Cache.hh \
- /opt/geant4-install/include/Geant4/G4CacheDetails.hh \
- /opt/geant4-install/include/Geant4/G4Backtrace.hh \
- /usr/include/c++/11/cxxabi.h \
- /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h \
- /usr/include/execinfo.h /usr/include/unistd.h \
- /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
- /usr/include/x86_64-linux-gnu/bits/environments.h \
- /usr/include/x86_64-linux-gnu/bits/confname.h \
- /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
- /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
- /usr/include/x86_64-linux-gnu/bits/unistd_ext.h \
- /usr/include/linux/close_range.h /usr/include/c++/11/cfenv \
- /usr/include/c++/11/fenv.h /usr/include/fenv.h \
- /usr/include/x86_64-linux-gnu/bits/fenv.h /usr/include/c++/11/csignal \
- /usr/include/signal.h \
- /usr/include/x86_64-linux-gnu/bits/signum-generic.h \
- /usr/include/x86_64-linux-gnu/bits/signum-arch.h \
- /usr/include/x86_64-linux-gnu/bits/types/sig_atomic_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/siginfo_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-arch.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-consts.h \
- /usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
- /usr/include/x86_64-linux-gnu/bits/sigevent-consts.h \
- /usr/include/x86_64-linux-gnu/bits/sigaction.h \
- /usr/include/x86_64-linux-gnu/bits/sigcontext.h \
- /usr/include/x86_64-linux-gnu/bits/types/stack_t.h \
- /usr/include/x86_64-linux-gnu/sys/ucontext.h \
- /usr/include/x86_64-linux-gnu/bits/sigstack.h \
- /usr/include/x86_64-linux-gnu/bits/sigstksz.h \
- /usr/include/x86_64-linux-gnu/bits/ss_flags.h \
- /usr/include/x86_64-linux-gnu/bits/types/struct_sigstack.h \
- /usr/include/x86_64-linux-gnu/bits/sigthread.h \
- /usr/include/x86_64-linux-gnu/bits/signal_ext.h \
- /usr/include/c++/11/regex /usr/include/c++/11/bitset \
- /usr/include/c++/11/iterator /usr/include/c++/11/bits/stream_iterator.h \
- /usr/include/c++/11/memory \
- /usr/include/c++/11/bits/stl_raw_storage_iter.h \
- /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
- /usr/include/c++/11/bits/shared_ptr_atomic.h \
- /usr/include/c++/11/backward/auto_ptr.h \
- /usr/include/c++/11/pstl/glue_memory_defs.h /usr/include/c++/11/stack \
- /usr/include/c++/11/deque /usr/include/c++/11/bits/stl_deque.h \
- /usr/include/c++/11/bits/deque.tcc /usr/include/c++/11/bits/stl_stack.h \
- /usr/include/c++/11/bits/regex_constants.h \
- /usr/include/c++/11/bits/regex_error.h \
- /usr/include/c++/11/bits/regex_automaton.h \
- /usr/include/c++/11/bits/regex_automaton.tcc \
- /usr/include/c++/11/bits/regex_scanner.h \
- /usr/include/c++/11/bits/regex_scanner.tcc \
- /usr/include/c++/11/bits/regex_compiler.h \
- /usr/include/c++/11/bits/regex_compiler.tcc \
- /usr/include/c++/11/bits/regex.h /usr/include/c++/11/bits/regex.tcc \
- /usr/include/c++/11/bits/regex_executor.h \
- /usr/include/c++/11/bits/regex_executor.tcc /usr/include/c++/11/set \
- /usr/include/c++/11/bits/stl_set.h \
- /usr/include/c++/11/bits/stl_multiset.h /usr/include/c++/11/list \
- /usr/include/c++/11/bits/stl_list.h /usr/include/c++/11/bits/list.tcc \
- /opt/geant4-install/include/Geant4/G4VUPLSplitter.hh \
- /opt/geant4-install/include/Geant4/G4VUserPhysicsList.hh \
- /opt/geant4-install/include/Geant4/G4ProductionCutsTable.hh \
- /opt/geant4-install/include/Geant4/G4MaterialCutsCouple.hh \
- /opt/geant4-install/include/Geant4/G4ProductionCuts.hh \
- /opt/geant4-install/include/Geant4/G4MCCIndexConversionTable.hh \
- /opt/geant4-install/include/Geant4/G4Region.hh \
- /opt/geant4-install/include/Geant4/G4GeomSplitter.hh \
- /opt/geant4-install/include/Geant4/geomwdefs.hh \
- /opt/geant4-install/include/Geant4/G4Region.icc \
- /opt/geant4-install/include/Geant4/G4PhysicsModelCatalog.hh \
- /opt/geant4-install/include/Geant4/G4PhysListFactory.hh \
- /opt/geant4-install/include/Geant4/G4VModularPhysicsList.hh \
- /workspace/neutrino_demo/MyNeutrinoPhysics.hh \
- /opt/geant4-install/include/Geant4/G4VPhysicsConstructor.hh \
- /opt/geant4-install/include/Geant4/G4UImanager.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/CLHEP/Units/PhysicalConstants.h \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/CLHEP/Units/SystemOfUnits.h \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ParticleDefinition.icc \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ParticleTableIterator.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ParticleTable.icc \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4PhysicsListHelper.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4PhysicsListOrderingParameter.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ThreadLocalSingleton.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4Cache.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4CacheDetails.hh \
+ /usr/include/c++/11/list /usr/include/c++/11/bits/stl_list.h \
+ /usr/include/c++/11/bits/list.tcc \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4VUPLSplitter.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/rundefs.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4VUserPhysicsList.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4PhysicsModelCatalog.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ProductionCutsTable.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4MaterialCutsCouple.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ProductionCuts.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4MCCIndexConversionTable.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4Region.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4GeomSplitter.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/geomwdefs.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4Region.icc \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4PhysListFactory.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4VModularPhysicsList.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/MyNeutrinoPhysics.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4VPhysicsConstructor.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4UImanager.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4UIcommandStatus.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4VStateDependent.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/G4ApplicationState.hh \
+ /home/jrositas/MuC_Neutrinos/GEANT4/geant_install/geant4-v11.4.2-install/include/Geant4/icomsdefs.hh \
  /usr/include/c++/11/fstream \
  /usr/include/x86_64-linux-gnu/c++/11/bits/basic_file.h \
  /usr/include/x86_64-linux-gnu/c++/11/bits/c++io.h \
- /usr/include/c++/11/bits/fstream.tcc \
- /opt/geant4-install/include/Geant4/icomsdefs.hh \
- /opt/geant4-install/include/Geant4/G4VStateDependent.hh \
- /opt/geant4-install/include/Geant4/G4ApplicationState.hh \
- /opt/geant4-install/include/Geant4/G4UIcommandStatus.hh
+ /usr/include/c++/11/bits/fstream.tcc

@@ -57,18 +57,18 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /workspace/neutrino_demo
+CMAKE_SOURCE_DIR = /home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /workspace/neutrino_demo/build
+CMAKE_BINARY_DIR = /home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/build
 
 #=============================================================================
 # Targets provided globally by CMake.
 
 # Special rule for the target edit_cache
 edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
 .PHONY : edit_cache
 
 # Special rule for the target edit_cache
@@ -87,9 +87,9 @@ rebuild_cache/fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/neutrino_demo/build/CMakeFiles /workspace/neutrino_demo/build//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/build/CMakeFiles /home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/build//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /workspace/neutrino_demo/build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -128,6 +128,78 @@ neutrino: cmake_check_build_system
 neutrino/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/build
 .PHONY : neutrino/fast
+
+ActionInitialization.o: ActionInitialization.cc.o
+.PHONY : ActionInitialization.o
+
+# target to build an object file
+ActionInitialization.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/ActionInitialization.cc.o
+.PHONY : ActionInitialization.cc.o
+
+ActionInitialization.i: ActionInitialization.cc.i
+.PHONY : ActionInitialization.i
+
+# target to preprocess a source file
+ActionInitialization.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/ActionInitialization.cc.i
+.PHONY : ActionInitialization.cc.i
+
+ActionInitialization.s: ActionInitialization.cc.s
+.PHONY : ActionInitialization.s
+
+# target to generate assembly for a file
+ActionInitialization.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/ActionInitialization.cc.s
+.PHONY : ActionInitialization.cc.s
+
+Biasing.o: Biasing.cc.o
+.PHONY : Biasing.o
+
+# target to build an object file
+Biasing.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/Biasing.cc.o
+.PHONY : Biasing.cc.o
+
+Biasing.i: Biasing.cc.i
+.PHONY : Biasing.i
+
+# target to preprocess a source file
+Biasing.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/Biasing.cc.i
+.PHONY : Biasing.cc.i
+
+Biasing.s: Biasing.cc.s
+.PHONY : Biasing.s
+
+# target to generate assembly for a file
+Biasing.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/Biasing.cc.s
+.PHONY : Biasing.cc.s
+
+BiasingMessenger.o: BiasingMessenger.cc.o
+.PHONY : BiasingMessenger.o
+
+# target to build an object file
+BiasingMessenger.cc.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/BiasingMessenger.cc.o
+.PHONY : BiasingMessenger.cc.o
+
+BiasingMessenger.i: BiasingMessenger.cc.i
+.PHONY : BiasingMessenger.i
+
+# target to preprocess a source file
+BiasingMessenger.cc.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/BiasingMessenger.cc.i
+.PHONY : BiasingMessenger.cc.i
+
+BiasingMessenger.s: BiasingMessenger.cc.s
+.PHONY : BiasingMessenger.s
+
+# target to generate assembly for a file
+BiasingMessenger.cc.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/neutrino.dir/build.make CMakeFiles/neutrino.dir/BiasingMessenger.cc.s
+.PHONY : BiasingMessenger.cc.s
 
 DetectorConstruction.o: DetectorConstruction.cc.o
 .PHONY : DetectorConstruction.o
@@ -378,6 +450,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... neutrino"
+	@echo "... ActionInitialization.o"
+	@echo "... ActionInitialization.i"
+	@echo "... ActionInitialization.s"
+	@echo "... Biasing.o"
+	@echo "... Biasing.i"
+	@echo "... Biasing.s"
+	@echo "... BiasingMessenger.o"
+	@echo "... BiasingMessenger.i"
+	@echo "... BiasingMessenger.s"
 	@echo "... DetectorConstruction.o"
 	@echo "... DetectorConstruction.i"
 	@echo "... DetectorConstruction.s"

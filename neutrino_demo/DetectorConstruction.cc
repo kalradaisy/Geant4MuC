@@ -8,29 +8,16 @@
 #include "G4Region.hh"
 #include "G4LogicalVolumeStore.hh"
 #include "G4UserLimits.hh"
+#include "G4Material.hh"
 
 
 DetectorConstruction::DetectorConstruction()
 {
     fMessenger = new DetectorMessenger(this);
+    /* Moved the old default geometry loading out of here so that it is only
+    loaded if the macro specifies no geometry itself. This way, macros can
+    define their own geometries without need for recompilation.*/
 
-    // Load default GDML immediately so Construct() can return a valid world
-    G4String defaultGDML = "/workspace/neutrino_demo/output.gdml";
-    G4cout << "Loading default GDML: " << defaultGDML << G4endl;
-
-    fParser.Read(defaultGDML, false); // false disables schema validation
-
-    G4VPhysicalVolume* world = fParser.GetWorldVolume();
-    if (!world) {
-        G4cerr << "Failed to load default GDML world volume!" << G4endl;
-        G4Exception("DetectorConstruction::DetectorConstruction",
-                    "NoGDML",
-                    FatalException,
-                    "World volume is NULL after reading default GDML.");
-    }
-
-    G4cout << "Default GDML loaded successfully. World volume: "
-           << world->GetName() << G4endl;
 }
 
 DetectorConstruction::~DetectorConstruction()
@@ -63,26 +50,39 @@ void DetectorConstruction::ReadGDML(const G4String& filename)
     G4RunManager::GetRunManager()->ReinitializeGeometry();
 }
 
-G4VPhysicalVolume* DetectorConstruction::Construct()
-{
+G4VPhysicalVolume* DetectorConstruction::Construct(){
+    
     G4VPhysicalVolume* world = fParser.GetWorldVolume();
-
+    // If no macro loaded a geometry, load the default now
     if (!world) {
-        G4Exception("DetectorConstruction::Construct()",
-                    "NoGDML",
-                    FatalException,
-                    "World volume is NULL. GDML was not loaded correctly.");
+        G4String defaultGDML = "../output.gdml";
+        G4cout << "No macro geometry specified. Loading default GDML: " << defaultGDML << G4endl;
+        
+        fParser.Read(defaultGDML, false); // false disables schema validation
+        world = fParser.GetWorldVolume();
+
+        if (!world) {
+            G4Exception("DetectorConstruction::Construct()",
+                        "NoGDML",
+                        FatalException,
+                        "World volume is NULL. GDML was not loaded correctly.");
+        }
+        G4cout << "Default GDML loaded successfully. World volume: "
+               << world->GetName() << G4endl;
     }
 
     G4LogicalVolume* worldLogical = world->GetLogicalVolume();
+
+    // Save the world volume for the worker threads (ADDED FOR BETTER BIASING)
+    fWorldLogical = worldLogical;
+
     if (worldLogical) {
-             G4double minStep = 1.0*mm;  // you can reduce if needed
-      G4UserLimits* stepLimits = new G4UserLimits(minStep);
-      worldLogical->SetUserLimits(stepLimits);
-      G4double maxStep = 10*cm;  // limit max step to 10 cm
-      worldLogical->SetUserLimits(new G4UserLimits(maxStep));
+        G4double minRange = 1.0*mm;  // you can reduce if needed
+      // maxStep = 10*cm, maxTrackLength = infinity, maxTime = infinity, minKineticEnergy = 0, minRange = 1*mm
+    G4UserLimits* stepLimits = new G4UserLimits(10*cm, DBL_MAX, DBL_MAX, 0., 1.0*mm);
+    worldLogical->SetUserLimits(stepLimits);
  
-      G4cout << "Minimum step size set for world: " << minStep/mm << " mm" << G4endl;
+      G4cout << "Minimum step size set for world: " << minRange/mm << " mm" << G4endl;
     } else {
         G4cerr << "World logical volume not found!" << G4endl;
     }
@@ -91,27 +91,32 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
     // -----------------------------------------
     // Create neutrino target region
     // -----------------------------------------
-    auto targetRegion = new G4Region("target");
+    //auto targetRegion = new G4Region("target");
+    fTargetRegion = new G4Region("target");
 
     auto lvStore = G4LogicalVolumeStore::GetInstance();
 
     G4cout << "\n=== Assigning Neutrino Region ===" << G4endl;
 
     for (auto lv : *lvStore) {
+        // 1. Skip the World volume
+        if (lv == fWorldLogical) continue;
 
-      //G4cout << "Logical volume: " << lv->GetName() << G4endl;
+        // 2. Skip Air, Vacuum, or Galactic volumes
+        if (lv->GetMaterial()) {
+            G4String matName = lv->GetMaterial()->GetName();
+            if (matName.find("Air") != std::string::npos || 
+                matName.find("Vacuum") != std::string::npos ||
+                matName.find("vacuum") != std::string::npos ||
+                matName.find("Galactic") != std::string::npos) {
+                continue; 
+            }
+        }
 
-        // Select your detector volume
-	//        if (lv->GetName() == "VertexBarrel_layer0_sens") {
-        if (lv->GetName().find("_sens") != std::string::npos) {
-	  // if (lv == world->GetLogicalVolume()){
-	  //continue;   // Skip world
-	  // }
-            targetRegion->AddRootLogicalVolume(lv);
-
-            G4cout << ">>> Neutrino target set on: "
-                   << lv->GetName() << G4endl;
-	     }
+        // 3. Add everything else to the target region
+        fTargetRegion->AddRootLogicalVolume(lv);
+        fTargetVolumes.push_back(lv);
+        G4cout << ">>> Neutrino target set on: " << lv->GetName() << G4endl;
     }
 
     G4cout << "===============================\n" << G4endl;
