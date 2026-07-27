@@ -3,6 +3,7 @@
 #include "RunAction.hh"
 #include "EventAction.hh"
 #include "SteppingAction.hh"
+#include "TrackingAction.hh"
 
 
 void ActionInitialization::BuildForMaster() const{
@@ -34,4 +35,6 @@ void ActionInitialization::Build() const
     SetUserAction(eventAction);
     /* And here's how you'll keep going, step after step.*/
     SetUserAction(new SteppingAction(eventAction, runAction));
+    /* A place to record the information for the tracks and whatnot*/
+    SetUserAction(new TrackingAction());
 }

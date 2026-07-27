@@ -56,12 +56,12 @@ private:
     double fZ_mm; // just for positioning the flux in the appropriate place
     
     // --- GENIE Summary Tree (gst) Variables ---
-    Int_t fNF{0};
-    Int_t fPDG_arr[250]{0};
-    Double_t fPx_arr[250]{0.0};
-    Double_t fPy_arr[250]{0.0};
-    Double_t fPz_arr[250]{0.0};
-    Double_t fVtxX{0.0}, fVtxY{0.0}, fVtxZ{0.0};
+    int fNF{0};
+    int fPDG_arr[250]{0};
+    double fPx_arr[250]{0.0};
+    double fPy_arr[250]{0.0};
+    double fPz_arr[250]{0.0};
+    double fVtxX{0.0}, fVtxY{0.0}, fVtxZ{0.0};
 
     RunAction* fRunAction;
 };

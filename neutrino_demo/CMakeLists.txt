@@ -26,6 +26,7 @@ set(SOURCES
     RunAction.cc
     EventAction.cc
     SteppingAction.cc
+    TrackingAction.cc
     main.cc
     Biasing.cc
     BiasingMessenger.cc

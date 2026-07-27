@@ -5,7 +5,6 @@
 class EventAction;
 class RunAction;
 class G4Step;
-class RunAction;
 
 class SteppingAction : public G4UserSteppingAction {
 public:

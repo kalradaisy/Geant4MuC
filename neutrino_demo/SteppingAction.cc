@@ -27,34 +27,6 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
     auto track = step->GetTrack();
 
-    if (track->GetParticleDefinition() == G4NeutrinoMu::NeutrinoMu()) {
-    
-    // 1. Did the process name contain muNuNucleus?
-    const G4VProcess* proc = step->GetPostStepPoint()->GetProcessDefinedStep();
-    if (proc && proc->GetProcessName().find("muNuNucleus") != std::string::npos) {
-        fEventAction->AddNuInteraction();
-        
-        G4cout << "\n--- NEUTRINO INTERACTION CONFIRMED ---" << G4endl;
-        G4cout << "Process: " << proc->GetProcessName() << G4endl;
-        
-        // 2. Did the neutrino die?
-        if (track->GetTrackStatus() == fStopAndKill) {
-            G4cout << "Status: Incident Neutrino was killed." << G4endl;
-        }
-
-        // 3. What particles were created?
-        const std::vector<const G4Track*>* secondaries = step->GetSecondaryInCurrentStep();
-        G4cout << "Energy Deposited in Step: " << step->GetTotalEnergyDeposit() << " MeV" << G4endl;
-        G4cout << "Secondaries produced: " << secondaries->size() << G4endl;
-    
-        for (size_t i = 0; i < secondaries->size(); ++i) {
-            G4cout << "  -> " << (*secondaries)[i]->GetParticleDefinition()->GetParticleName() 
-                   << " (Energy: " << (*secondaries)[i]->GetKineticEnergy() << " MeV)" << G4endl;
-        }
-        G4cout << "--------------------------------------\n" << G4endl;
-        }
-    }
-
     auto material = step->GetPreStepPoint()->GetMaterial();
     auto element = material->GetElement(0); // first element
 
@@ -63,6 +35,238 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
     // Accumulate total energy deposition and steps for all tracks
     // -----------------------------
+    // -----------------------------
+    // Primary Neutrino Interaction Classification
+    // -----------------------------
+    int pdg = track->GetDefinition()->GetPDGEncoding();
+    bool isPrimaryNeutrino = track->GetParentID() == 0 && 
+                             (std::abs(pdg) == 12 || std::abs(pdg) == 14 || std::abs(pdg) == 16);
+                             
+    const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
+
+    std::string nuProcName = process ? std::string(process->GetProcessName()) : "None";
+
+    // Clean up the process name by stripping out "biasWrapper()"
+    std::string biasPrefix = "biasWrapper(";
+    if (nuProcName.find(biasPrefix) == 0 && nuProcName.back() == ')') {
+        // Extract just the core process name
+        nuProcName = nuProcName.substr(biasPrefix.length(), nuProcName.length() - biasPrefix.length() - 1);
+    }
+
+    // ========== NEUTRINO OSCILLATION TRACKING ==========
+    bool isOscillationProcess = (nuProcName.find("Oscillation") != std::string::npos || 
+                                 nuProcName.find("oscillation") != std::string::npos);
+
+    if (isPrimaryNeutrino && isOscillationProcess) {
+        fEventAction->nOscillationSteps++;
+
+        if (!fEventAction->primaryOscillationProcessInvoked) {
+            fEventAction->primaryOscillationProcessInvoked = 1;
+            fEventAction->primaryOscillationPDGBefore = pdg;
+
+            // Search the secondaries for the new oscillated neutrino flavor
+            int postOscPDG = pdg; 
+            const auto* oscSecondaries = step->GetSecondaryInCurrentStep();
+            if (oscSecondaries) {
+                for (auto sec : *oscSecondaries) {
+                    int secPDG = sec->GetDefinition()->GetPDGEncoding();
+                    int absSecPDG = std::abs(secPDG);
+                    if (absSecPDG == 12 || absSecPDG == 14 || absSecPDG == 16) {
+                        postOscPDG = secPDG;
+                        break;
+                    }
+                }
+            }
+
+            fEventAction->primaryOscillationPDGAfter = postOscPDG;
+            fEventAction->primaryOscillationFlavorChanged = (postOscPDG != pdg) ? 1 : 0;
+            
+            // Update the final PDG to the newly oscillated flavor
+            fEventAction->primaryFinalPDG = postOscPDG;
+        }
+    }
+
+    // Only process this once per event at the exact moment of the first real interaction
+    if (!fEventAction->decisionMade && isPrimaryNeutrino && process && nuProcName != "Transportation") {
+        
+        // Record the clean process name
+        fEventAction->nuInteractionProcess = nuProcName;
+        fEventAction->allInteractionProcess = nuProcName;
+
+        // Calculate the expected charged lepton PDG based on the incoming neutrino flavor
+        int expectedLepton = 0;
+        if (std::abs(pdg) == 12) expectedLepton = (pdg > 0) ? 11 : -11; // nu_e -> e-
+        if (std::abs(pdg) == 14) expectedLepton = (pdg > 0) ? 13 : -13; // nu_mu -> mu-
+        if (std::abs(pdg) == 16) expectedLepton = (pdg > 0) ? 15 : -15; // nu_tau -> tau-
+
+        bool foundCCLepton = false;
+        bool foundOutNu = false;
+        bool foundHadron = false;
+
+        // Particle counters for interaction model topology
+        int nPions = 0;
+        int nNucleons = 0;
+
+        // Analyze the particles produced in this interaction
+        const auto* secondaries = step->GetSecondaryInCurrentStep();
+        if (secondaries) {
+            for (auto sec : *secondaries) {
+                
+                // Ensure the secondary was born from this specific primary track
+                if (sec->GetParentID() != track->GetTrackID()) continue;
+
+                int secPDG = sec->GetDefinition()->GetPDGEncoding();
+                int absSecPDG = std::abs(secPDG);
+                G4double secE = sec->GetKineticEnergy() + sec->GetDefinition()->GetPDGMass();
+
+                // 1. Did we find the expected charged lepton? (Charged Current)
+                if (secPDG == expectedLepton) {
+                    foundCCLepton = true;
+                    fEventAction->outgoingLeptonPDG = secPDG;
+                    fEventAction->outgoingLeptonE = secE;
+                    fEventAction->outgoingLeptonPx = sec->GetMomentum().x();
+                    fEventAction->outgoingLeptonPy = sec->GetMomentum().y();
+                    fEventAction->outgoingLeptonPz = sec->GetMomentum().z();
+                }
+
+                // 2. Did we find an outgoing neutrino? (Neutral Current)
+                if (secPDG == pdg) {
+                    foundOutNu = true;
+                }
+
+                // 3. Topology Counters for Interaction Model Classification
+                if (absSecPDG == 211 || absSecPDG == 111) { // pi+, pi-, pi0
+                    nPions++;
+                }
+                if (absSecPDG == 2212 || absSecPDG == 2112) { // proton, neutron
+                    nNucleons++;
+                }
+
+                // 4. Hadronic energy accumulation
+                if (absSecPDG == 2212 || absSecPDG == 2112 || absSecPDG == 211 ||
+                    absSecPDG == 321  || absSecPDG == 111  || absSecPDG == 311 ||
+                    absSecPDG == 310  || absSecPDG == 130) {
+                    foundHadron = true;
+                    fEventAction->outgoingHadronE += secE;
+                }
+            }
+        }
+
+        // Classify the interaction type & model topology
+        if (foundCCLepton) {
+            fEventAction->isCC = 1;
+            fEventAction->isNC = 0;
+            fEventAction->interactionType = "CC";
+            // Assign CC Interaction Model Topology
+            if (nPions == 0 && nNucleons > 0) {
+                fEventAction->interactionModel = "CCQE";
+            } else if (nPions == 1) {
+                fEventAction->interactionModel = "CCRES";
+            } else {
+                fEventAction->interactionModel = "CCDIS";
+            }
+            // ========== NEUTRINO KINEMATICS (CC events) ==========
+            // Incoming Neutrino kinematics MUST come from the PreStepPoint.
+            // The track itself is killed at the PostStepPoint, meaning its current energy is 0.
+            G4double Enu = step->GetPreStepPoint()->GetTotalEnergy();
+            G4ThreeVector pNu = step->GetPreStepPoint()->GetMomentum();
+            G4double pNuMag = pNu.mag();
+            
+            // Outgoing Lepton kinematics from the saved variables
+            G4double Elep = fEventAction->outgoingLeptonE;
+            G4ThreeVector pLep(fEventAction->outgoingLeptonPx, 
+                               fEventAction->outgoingLeptonPy, 
+                               fEventAction->outgoingLeptonPz);
+            G4double pLepMag = pLep.mag();
+            
+            // Energy and momentum transfer
+            G4double qEnergy = Enu - Elep;
+            G4ThreeVector qVec = pNu - pLep;
+            
+            fEventAction->q0 = qEnergy;
+            // Q2 = |qVec|^2 - q0^2
+            fEventAction->Q2 = qVec.mag2() - (qEnergy * qEnergy);
+            
+            // Invariant Mass (W)
+            const G4double nucleonMass = 939.565 * CLHEP::MeV;
+            G4double W2 = (nucleonMass * nucleonMass) + (2.0 * nucleonMass * qEnergy) - fEventAction->Q2;
+            fEventAction->W = (W2 > 0.0) ? std::sqrt(W2) : 0.0;
+            
+            // Bjorken-x & Inelasticity
+            fEventAction->xBj = (2.0 * nucleonMass * qEnergy > 0.0) 
+                                ? fEventAction->Q2 / (2.0 * nucleonMass * qEnergy) 
+                                : 0.0;
+                                
+            // Inelasticity (y)
+            fEventAction->yBj = (Enu > 0.0) ? qEnergy / Enu : 0.0;
+            fEventAction->inelasticity = (Enu > 0.0) ? (1.0 - Elep / Enu) : 0.0;
+
+            // ========== LEPTON SCATTERING ANGLE ==========
+            if (pNuMag > 0.0 && pLepMag > 0.0) {
+                G4double cosThetaLep = pNu.dot(pLep) / (pNuMag * pLepMag);
+                // Clamp within [-1, 1] to protect acos against precision floating point overflow
+                cosThetaLep = std::max(-1.0, std::min(1.0, cosThetaLep));
+                fEventAction->leptonCosTheta = cosThetaLep;
+                fEventAction->leptonScatteringAngle = std::acos(cosThetaLep);
+            } else {
+                fEventAction->leptonCosTheta = 1.0;
+                fEventAction->leptonScatteringAngle = 0.0;
+            }
+
+            // ========== SHOWER SECONDARIES MULTIPLICITY ==========
+            if (secondaries) {
+                fEventAction->showerNSecondaries = static_cast<G4int>(secondaries->size());
+            }
+        } 
+        else if (foundOutNu) {
+            fEventAction->isCC = 0;
+            fEventAction->isNC = 1;
+            fEventAction->interactionType = "NC";
+
+            // Neutral current kinematics are generally not fully reconstructible 
+            // in the same way without knowing the outgoing neutrino energy.
+            // Leaving kinematics as 0.0 default.
+
+            // Assign NC Interaction Model Topology
+            if (nPions == 0 && nNucleons > 0) {
+                fEventAction->interactionModel = "NCQE";
+            } else if (nPions == 1) {
+                fEventAction->interactionModel = "NCRES";
+            } else {
+                fEventAction->interactionModel = "NCDIS";
+            }
+        } 
+        else {
+            fEventAction->isCC = 0;
+            fEventAction->isNC = 0;
+            fEventAction->interactionType = "Unknown";
+            fEventAction->interactionModel = "Unknown";
+            
+            // Debug block retained only for true anomaly cases (neither lepton nor neutrino found)
+            G4cout << "\n[DEBUG] --- UNKNOWN INTERACTION DETECTED ---" << G4endl;
+            G4cout << "[DEBUG] Expected Lepton PDG: " << expectedLepton << G4endl;
+            if (secondaries && secondaries->size() > 0) {
+                G4cout << "[DEBUG] Secondaries produced directly from primary:" << G4endl;
+                for (auto sec : *secondaries) {
+                    if (sec->GetParentID() == track->GetTrackID()) {
+                        G4cout << "        -> PDG: " << sec->GetDefinition()->GetPDGEncoding() 
+                               << " (" << sec->GetDefinition()->GetParticleName() << ") "
+                               << "| KE: " << sec->GetKineticEnergy() / CLHEP::MeV << " MeV" << G4endl;
+                    }
+                }
+            } else {
+                G4cout << "[DEBUG] No secondaries produced in this step." << G4endl;
+            }
+            G4cout << "[DEBUG] ----------------------------------------" << G4endl;
+        }
+
+        // Lock this so we don't overwrite it on the next step
+        fEventAction->decisionMade = true;
+        
+        G4cout << "\n*** NEUTRINO INTERACTION RECORDED ***" << G4endl;
+        G4cout << "Process: " << nuProcName << " | Type: " << fEventAction->interactionType 
+        << " | Model: " << fEventAction->interactionModel << G4endl;
+    }
     fEventAction->AddEdep(step->GetTotalEnergyDeposit());
     fEventAction->IncrementStep();
 
@@ -85,30 +289,33 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
         // initial kinetic energy of secondary
         double Esec = track->GetKineticEnergy();
-        if(Esec > 1*keV) fEventAction->AddSecE(Esec);
+        if(Esec > 1*keV) {
+            fEventAction->AddSecE(Esec);
+            fRunAction->secEnergies.push_back(Esec);
+        }
 
         // Particle type
         auto name = track->GetDefinition()->GetParticleName();
 
         int pdg = track->GetDefinition()->GetPDGEncoding();
         switch(pdg) {
-            case 22:    fEventAction->AddGamma();      // gamma
-            case 11:    fEventAction->AddElectron();   // e-
-            case -11:   fEventAction->AddPositron();   // e+
-            case 2212:  fEventAction->AddProtonSec();  // proton
-            case 2112:  fEventAction->AddNeutron();    // neutron
-            case 211:   fEventAction->AddPionPlus();   // pi+
-            case -211:  fEventAction->AddPionMinus();  // pi-
-            case 111:   fEventAction->AddPionZero();   // pi0
-            case 13:    fEventAction->AddMuonMinus();  // mu-
-            case -15:   fEventAction->AddTauPlus(); // tau+
-            case 15:    fEventAction->AddTauMinus(); // tau-
-            case 321:   fEventAction->AddKaonPlus(); // kaon+
-            case -321:  fEventAction->AddKaonMinus(); // kaon-
-            case 311:   fEventAction->AddKaonZero(); // kaon0
-            case 310:   fEventAction->AddKaonZeroL(); // kaon0 Long
-            case 130:   fEventAction->AddKaonZeroS(); // kaon0 short
-            case -13:   fEventAction->AddMuonPlus(); // mu+
+            case 22:    fEventAction->AddGamma();       break;  // gamma
+            case 11:    fEventAction->AddElectron();    break;  // e-
+            case -11:   fEventAction->AddPositron();    break;  // e+
+            case 2212:  fEventAction->AddProtonSec();   break;  // proton
+            case 2112:  fEventAction->AddNeutron();     break;  // neutron
+            case 211:   fEventAction->AddPionPlus();    break;  // pi+
+            case -211:  fEventAction->AddPionMinus();   break;  // pi-
+            case 111:   fEventAction->AddPionZero();    break;  // pi0
+            case 13:    fEventAction->AddMuonMinus();   break;  // mu-
+            case -15:   fEventAction->AddTauPlus();     break;  // tau+
+            case 15:    fEventAction->AddTauMinus();    break;  // tau-
+            case 321:   fEventAction->AddKaonPlus();    break;  // kaon+
+            case -321:  fEventAction->AddKaonMinus();   break;  // kaon-
+            case 311:   fEventAction->AddKaonZero();    break;  // kaon0
+            case 310:   fEventAction->AddKaonZeroL();   break;  // kaon0 Long
+            case 130:   fEventAction->AddKaonZeroS();   break;  // kaon0 short
+            case -13:   fEventAction->AddMuonPlus();    break;  // mu+
             }
         
         // Z position
@@ -133,26 +340,6 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         }
     }
 
-    if (step->GetPostStepPoint()->GetStepStatus() == fPostStepDoItProc) {
-
-        auto proc = step->GetPostStepPoint()->GetProcessDefinedStep();
-
-        if (proc) {
-            auto pname = proc->GetProcessName();
-            //G4cout << "PROCESS: " << pname << G4endl; // debugging print
-
-            if (pname == "nu_eNuclear" ||
-                pname == "nu_muNuclear" ||
-                pname == "nu_tauNuclear") {
-
-                G4cout << "\n*** NEUTRINO INTERACTION ***\n"
-                    << "Particle: "
-                    << step->GetTrack()->GetParticleDefinition()->GetParticleName()
-                    << "\nProcess: " << pname << G4endl;
-            }
-        }
-    }
-
     auto proc1 = step->GetPostStepPoint()->GetProcessDefinedStep();
 
     if(proc1)
@@ -173,6 +360,10 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 pname.find("nu") != std::string::npos) {
 
                 fEventAction->AddNuInteraction();
+                fEventAction->vertexX = step->GetPostStepPoint()->GetPosition().x();
+                fEventAction->vertexY = step->GetPostStepPoint()->GetPosition().y();
+                fEventAction->vertexZ = step->GetPostStepPoint()->GetPosition().z();
+                fEventAction->vertexT = step->GetPostStepPoint()->GetGlobalTime();
 
                 /*G4cout << "*** NEUTRINO INTERACTION EVENT ***\n"
                     << "Process: " << pname << "\n"
@@ -221,39 +412,80 @@ if(secondaries && secondaries->size() > 0) {
 
     if(track->GetParentID() == 0) {
 
-    // Save initial info at first step
-    if(fEventAction->ReadE() == 0) {
-        fEventAction->SetInitialKinematics(
-            track->GetKineticEnergy(),
-            track->GetPosition(),
-            track->GetMomentum()
-        );
-    }
+        // Save initial info at first step
+        if(track->GetCurrentStepNumber() == 1) {
+            // Initialize primary PDG tracking variables
+            fEventAction->primaryPDG = track->GetDefinition()->GetPDGEncoding();
+            fEventAction->primaryFinalPDG = track->GetDefinition()->GetPDGEncoding();
+
+            fEventAction->x = track->GetPosition().x();
+            fEventAction->y = track->GetPosition().y();
+            fEventAction->z = track->GetPosition().z();
+            
+            if(fEventAction->ReadE() == 0) {
+                fEventAction->SetInitialKinematics(
+                    track->GetKineticEnergy(),
+                    track->GetPosition(),
+                    track->GetMomentum()
+            );
+            }
+        }
 
     // Update final info only at track end
-    if(track->GetTrackStatus() == fStopAndKill) {
-        fEventAction->SetFinalKinematics(
-            track->GetKineticEnergy(),
-            track->GetPosition()
-        );
+        if(track->GetTrackStatus() == fStopAndKill) {
+            // If the particle terminates without oscillating, record its final definition
+            int finalPDG = track->GetDefinition()->GetPDGEncoding();
+            if (std::abs(finalPDG) == 12 || std::abs(finalPDG) == 14 || std::abs(finalPDG) == 16) {
+                fEventAction->primaryFinalPDG = finalPDG;
+            }
 
-        // Recompute final direction
-        fEventAction->SetFinalMomentum(track->GetMomentum());
+            fEventAction->SetFinalKinematics(
+                track->GetKineticEnergy(),
+                track->GetPosition()
+            );
+
+            // Recompute final direction
+            fEventAction->SetFinalMomentum(track->GetMomentum());
         }
     }
     // Save step position for offline 3D visualization
     auto analysisManager = G4AnalysisManager::Instance();
-    G4ThreeVector pos = step->GetPostStepPoint()->GetPosition();
     int eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
+    
+    // Get Pre and Post step positions
+    G4ThreeVector prePos = step->GetPreStepPoint()->GetPosition();
+    G4ThreeVector postPos = step->GetPostStepPoint()->GetPosition();
+    
+    // Get Process names safely
+    const G4VProcess* proc = step->GetPostStepPoint()->GetProcessDefinedStep();
+    const G4VProcess* creator = track->GetCreatorProcess();
+    
+    G4String procName = proc ? proc->GetProcessName() : "None";
+    G4String creatorName = creator ? creator->GetProcessName() : "Primary";
 
+    // Fill IDs
     analysisManager->FillNtupleIColumn(1, 0, eventID);
     analysisManager->FillNtupleIColumn(1, 1, track->GetTrackID());
     analysisManager->FillNtupleIColumn(1, 2, track->GetParentID());
     analysisManager->FillNtupleIColumn(1, 3, track->GetDefinition()->GetPDGEncoding());
-    analysisManager->FillNtupleDColumn(1, 4, pos.x() / CLHEP::mm);
-    analysisManager->FillNtupleDColumn(1, 5, pos.y() / CLHEP::mm);
-    analysisManager->FillNtupleDColumn(1, 6, pos.z() / CLHEP::mm);
-    analysisManager->FillNtupleDColumn(1, 7, step->GetTotalEnergyDeposit() / CLHEP::MeV);
+    
+    // Fill Pre-Step Coordinates
+    analysisManager->FillNtupleDColumn(1, 4, prePos.x() / CLHEP::mm);
+    analysisManager->FillNtupleDColumn(1, 5, prePos.y() / CLHEP::mm);
+    analysisManager->FillNtupleDColumn(1, 6, prePos.z() / CLHEP::mm);
+    
+    // Fill Post-Step Coordinates
+    analysisManager->FillNtupleDColumn(1, 7, postPos.x() / CLHEP::mm);
+    analysisManager->FillNtupleDColumn(1, 8, postPos.y() / CLHEP::mm);
+    analysisManager->FillNtupleDColumn(1, 9, postPos.z() / CLHEP::mm);
+    
+    // Fill Energy values
+    analysisManager->FillNtupleDColumn(1, 10, step->GetPreStepPoint()->GetKineticEnergy() / CLHEP::MeV);
+    analysisManager->FillNtupleDColumn(1, 11, step->GetTotalEnergyDeposit() / CLHEP::MeV);
+    
+    // Fill String Processes
+    analysisManager->FillNtupleSColumn(1, 12, procName);
+    analysisManager->FillNtupleSColumn(1, 13, creatorName);
     
     analysisManager->AddNtupleRow(1); // Adds row specifically to Ntuple 1 ("tracks")
 }

@@ -1,8 +1,7 @@
 # information for running the gun but also for naming the file!
 /control/alias NSHOTS 1000
 /control/alias FLUX_NAME IMCC_5TeV_A_200m
-/control/alias DETECTOR MuColl_v1,0,1 # name the geoemtry you'd like to use
-# NB: Root gets upset by dots, so version names need to use commas. Sorry.
+/control/alias DETECTOR MAIA # name the geometry you'd like to use
 
 # This doesn't name the file, but it is useful for controlling the biasing
 /control/alias MUNUNUCBIAS 1e6

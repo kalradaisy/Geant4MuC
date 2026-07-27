@@ -6,6 +6,7 @@
 #include "globals.hh"
 #include "G4ThreeVector.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
+#include <vector>
 
 
 class EventAction : public G4UserEventAction {
@@ -109,12 +110,58 @@ public:
     double GetInitialE() const { return E; }
 
     G4bool neutrinoInteractionPrinted = false; //idk where this is used
+
+    double E, x, y, z;
+    double vertexX, vertexY, vertexZ, vertexT;
+    G4String interactionType;
+    G4String interactionModel;
+    G4int eventID;
+    G4int primaryPDG;
+    G4int particleType;
+    G4int primaryFinalPDG;
+
+    // Store bools as ints, we have to to use G4AnalysisManager. It's all good
+    G4int primaryOscillationProcessInvoked;
+    G4int primaryOscillationFlavorChanged;
+    
+    G4int primaryOscillationPDGBefore;
+    G4int primaryOscillationPDGAfter;
+    G4int nOscillationSteps;
+
+    G4String nuInteractionProcess;
+    G4String allInteractionProcess;
+    
+    G4int isCC;
+    G4int isNC;
+    
+    G4int outgoingLeptonPDG;
+    G4double outgoingLeptonE;
+    G4double outgoingHadronE;
+    
+    G4double outgoingLeptonPx;
+    G4double outgoingLeptonPy;
+    G4double outgoingLeptonPz;
+
+    G4bool decisionMade;
+
+    G4double q0;
+    G4double Q2;
+    G4double W;
+    G4double xBj;
+    G4double yBj;
+    
+    // Validation & Lepton Kinematics
+    G4double leptonScatteringAngle;
+    G4double leptonCosTheta;
+    G4double inelasticity;
+    
+    // Shower Properties
+    G4int showerNSecondaries;
   
 private:
     // --------------------------------------------------------
     // NEW: We moved these from RunAction to EventAction!
     // --------------------------------------------------------
-    double E, x, y, z;
     double finalE, finalX, finalY, finalZ;
     double px, py, pz;
     double theta, phi, finalPhi, finalPhiDeg;

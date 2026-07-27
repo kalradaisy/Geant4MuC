@@ -1,14 +1,14 @@
 # information for running the gun but also for naming the file!
-/control/alias PARTICLE anti_nu_mu
-/control/alias ENERGY 100 #GeV
-/control/alias NSHOTS 1000 # How many times the gun is fired in a run
-/control/alias DETECTOR MuColl_v1,0,1 # name the geoemtry you'd like to use
-# NB: Root gets upset by dots, so version names need to use commas. Sorry.
+/control/alias PARTICLE nu_mu
+/control/alias ENERGY 10 #GeV
+/control/alias NSHOTS 50 # How many times the gun is fired in a run
+/control/alias DETECTOR MAIA # name the geometry you'd like to use
+
 
 # This doesn't name the file, but it is useful for controlling the biasing
-/control/alias MUNUNUCBIAS 5e11
-/control/alias ELNUNUCBIAS 5e9
-/control/alias NUELECBIAS 5e14
+/control/alias MUNUNUCBIAS 1e9
+/control/alias ELNUNUCBIAS 1e9
+/control/alias NUELECBIAS 1
 
 #______________________________________________________________________________
 /physics_lists/nu/NuDetectorName target
@@ -24,7 +24,7 @@
 # sets our particle as a muon neutrino
 /gun/energy {ENERGY} GeV
 # energy of the particles from the gun
-/gun/position 0 0 10 cm
+/gun/position 0 0 0 cm
 # gun position
 
 # Allows dynamic filenaming, meaning we can assign unique runs unique names

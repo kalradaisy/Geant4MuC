@@ -4,10 +4,6 @@
 #include "G4UserRunAction.hh"
 #include "G4AnalysisManager.hh"
 
-// With any luck, the includes below can be 86'd
-#include "TFile.h"
-#include "TTree.h"
-
 class G4Run;
 
 class RunAction : public G4UserRunAction {
@@ -20,6 +16,8 @@ public:
 
     // You no longer need to store variables like "E, x, y, z" in RunAction!
     // The Analysis Manager handles the memory internally.
+
+    std::vector<double> secEnergies;
 
 private:
     G4String fBaseName;

@@ -3,7 +3,7 @@
 # the need to recompile the entire program, saving time.
 # FORCE SINGLE THREAD (otherwise things'll take forever)
 /run/numberOfThreads 1
-/detector/readGDML ../output.gdml
+/detector/readGDML ../MAIA.gdml
 /run/initialize
 /vis/open OGLIQt
 # necessary always

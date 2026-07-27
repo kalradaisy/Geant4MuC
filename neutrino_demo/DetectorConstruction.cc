@@ -55,7 +55,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct(){
     G4VPhysicalVolume* world = fParser.GetWorldVolume();
     // If no macro loaded a geometry, load the default now
     if (!world) {
-        G4String defaultGDML = "../output.gdml";
+        G4String defaultGDML = "../MAIA.gdml";
         G4cout << "No macro geometry specified. Loading default GDML: " << defaultGDML << G4endl;
         
         fParser.Read(defaultGDML, false); // false disables schema validation
