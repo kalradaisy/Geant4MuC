@@ -17,7 +17,11 @@ public:
     // You no longer need to store variables like "E, x, y, z" in RunAction!
     // The Analysis Manager handles the memory internally.
 
-    std::vector<double> secEnergies;
+    // We do still need to store some vectors here because of the way GEANT4
+    // handles memory
+
+    std::vector<G4double> secEnergies; // Stores seconadry energies
+    std::vector<G4double> secWeights; // Stores secondary statistical weights
 
 private:
     G4String fBaseName;

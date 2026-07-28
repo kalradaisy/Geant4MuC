@@ -157,6 +157,9 @@ public:
     
     // Shower Properties
     G4int showerNSecondaries;
+
+    // Biased interaction weight information, native to geant
+    G4double eventWeight;
   
 private:
     // --------------------------------------------------------

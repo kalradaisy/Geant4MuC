@@ -43,6 +43,7 @@ void EventAction::BeginOfEventAction(const G4Event* event)
         static_cast<const RunAction*>(G4RunManager::GetRunManager()->GetUserRunAction())
     );
     runAction->secEnergies.clear(); // handles secondary energies
+    runAction->secWeights.clear(); // handles secondary weights
     nGamma = 0;
     nElectron = 0;
     nPositron = 0;
@@ -126,6 +127,8 @@ void EventAction::BeginOfEventAction(const G4Event* event)
     inelasticity = 0.0;
     showerNSecondaries = 0;
 
+    eventWeight = 1.0;
+
 
     // Get primary particle info and store it locally
     auto vertex = event->GetPrimaryVertex();
@@ -184,83 +187,85 @@ void EventAction::EndOfEventAction(const G4Event*)
     analysisManager->FillNtupleIColumn(0, 25, nSteps);
     analysisManager->FillNtupleIColumn(0, 26, nSecondaries);
     // Sec Energies is 27, but it is handled entirely in RunAction due to memory
-    analysisManager->FillNtupleIColumn(0, 28, nGamma);
-    analysisManager->FillNtupleIColumn(0, 29, nElectron);
-    analysisManager->FillNtupleIColumn(0, 30, nPositron);
-    analysisManager->FillNtupleIColumn(0, 31, nProtonSec);
-    analysisManager->FillNtupleIColumn(0, 32, nNeutron);
-    analysisManager->FillNtupleIColumn(0, 33, nPionPlus);
-    analysisManager->FillNtupleIColumn(0, 34, nPionMinus);
-    analysisManager->FillNtupleIColumn(0, 35, nPionZero);
-    analysisManager->FillNtupleIColumn(0, 36, nMuonPlus);
-    analysisManager->FillNtupleIColumn(0, 37, nMuonMinus);
-    analysisManager->FillNtupleIColumn(0, 38, nTauPlus);
-    analysisManager->FillNtupleIColumn(0, 39, nTauMinus);
-    analysisManager->FillNtupleIColumn(0, 40, nKaonPlus);
-    analysisManager->FillNtupleIColumn(0, 41, nKaonMinus);
-    analysisManager->FillNtupleIColumn(0, 42, nKaonZero);
-    analysisManager->FillNtupleIColumn(0, 43, nKaonZeroL);
-    analysisManager->FillNtupleIColumn(0, 44, nKaonZeroS);
+    // Sec Weights is 28
+    analysisManager->FillNtupleIColumn(0, 29, nGamma);
+    analysisManager->FillNtupleIColumn(0, 30, nElectron);
+    analysisManager->FillNtupleIColumn(0, 31, nPositron);
+    analysisManager->FillNtupleIColumn(0, 32, nProtonSec);
+    analysisManager->FillNtupleIColumn(0, 33, nNeutron);
+    analysisManager->FillNtupleIColumn(0, 34, nPionPlus);
+    analysisManager->FillNtupleIColumn(0, 35, nPionMinus);
+    analysisManager->FillNtupleIColumn(0, 36, nPionZero);
+    analysisManager->FillNtupleIColumn(0, 37, nMuonPlus);
+    analysisManager->FillNtupleIColumn(0, 38, nMuonMinus);
+    analysisManager->FillNtupleIColumn(0, 39, nTauPlus);
+    analysisManager->FillNtupleIColumn(0, 40, nTauMinus);
+    analysisManager->FillNtupleIColumn(0, 41, nKaonPlus);
+    analysisManager->FillNtupleIColumn(0, 42, nKaonMinus);
+    analysisManager->FillNtupleIColumn(0, 43, nKaonZero);
+    analysisManager->FillNtupleIColumn(0, 44, nKaonZeroL);
+    analysisManager->FillNtupleIColumn(0, 45, nKaonZeroS);
 
 
-    analysisManager->FillNtupleDColumn(0, 45, secTotalE);
-    analysisManager->FillNtupleDColumn(0, 46, secMeanE);
-    analysisManager->FillNtupleDColumn(0, 47, secTrackLength);
-    analysisManager->FillNtupleDColumn(0, 48, secFirstZ);
-    analysisManager->FillNtupleDColumn(0, 49, secLastZ);
-    analysisManager->FillNtupleDColumn(0, 50, secFirstX);
-    analysisManager->FillNtupleDColumn(0, 51, secLastX);
-    analysisManager->FillNtupleDColumn(0, 52, secFirstY);
-    analysisManager->FillNtupleDColumn(0, 53, secLastY);
+    analysisManager->FillNtupleDColumn(0, 46, secTotalE);
+    analysisManager->FillNtupleDColumn(0, 47, secMeanE);
+    analysisManager->FillNtupleDColumn(0, 48, secTrackLength);
+    analysisManager->FillNtupleDColumn(0, 49, secFirstZ);
+    analysisManager->FillNtupleDColumn(0, 50, secLastZ);
+    analysisManager->FillNtupleDColumn(0, 51, secFirstX);
+    analysisManager->FillNtupleDColumn(0, 52, secLastX);
+    analysisManager->FillNtupleDColumn(0, 53, secFirstY);
+    analysisManager->FillNtupleDColumn(0, 54, secLastY);
 
-    analysisManager->FillNtupleIColumn(0, 54, nBackward);
-    analysisManager->FillNtupleIColumn(0, 55, nDecay);
-    analysisManager->FillNtupleIColumn(0, 56, nCompton);
-    analysisManager->FillNtupleIColumn(0, 57, nPairProd);
-    analysisManager->FillNtupleIColumn(0, 58, nIonisation);
-    analysisManager->FillNtupleIColumn(0, 59, nBremsstrahlung);
-    analysisManager->FillNtupleIColumn(0, 60, nPhotoElectric);
-    analysisManager->FillNtupleIColumn(0, 61, nAnnihilation);
-    analysisManager->FillNtupleIColumn(0, 62, targetZ);
-    analysisManager->FillNtupleIColumn(0, 63, targetA);
-    analysisManager->FillNtupleIColumn(0, 64, targetPDG);
-    analysisManager->FillNtupleIColumn(0, 65, fNuInteractions);
+    analysisManager->FillNtupleIColumn(0, 55, nBackward);
+    analysisManager->FillNtupleIColumn(0, 56, nDecay);
+    analysisManager->FillNtupleIColumn(0, 57, nCompton);
+    analysisManager->FillNtupleIColumn(0, 58, nPairProd);
+    analysisManager->FillNtupleIColumn(0, 59, nIonisation);
+    analysisManager->FillNtupleIColumn(0, 60, nBremsstrahlung);
+    analysisManager->FillNtupleIColumn(0, 61, nPhotoElectric);
+    analysisManager->FillNtupleIColumn(0, 62, nAnnihilation);
+    analysisManager->FillNtupleIColumn(0, 63, targetZ);
+    analysisManager->FillNtupleIColumn(0, 64, targetA);
+    analysisManager->FillNtupleIColumn(0, 65, targetPDG);
+    analysisManager->FillNtupleIColumn(0, 66, fNuInteractions);
 
-    analysisManager->FillNtupleSColumn(0, 66, interactionType);
-    analysisManager->FillNtupleSColumn(0, 67, interactionModel);
-    analysisManager->FillNtupleIColumn(0, 68, eventID);
-    analysisManager->FillNtupleIColumn(0, 69, primaryPDG);
-    analysisManager->FillNtupleIColumn(0, 70, particleType);
-    analysisManager->FillNtupleIColumn(0, 71, primaryFinalPDG);
-    analysisManager->FillNtupleIColumn(0, 72, primaryOscillationProcessInvoked);
-    analysisManager->FillNtupleIColumn(0, 73, primaryOscillationFlavorChanged);
-    analysisManager->FillNtupleIColumn(0, 74, primaryOscillationPDGBefore);
-    analysisManager->FillNtupleIColumn(0, 75, primaryOscillationPDGAfter);
-    analysisManager->FillNtupleIColumn(0, 76, nOscillationSteps);
+    analysisManager->FillNtupleSColumn(0, 67, interactionType);
+    analysisManager->FillNtupleSColumn(0, 68, interactionModel);
+    analysisManager->FillNtupleIColumn(0, 69, eventID);
+    analysisManager->FillNtupleIColumn(0, 70, primaryPDG);
+    analysisManager->FillNtupleIColumn(0, 71, particleType);
+    analysisManager->FillNtupleIColumn(0, 72, primaryFinalPDG);
+    analysisManager->FillNtupleIColumn(0, 73, primaryOscillationProcessInvoked);
+    analysisManager->FillNtupleIColumn(0, 74, primaryOscillationFlavorChanged);
+    analysisManager->FillNtupleIColumn(0, 75, primaryOscillationPDGBefore);
+    analysisManager->FillNtupleIColumn(0, 76, primaryOscillationPDGAfter);
+    analysisManager->FillNtupleIColumn(0, 77, nOscillationSteps);
 
-    analysisManager->FillNtupleSColumn(0, 77, nuInteractionProcess);
-    analysisManager->FillNtupleSColumn(0, 78, allInteractionProcess);
+    analysisManager->FillNtupleSColumn(0, 78, nuInteractionProcess);
+    analysisManager->FillNtupleSColumn(0, 79, allInteractionProcess);
     
-    analysisManager->FillNtupleIColumn(0, 79, isCC);
-    analysisManager->FillNtupleIColumn(0, 80, isNC);
-    analysisManager->FillNtupleIColumn(0, 81, outgoingLeptonPDG);
+    analysisManager->FillNtupleIColumn(0, 80, isCC);
+    analysisManager->FillNtupleIColumn(0, 81, isNC);
+    analysisManager->FillNtupleIColumn(0, 82, outgoingLeptonPDG);
     
-    analysisManager->FillNtupleDColumn(0, 82, outgoingLeptonE);
-    analysisManager->FillNtupleDColumn(0, 83, outgoingHadronE);
-    analysisManager->FillNtupleDColumn(0, 84, outgoingLeptonPx);
-    analysisManager->FillNtupleDColumn(0, 85, outgoingLeptonPy);
-    analysisManager->FillNtupleDColumn(0, 86, outgoingLeptonPz);
+    analysisManager->FillNtupleDColumn(0, 83, outgoingLeptonE);
+    analysisManager->FillNtupleDColumn(0, 84, outgoingHadronE);
+    analysisManager->FillNtupleDColumn(0, 85, outgoingLeptonPx);
+    analysisManager->FillNtupleDColumn(0, 86, outgoingLeptonPy);
+    analysisManager->FillNtupleDColumn(0, 87, outgoingLeptonPz);
 
-    analysisManager->FillNtupleDColumn(0, 87, q0);
-    analysisManager->FillNtupleDColumn(0, 88, Q2);
-    analysisManager->FillNtupleDColumn(0, 89, W);
-    analysisManager->FillNtupleDColumn(0, 90, xBj);
-    analysisManager->FillNtupleDColumn(0, 91, yBj);
+    analysisManager->FillNtupleDColumn(0, 88, q0);
+    analysisManager->FillNtupleDColumn(0, 89, Q2);
+    analysisManager->FillNtupleDColumn(0, 90, W);
+    analysisManager->FillNtupleDColumn(0, 91, xBj);
+    analysisManager->FillNtupleDColumn(0, 92, yBj);
 
-    analysisManager->FillNtupleDColumn(0, 92, leptonScatteringAngle);
-    analysisManager->FillNtupleDColumn(0, 93, leptonCosTheta);
-    analysisManager->FillNtupleDColumn(0, 94, inelasticity);
-    analysisManager->FillNtupleIColumn(0, 95, showerNSecondaries);
+    analysisManager->FillNtupleDColumn(0, 93, leptonScatteringAngle);
+    analysisManager->FillNtupleDColumn(0, 94, leptonCosTheta);
+    analysisManager->FillNtupleDColumn(0, 95, inelasticity);
+    analysisManager->FillNtupleIColumn(0, 96, showerNSecondaries);
+    analysisManager->FillNtupleDColumn(0, 97, eventWeight);
 
     // This replaces fTree->Fill()
     analysisManager->AddNtupleRow(0);

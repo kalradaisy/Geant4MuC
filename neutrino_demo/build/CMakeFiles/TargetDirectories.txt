@@ -1,3 +1,0 @@
-/home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/build/CMakeFiles/neutrino.dir
-/home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/build/CMakeFiles/edit_cache.dir
-/home/jrositas/MuC_Neutrinos/GEANT4/Geant4NuInt/neutrino_demo/build/CMakeFiles/rebuild_cache.dir

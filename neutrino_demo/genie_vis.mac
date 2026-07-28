@@ -1,5 +1,5 @@
 /run/numberOfThreads 1
-/detector/readGDML ../output.gdml
+/detector/readGDML ../MAIA.gdml
 /run/initialize
 
 # Set file name and generator mode

@@ -30,11 +30,6 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     auto material = step->GetPreStepPoint()->GetMaterial();
     auto element = material->GetElement(0); // first element
 
- 
-    // -----------------------------
-
-    // Accumulate total energy deposition and steps for all tracks
-    // -----------------------------
     // -----------------------------
     // Primary Neutrino Interaction Classification
     // -----------------------------
@@ -91,6 +86,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         
         // Record the clean process name
         fEventAction->nuInteractionProcess = nuProcName;
+        fEventAction->eventWeight = track->GetWeight();
         fEventAction->allInteractionProcess = nuProcName;
 
         // Calculate the expected charged lepton PDG based on the incoming neutrino flavor
@@ -119,7 +115,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 int absSecPDG = std::abs(secPDG);
                 G4double secE = sec->GetKineticEnergy() + sec->GetDefinition()->GetPDGMass();
 
-                // 1. Did we find the expected charged lepton? (Charged Current)
+                // Look for correct lepton for a CC interaction
                 if (secPDG == expectedLepton) {
                     foundCCLepton = true;
                     fEventAction->outgoingLeptonPDG = secPDG;
@@ -129,12 +125,12 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     fEventAction->outgoingLeptonPz = sec->GetMomentum().z();
                 }
 
-                // 2. Did we find an outgoing neutrino? (Neutral Current)
+                // Looks for an outgoing neutrino for a NC interaction
                 if (secPDG == pdg) {
                     foundOutNu = true;
                 }
 
-                // 3. Topology Counters for Interaction Model Classification
+                // Topology Counters for Interaction Model Classification
                 if (absSecPDG == 211 || absSecPDG == 111) { // pi+, pi-, pi0
                     nPions++;
                 }
@@ -142,7 +138,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     nNucleons++;
                 }
 
-                // 4. Hadronic energy accumulation
+                // Hadronic energy accumulation
                 if (absSecPDG == 2212 || absSecPDG == 2112 || absSecPDG == 211 ||
                     absSecPDG == 321  || absSecPDG == 111  || absSecPDG == 311 ||
                     absSecPDG == 310  || absSecPDG == 130) {
@@ -292,6 +288,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         if(Esec > 1*keV) {
             fEventAction->AddSecE(Esec);
             fRunAction->secEnergies.push_back(Esec);
+            fRunAction->secWeights.push_back(track->GetWeight());
         }
 
         // Particle type
@@ -486,6 +483,9 @@ if(secondaries && secondaries->size() > 0) {
     // Fill String Processes
     analysisManager->FillNtupleSColumn(1, 12, procName);
     analysisManager->FillNtupleSColumn(1, 13, creatorName);
+
+    // Read and write statistical weights
+    analysisManager->FillNtupleDColumn(1, 14, track->GetWeight());
     
     analysisManager->AddNtupleRow(1); // Adds row specifically to Ntuple 1 ("tracks")
 }

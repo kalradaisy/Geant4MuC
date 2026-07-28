@@ -51,6 +51,8 @@ RunAction::RunAction() : G4UserRunAction(), fBaseName("")
     analysisManager->CreateNtupleIColumn(0, "nSecondaries");
     analysisManager->CreateNtupleDColumn(0, "secEnergies", secEnergies);
     // We have to treat this specially because G4 wants vectors defined upfront
+    analysisManager->CreateNtupleDColumn(0, "secWeights", secWeights);
+    // Same here
     analysisManager->CreateNtupleIColumn(0, "nGamma");
     analysisManager->CreateNtupleIColumn(0, "nElectron");
     analysisManager->CreateNtupleIColumn(0, "nPositron");
@@ -126,7 +128,9 @@ RunAction::RunAction() : G4UserRunAction(), fBaseName("")
     analysisManager->CreateNtupleDColumn(0, "leptonScatteringAngle");
     analysisManager->CreateNtupleDColumn(0, "leptonCosTheta");      
     analysisManager->CreateNtupleDColumn(0, "inelasticity");         
-    analysisManager->CreateNtupleIColumn(0, "showerNSecondaries");   
+    analysisManager->CreateNtupleIColumn(0, "showerNSecondaries");
+
+    analysisManager->CreateNtupleDColumn(0, "eventWeight");
     
     analysisManager->FinishNtuple(0);
 
@@ -145,6 +149,7 @@ RunAction::RunAction() : G4UserRunAction(), fBaseName("")
     analysisManager->CreateNtupleDColumn(1, "step_edep");
     analysisManager->CreateNtupleSColumn(1, "step_proc");
     analysisManager->CreateNtupleSColumn(1, "step_creatorproc");
+    analysisManager->CreateNtupleDColumn(1, "step_weight"); // Track weight for 3D steps
     analysisManager->FinishNtuple(1);
 
     analysisManager->CreateNtuple("trackBirths", "Track Initial Properties");
