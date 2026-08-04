@@ -8,7 +8,7 @@
 #include "G4PrimaryVertex.hh"
 #include "G4AnalysisManager.hh" // NEW: Required to write data!
 
-EventAction::EventAction() : totalEdep_(0), nSteps_(0) {}
+EventAction::EventAction() {}
 
 EventAction::~EventAction() {}
 
@@ -44,6 +44,12 @@ void EventAction::BeginOfEventAction(const G4Event* event)
     );
     runAction->secEnergies.clear(); // handles secondary energies
     runAction->secWeights.clear(); // handles secondary weights
+    runAction->secStartX.clear();
+    runAction->secStartY.clear();
+    runAction->secStartZ.clear();
+    runAction->secEndX.clear();
+    runAction->secEndY.clear();
+    runAction->secEndZ.clear();
     nGamma = 0;
     nElectron = 0;
     nPositron = 0;
@@ -66,12 +72,6 @@ void EventAction::BeginOfEventAction(const G4Event* event)
     secTotalE = 0;
     secMeanE = 0;
     secTrackLength = 0;
-    secFirstZ = 0;
-    secLastZ = 0;
-    secFirstX = 0;
-    secLastX = 0;
-    secFirstY = 0;
-    secLastY = 0;
 
     nBackward = 0;
     nDecay = 0;
@@ -85,6 +85,12 @@ void EventAction::BeginOfEventAction(const G4Event* event)
     targetA = 0;
     targetPDG = 0;
     fNuInteractions = 0;
+
+    vertexX = 0.0;
+    vertexY = 0.0;
+    vertexZ = 0.0;
+    vertexT = 0.0;
+    decisionMade = false;
 
     // Reset interaction strings
     interactionType = "None";
@@ -103,7 +109,6 @@ void EventAction::BeginOfEventAction(const G4Event* event)
     decisionMade = false;
 
     nuInteractionProcess = "None";
-    allInteractionProcess = "None";
     
     isCC = 0;
     isNC = 0;
@@ -150,6 +155,26 @@ void EventAction::BeginOfEventAction(const G4Event* event)
             phi   = p.phi();
         }
     }
+}
+
+void EventAction::AddSecStartPos(const G4ThreeVector& pos)
+{
+    auto runAction = const_cast<RunAction*>(
+        static_cast<const RunAction*>(G4RunManager::GetRunManager()->GetUserRunAction())
+    );
+    runAction->secStartX.push_back(pos.x());
+    runAction->secStartY.push_back(pos.y());
+    runAction->secStartZ.push_back(pos.z());
+}
+
+void EventAction::AddSecEndPos(const G4ThreeVector& pos)
+{
+    auto runAction = const_cast<RunAction*>(
+        static_cast<const RunAction*>(G4RunManager::GetRunManager()->GetUserRunAction())
+    );
+    runAction->secEndX.push_back(pos.x());
+    runAction->secEndY.push_back(pos.y());
+    runAction->secEndZ.push_back(pos.z());
 }
 
 void EventAction::EndOfEventAction(const G4Event*)
@@ -210,12 +235,14 @@ void EventAction::EndOfEventAction(const G4Event*)
     analysisManager->FillNtupleDColumn(0, 46, secTotalE);
     analysisManager->FillNtupleDColumn(0, 47, secMeanE);
     analysisManager->FillNtupleDColumn(0, 48, secTrackLength);
-    analysisManager->FillNtupleDColumn(0, 49, secFirstZ);
-    analysisManager->FillNtupleDColumn(0, 50, secLastZ);
-    analysisManager->FillNtupleDColumn(0, 51, secFirstX);
-    analysisManager->FillNtupleDColumn(0, 52, secLastX);
-    analysisManager->FillNtupleDColumn(0, 53, secFirstY);
-    analysisManager->FillNtupleDColumn(0, 54, secLastY);
+    /* The starting and ending vectors are handled by RunAction.cc as well
+    49, secStartZ
+    50, secEndZ
+    51, secStartX
+    52, secEndX
+    53, secStartY
+    54, secEndY
+    */
 
     analysisManager->FillNtupleIColumn(0, 55, nBackward);
     analysisManager->FillNtupleIColumn(0, 56, nDecay);
@@ -243,29 +270,28 @@ void EventAction::EndOfEventAction(const G4Event*)
     analysisManager->FillNtupleIColumn(0, 77, nOscillationSteps);
 
     analysisManager->FillNtupleSColumn(0, 78, nuInteractionProcess);
-    analysisManager->FillNtupleSColumn(0, 79, allInteractionProcess);
     
-    analysisManager->FillNtupleIColumn(0, 80, isCC);
-    analysisManager->FillNtupleIColumn(0, 81, isNC);
-    analysisManager->FillNtupleIColumn(0, 82, outgoingLeptonPDG);
+    analysisManager->FillNtupleIColumn(0, 79, isCC);
+    analysisManager->FillNtupleIColumn(0, 80, isNC);
+    analysisManager->FillNtupleIColumn(0, 81, outgoingLeptonPDG);
     
-    analysisManager->FillNtupleDColumn(0, 83, outgoingLeptonE);
-    analysisManager->FillNtupleDColumn(0, 84, outgoingHadronE);
-    analysisManager->FillNtupleDColumn(0, 85, outgoingLeptonPx);
-    analysisManager->FillNtupleDColumn(0, 86, outgoingLeptonPy);
-    analysisManager->FillNtupleDColumn(0, 87, outgoingLeptonPz);
+    analysisManager->FillNtupleDColumn(0, 82, outgoingLeptonE);
+    analysisManager->FillNtupleDColumn(0, 83, outgoingHadronE);
+    analysisManager->FillNtupleDColumn(0, 84, outgoingLeptonPx);
+    analysisManager->FillNtupleDColumn(0, 85, outgoingLeptonPy);
+    analysisManager->FillNtupleDColumn(0, 86, outgoingLeptonPz);
 
-    analysisManager->FillNtupleDColumn(0, 88, q0);
-    analysisManager->FillNtupleDColumn(0, 89, Q2);
-    analysisManager->FillNtupleDColumn(0, 90, W);
-    analysisManager->FillNtupleDColumn(0, 91, xBj);
-    analysisManager->FillNtupleDColumn(0, 92, yBj);
+    analysisManager->FillNtupleDColumn(0, 87, q0);
+    analysisManager->FillNtupleDColumn(0, 88, Q2);
+    analysisManager->FillNtupleDColumn(0, 89, W);
+    analysisManager->FillNtupleDColumn(0, 90, xBj);
+    analysisManager->FillNtupleDColumn(0, 91, yBj);
 
-    analysisManager->FillNtupleDColumn(0, 93, leptonScatteringAngle);
-    analysisManager->FillNtupleDColumn(0, 94, leptonCosTheta);
-    analysisManager->FillNtupleDColumn(0, 95, inelasticity);
-    analysisManager->FillNtupleIColumn(0, 96, showerNSecondaries);
-    analysisManager->FillNtupleDColumn(0, 97, eventWeight);
+    analysisManager->FillNtupleDColumn(0, 92, leptonScatteringAngle);
+    analysisManager->FillNtupleDColumn(0, 93, leptonCosTheta);
+    analysisManager->FillNtupleDColumn(0, 94, inelasticity);
+    analysisManager->FillNtupleIColumn(0, 95, showerNSecondaries);
+    analysisManager->FillNtupleDColumn(0, 96, eventWeight);
 
     // This replaces fTree->Fill()
     analysisManager->AddNtupleRow(0);

@@ -75,12 +75,13 @@ RunAction::RunAction() : G4UserRunAction(), fBaseName("")
     analysisManager->CreateNtupleDColumn(0, "secTotalE");
     analysisManager->CreateNtupleDColumn(0, "secMeanE");
     analysisManager->CreateNtupleDColumn(0, "secTrackLength");
-    analysisManager->CreateNtupleDColumn(0, "secFirstZ");
-    analysisManager->CreateNtupleDColumn(0, "secLastZ");
-    analysisManager->CreateNtupleDColumn(0, "secFirstX");
-    analysisManager->CreateNtupleDColumn(0, "secLastX");
-    analysisManager->CreateNtupleDColumn(0, "secFirstY");
-    analysisManager->CreateNtupleDColumn(0, "secLastY");
+    // more vector definition subtlety here
+    analysisManager->CreateNtupleDColumn(0, "secStartX", secStartX);
+    analysisManager->CreateNtupleDColumn(0, "secEndX", secEndX);
+    analysisManager->CreateNtupleDColumn(0, "secStartY", secStartY);
+    analysisManager->CreateNtupleDColumn(0, "secEndY", secEndY);
+    analysisManager->CreateNtupleDColumn(0, "secStartZ", secStartZ);
+    analysisManager->CreateNtupleDColumn(0, "secEndZ", secEndZ);
 
     analysisManager->CreateNtupleIColumn(0, "nBackward");
     analysisManager->CreateNtupleIColumn(0, "nDecay");
@@ -109,7 +110,6 @@ RunAction::RunAction() : G4UserRunAction(), fBaseName("")
     analysisManager->CreateNtupleIColumn(0, "nOscillationSteps");
 
     analysisManager->CreateNtupleSColumn(0, "nuInteractionProcess");
-    analysisManager->CreateNtupleSColumn(0, "allInteractionProcess");
     analysisManager->CreateNtupleIColumn(0, "isCC");
     analysisManager->CreateNtupleIColumn(0, "isNC");
     analysisManager->CreateNtupleIColumn(0, "outgoingLeptonPDG");
@@ -145,8 +145,16 @@ RunAction::RunAction() : G4UserRunAction(), fBaseName("")
     analysisManager->CreateNtupleDColumn(1, "step_postX");
     analysisManager->CreateNtupleDColumn(1, "step_postY");
     analysisManager->CreateNtupleDColumn(1, "step_postZ");
+    analysisManager->CreateNtupleDColumn(1, "step_preMomX");     
+    analysisManager->CreateNtupleDColumn(1, "step_preMomY");     
+    analysisManager->CreateNtupleDColumn(1, "step_preMomZ");     
+    analysisManager->CreateNtupleDColumn(1, "step_postMomX");    
+    analysisManager->CreateNtupleDColumn(1, "step_postMomY");    
+    analysisManager->CreateNtupleDColumn(1, "step_postMomZ");    
     analysisManager->CreateNtupleDColumn(1, "step_kinE");
     analysisManager->CreateNtupleDColumn(1, "step_edep");
+    analysisManager->CreateNtupleDColumn(1, "step_stepLength");  
+    analysisManager->CreateNtupleDColumn(1, "step_time");        
     analysisManager->CreateNtupleSColumn(1, "step_proc");
     analysisManager->CreateNtupleSColumn(1, "step_creatorproc");
     analysisManager->CreateNtupleDColumn(1, "step_weight"); // Track weight for 3D steps
@@ -160,6 +168,11 @@ RunAction::RunAction() : G4UserRunAction(), fBaseName("")
     analysisManager->CreateNtupleDColumn(2, "trk_birthPosZ");
     analysisManager->CreateNtupleDColumn(2, "trk_birthKE");
     analysisManager->FinishNtuple(2);
+
+    analysisManager->CreateNtuple("interactions", "All Interaction Processes");
+    analysisManager->CreateNtupleIColumn(3, "eventID");
+    analysisManager->CreateNtupleSColumn(3, "process");
+    analysisManager->FinishNtuple(3);
 }
 
 RunAction::~RunAction() 

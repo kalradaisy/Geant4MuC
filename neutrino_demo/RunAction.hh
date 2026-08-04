@@ -3,6 +3,8 @@
 
 #include "G4UserRunAction.hh"
 #include "G4AnalysisManager.hh"
+#include "TFile.h" 
+#include "TTree.h"
 
 class G4Run;
 
@@ -22,6 +24,13 @@ public:
 
     std::vector<G4double> secEnergies; // Stores seconadry energies
     std::vector<G4double> secWeights; // Stores secondary statistical weights
+
+    std::vector<double> secStartX;
+    std::vector<double> secStartY;
+    std::vector<double> secStartZ;
+    std::vector<double> secEndX;
+    std::vector<double> secEndY;
+    std::vector<double> secEndZ;
 
 private:
     G4String fBaseName;

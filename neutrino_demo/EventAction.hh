@@ -7,6 +7,8 @@
 #include "G4ThreeVector.hh"
 #include "CLHEP/Units/PhysicalConstants.h"
 #include <vector>
+#include <string>
+#include "G4String.hh"
 
 
 class EventAction : public G4UserEventAction {
@@ -17,8 +19,8 @@ public:
     void BeginOfEventAction(const G4Event*) override;
     void EndOfEventAction(const G4Event* event) override;
 
-    void AddEdep(double edep) { totalEdep_ += edep; }
-    void IncrementStep() { nSteps_++; }
+    void AddEdep(double edep) { totalEdep += edep; }
+    void IncrementStep() { nSteps++; }
     /* Updated Setter methods below*/
     // Process & Particle Counters
     void AddNuInteraction() { fNuInteractions++; }
@@ -36,21 +38,12 @@ public:
     void SetTargetA(int A)     { targetA = A; }
     void SetTargetPDG(int PDG_val)     { targetPDG = PDG_val; }
 
+    void AddSecStartPos(const G4ThreeVector& pos);
+    void AddSecEndPos(const G4ThreeVector& pos);
+
     
     // Track length accumulator
     void AddSecTrackLength(double len) { secTrackLength += len; }
-
-    void SetFirstLastXYZ(const G4ThreeVector& pos){
-        double x = pos.x();
-        double y = pos.y();
-        double z = pos.z();
-        if(secFirstX > x) secFirstX = x;
-        if(secLastX  < x) secLastX = x;
-        if(secFirstY > y) secFirstY = y;
-        if(secLastY  < y) secLastY = y;
-        if(secFirstZ > z) secFirstZ = z;
-        if(secLastZ  < z) secLastZ = z;
-    }
 
     void CountBackTracks(const G4ThreeVector& p){
         if(p.z() < 0) nBackward++;
@@ -111,7 +104,7 @@ public:
 
     G4bool neutrinoInteractionPrinted = false; //idk where this is used
 
-    double E, x, y, z;
+    double E, x, y, z, costh;
     double vertexX, vertexY, vertexZ, vertexT;
     G4String interactionType;
     G4String interactionModel;
@@ -129,7 +122,6 @@ public:
     G4int nOscillationSteps;
 
     G4String nuInteractionProcess;
-    G4String allInteractionProcess;
     
     G4int isCC;
     G4int isNC;
@@ -172,7 +164,6 @@ private:
     double totalEdep;
     int nSteps;
     int nSecondaries;
-    double costh;  
 
     double finalPx, finalPy, finalPz;
     double finalCosth;
@@ -190,13 +181,6 @@ private:
     double secTotalE;
     double secMeanE;
     double secTrackLength;
-
-    double secFirstZ;
-    double secLastZ;
-    double secFirstX;
-    double secLastX;
-    double secFirstY;
-    double secLastY;
 
     int nBackward;
 
@@ -224,9 +208,7 @@ private:
     int nKaonZeroS=0;
     int fNuInteractions = 0;
 
-    // Per-event accumulators
-    double totalEdep_ = 0;
-    int nSteps_ = 0;
 };
+
 
 #endif
