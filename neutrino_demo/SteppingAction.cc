@@ -25,34 +25,44 @@ SteppingAction::SteppingAction(EventAction* eventAction, RunAction* runAction)
 void SteppingAction::UserSteppingAction(const G4Step* step) 
 {
     if(!fRunAction || !fEventAction) return;
+    // if there is no access to RunAction and EventAction, just stop
 
-    auto track = step->GetTrack();
-    auto material = step->GetPreStepPoint()->GetMaterial();
-    auto element = material->GetElement(0); // first element
+    // assigning info that will be helpful later
+    auto track = step->GetTrack(); // gets our track
+    auto material = step->GetPreStepPoint()->GetMaterial(); // gets our material
+    auto element = material->GetElement(0); // and the first element
 
     // Accumulate total energy deposit and step count for all steps
     fEventAction->AddEdep(step->GetTotalEnergyDeposit());
-    fEventAction->IncrementStep();
+    fEventAction->IncrementStep(); // move onto the next step
 
     // Step & Process Name prep
     const G4VProcess* process = step->GetPostStepPoint()->GetProcessDefinedStep();
     std::string procName = process ? std::string(process->GetProcessName()) : "None";
+    // gets process name information (if it exists)
 
     // Clean up process name by stripping out "biasWrapper()", just for clarity
     std::string biasPrefix = "biasWrapper(";
     if (procName.find(biasPrefix) == 0 && procName.back() == ')') {
         procName = procName.substr(biasPrefix.length(), procName.length() - biasPrefix.length() - 1);
     }
+    /* this is just because modern biasing puts an ugly wrapper around the name
+    of the process you bias. As long as you know what you're biasing, which you
+    should, then this wrapper name can be stripped off for a more pleasing name*/
 
-    if (procName != "Transportation" && procName != "None") {
+    if (procName != "Transportation" && procName != "None") { // if smth happens
         auto analysisManager = G4AnalysisManager::Instance();
         int currentEventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
-        
+        // instantiate
+
+        // information about the process for every single step, saved in ntuple 3
+        // this is the analog of allInteractionProcess in the v11.4.1 code
         analysisManager->FillNtupleIColumn(3, 0, currentEventID);
         analysisManager->FillNtupleSColumn(3, 1, procName);
         analysisManager->AddNtupleRow(3);
     }
 
+    // looking at PDG info for our particle, seeing if it's a neutrino
     int pdg = track->GetDefinition()->GetPDGEncoding();
     bool isPrimary = (track->GetParentID() == 0);
     bool isPrimaryNeutrino = isPrimary && 
@@ -104,13 +114,15 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         fEventAction->vertexT = step->GetPostStepPoint()->GetGlobalTime();
         fEventAction->eventWeight = track->GetWeight();
 
-        // Lock decision immediately so subsequent steps/secondaries cannot overwrite
-        // This is so we don't accidentally save multiple copies of data or overwrite it
+        /* Lock decision immediately so subsequent steps/secondaries cannot
+        overwrite. This is because we are saving information about the primary
+        interaction vertex, and we do not want to either overwrite this info
+        with later information or save the same information multiple times */
         fEventAction->decisionMade = true;
 
         // neutrino-specific sub-branch
         if (isPrimaryNeutrino) {
-            fEventAction->nuInteractionProcess = procName;
+            fEventAction->nuInteractionProcess = procName; // what process?
 
             // Calculate expected charged lepton PDG based on incoming neutrino flavor
             int expectedLepton = 0;
@@ -118,6 +130,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             if (std::abs(pdg) == 14) expectedLepton = (pdg > 0) ? 13 : -13; // nu_mu -> mu-
             if (std::abs(pdg) == 16) expectedLepton = (pdg > 0) ? 15 : -15; // nu_tau -> tau-
 
+            // instantiating some flags to default values so they may be set later
             bool foundCCLepton = false;
             bool foundOutNu = false;
             bool foundHadron = false;
@@ -126,13 +139,15 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             int nNucleons = 0;
 
             // Analyze particles produced in this interaction
+            // Those secondaries inform CC/NC classification as well
             const auto* secondaries = step->GetSecondaryInCurrentStep();
             if (secondaries) {
-                for (auto sec : *secondaries) {
+                for (auto sec : *secondaries) { // check through all secondaries
                     
                     // Ensure secondary was born from this specific primary track
                     if (sec->GetParentID() != track->GetTrackID()) continue;
 
+                    // record secondary information
                     int secPDG = sec->GetDefinition()->GetPDGEncoding();
                     int absSecPDG = std::abs(secPDG);
                     G4double secE = sec->GetKineticEnergy() + sec->GetDefinition()->GetPDGMass();
@@ -174,37 +189,44 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             if (foundCCLepton) {
                 fEventAction->isCC = 1;
                 fEventAction->isNC = 0;
-                fEventAction->interactionType = "CC";
-                if (nPions == 0 && nNucleons > 0) {
-                    fEventAction->interactionModel = "CCQE";
-                } else if (nPions == 1) {
+                fEventAction->interactionType = "CC"; // Charged Current
+                if (nPions == 0 && nNucleons > 0) { // CC Quasi-Elastic Scattering
+                    fEventAction->interactionModel = "CCQE"; 
+                } else if (nPions == 1) { // CC Resonance
                     fEventAction->interactionModel = "CCRES";
-                } else {
+                } else { // CC Deep Inelastic Scattering
                     fEventAction->interactionModel = "CCDIS";
                 }
 
                 // CC neutrino kinematics
+
+                // Neutrino energy, momentum, and momentum magnitude
                 G4double Enu = step->GetPreStepPoint()->GetTotalEnergy();
                 G4ThreeVector pNu = step->GetPreStepPoint()->GetMomentum();
                 G4double pNuMag = pNu.mag();
                 
+                // Lepton energy, momentum, and momentum magnitude
                 G4double Elep = fEventAction->outgoingLeptonE;
                 G4ThreeVector pLep(fEventAction->outgoingLeptonPx, 
                                    fEventAction->outgoingLeptonPy, 
                                    fEventAction->outgoingLeptonPz);
                 G4double pLepMag = pLep.mag();
                 
+                // q_0 calculation
                 G4double qEnergy = Enu - Elep;
                 G4ThreeVector qVec = pNu - pLep;
                 
+                // Q^2 calculation
                 fEventAction->q0 = qEnergy;
                 G4double rawQ2 = qVec.mag2() - (qEnergy * qEnergy);
                 fEventAction->Q2 = std::max(0.0, rawQ2);
                 
+                // W calculation
                 const G4double nucleonMass = 939.565 * CLHEP::MeV;
                 G4double W2 = (nucleonMass * nucleonMass) + (2.0 * nucleonMass * qEnergy) - fEventAction->Q2;
                 fEventAction->W = (W2 > 0.0) ? std::sqrt(W2) : 0.0;
                 
+                // xBj, yBj, and inelasticity calculations
                 fEventAction->xBj = (2.0 * nucleonMass * qEnergy > 0.0) 
                                     ? fEventAction->Q2 / (2.0 * nucleonMass * qEnergy) 
                                     : 0.0;
@@ -223,11 +245,14 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     fEventAction->leptonScatteringAngle = 0.0;
                 }
 
+                /* Recording the number of secondaries from the interaction.
+                NB: This was not implemented in v11.4.1, so it may need to be
+                changed if its original intention was to save other information */
                 if (secondaries) {
                     fEventAction->showerNSecondaries = static_cast<G4int>(secondaries->size());
                 }
             } 
-            else if (foundOutNu) {
+            else if (foundOutNu) { // If it's not CC, it's Neutral Current
                 fEventAction->isCC = 0;
                 fEventAction->isNC = 1;
                 fEventAction->interactionType = "NC";
@@ -236,19 +261,20 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 // Leaving kinematics as 0.0 default.
 
                 if (nPions == 0 && nNucleons > 0) {
-                    fEventAction->interactionModel = "NCQE";
+                    fEventAction->interactionModel = "NCQE"; // NC Quasi Elastic
                 } else if (nPions == 1) {
-                    fEventAction->interactionModel = "NCRES";
+                    fEventAction->interactionModel = "NCRES"; // Resonance
                 } else {
                     fEventAction->interactionModel = "NCDIS";
-                }
+                } // Neutral Current Deep Inelastic Scattering
             } 
-            else {
+            else { // If it's not CC or NC, then something really weird happened
                 fEventAction->isCC = 0;
                 fEventAction->isNC = 0;
                 fEventAction->interactionType = "Unknown";
                 fEventAction->interactionModel = "Unknown";
-                
+                // This could be removed if confident Unknown interactions are
+                // unlikely to take place, but it is left in for posterity's sake
                 G4cout << "\n[DEBUG] --- UNKNOWN INTERACTION DETECTED ---" << G4endl;
                 G4cout << "[DEBUG] Expected Lepton PDG: " << expectedLepton << G4endl;
                 if (secondaries && secondaries->size() > 0) {
@@ -265,7 +291,9 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 }
                 G4cout << "[DEBUG] ----------------------------------------" << G4endl;
             }
-
+            // Just a helpful print for neutrino biasing testing
+            // Can be commented out if running a macroscopic number of events
+            // Maybe it's worth gating stuff like this behind a verbosity messenger
             G4cout << "\n*** NEUTRINO INTERACTION RECORDED ***" << G4endl;
             G4cout << "Process: " << procName << " | Type: " << fEventAction->interactionType 
                    << " | Model: " << fEventAction->interactionModel << G4endl;
@@ -293,23 +321,25 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             return;
         }
     }
-    
+    // If we are looking at something that isn't the parent track
     if(track->GetParentID() > 0 && track->GetCurrentStepNumber() == 1) {
-        fEventAction->AddSecondary();
+        fEventAction->AddSecondary(); // Add a secondary to the count
 
-        double Esec = track->GetKineticEnergy();
-        if(Esec > 1*keV) {
+        double Esec = track->GetKineticEnergy(); // Saving its kinetic energy
+        if(Esec > 1*keV) { // as long as that KE is above 1 keV
             fEventAction->AddSecE(Esec);
             fRunAction->secEnergies.push_back(Esec);
             fRunAction->secWeights.push_back(track->GetWeight());
+            // remember to save the weight too!
         }
-
+        // if our secondary is at the end of its road
         if(track->GetParentID() > 0 && track->GetTrackStatus() == fStopAndKill) {
             fEventAction->AddSecEndPos(track->GetPosition());
+            // record where that ending position was
         }
 
         int pdgSec = track->GetDefinition()->GetPDGEncoding();
-        switch(pdgSec) {
+        switch(pdgSec) { // just incrementing some counters based on PDG here
             case 22:    fEventAction->AddGamma();       break;
             case 11:    fEventAction->AddElectron();    break;
             case -11:   fEventAction->AddPositron();    break;
@@ -328,12 +358,14 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             case 130:   fEventAction->AddKaonZeroS();   break;
             case -13:   fEventAction->AddMuonPlus();    break;
         }
-        
+        // Some functions for position and back scatter info
         fEventAction->AddSecStartPos(track->GetPosition());
         fEventAction->CountBackTracks(track->GetMomentumDirection());
 
         auto proc = track->GetCreatorProcess();
-        if(proc) {
+        if(proc) { // recording process name info here for our tree
+            // if I were a better programmer, I'd probably make these enums
+            // so I could use a switch statement.
             auto pname = proc->GetProcessName();
             if(pname == "compt")    fEventAction->AddCompton();
             if(pname == "conv")     fEventAction->AddPairProd();
@@ -350,22 +382,26 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     if(proc1)
     {
         auto hadProc = dynamic_cast<const G4HadronicProcess*>(proc1);
-        if(hadProc)
+        if(hadProc) // if hadronic process
         {
             const G4Nucleus* target = hadProc->GetTargetNucleus();
             G4String pname = proc1->GetProcessName();
+            // getting process name and getting the target
 
             if (pname.find("Nu") != std::string::npos ||
                 pname.find("nu") != std::string::npos) {
                 fEventAction->AddNuInteraction();
             }
+            // recording if there was a neutrino interaction or not
 
-            if(target)
+            if(target) // there should always be a target, but still checks
             {
-                int Z = target->GetZ_asInt();
-                int A = target->GetA_asInt();
+                int Z = target->GetZ_asInt(); // atomic number
+                int A = target->GetA_asInt(); // mass number
                 int targetPDGCode = 1000000000 + 10000*Z + 10*A;
+                // the long PDG code
 
+                // saving our info
                 fEventAction->SetTargetZ(Z);
                 fEventAction->SetTargetA(A);
                 fEventAction->SetTargetPDG(targetPDGCode);
@@ -373,7 +409,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         }
     }
 
-    // Track length accumulation (all tracks)
+    // Recording step length info for all tracks
     fEventAction->AddSecTrackLength(step->GetStepLength());
 
     // primary track info (ntuple 1)
@@ -383,14 +419,20 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         if(track->GetCurrentStepNumber() == 1) {
             fEventAction->primaryPDG = track->GetDefinition()->GetPDGEncoding();
             fEventAction->primaryFinalPDG = track->GetDefinition()->GetPDGEncoding();
+            // primary final PDG is set here just as a fallback, but it is
+            // purposely overwritten in the following block with fStopAndKill
 
             fEventAction->x = track->GetPosition().x();
             fEventAction->y = track->GetPosition().y();
             fEventAction->z = track->GetPosition().z();
+            // primary coordates
 
             fEventAction->costh = track->GetVertexMomentumDirection().z();
+            // saving primary cos(theta)
             
-            if(fEventAction->ReadE() == 0) {
+            if(fEventAction->ReadE() == 0) { // if no energy
+                // I am not sure why this block needs to be here, 
+                // but I am nervous to remove it
                 fEventAction->SetInitialKinematics(
                     track->GetKineticEnergy(),
                     track->GetPosition(),
@@ -402,20 +444,23 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         // Update final info at primary track end
         if(track->GetTrackStatus() == fStopAndKill) {
             int finalPDG = track->GetDefinition()->GetPDGEncoding();
+            // Saving the ending particle information
             if (std::abs(finalPDG) == 12 || std::abs(finalPDG) == 14 || std::abs(finalPDG) == 16) {
                 fEventAction->primaryFinalPDG = finalPDG;
             }
+            // Overwriting the previous primaryFinalPDG now that we're at the end
 
+            // Just setting final kinematic information
             fEventAction->SetFinalKinematics(
                 track->GetKineticEnergy(),
                 track->GetPosition()
             );
-
+            // and momentum
             fEventAction->SetFinalMomentum(track->GetMomentum());
         }
     }
 
-    // "tracks" tree filling (ntuple 1)
+    // "tracks" tree filling (ntuple 1), all do what they say on the box
     auto analysisManager = G4AnalysisManager::Instance();
     int eventID = G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID();
     
