@@ -1,0 +1,27 @@
+# ==============================
+# --- Physics list settings ---
+# ==============================
+
+
+
+# Read your GDML detector description
+/detector/readGDML /workspace/neutrino_demo/output.gdml
+
+
+# ==============================
+# --- Primary generator ---
+# ==============================
+
+# Use neutrino flux file as primary source
+/generator/mode flux
+
+# ROOT flux file
+/generator/fluxFile /workspace/neutrino_demo/build/IMCC3_M_1000GeV_1000_150m_G4flux.root
+
+# ==============================
+# --- Initialize and Run ---
+# ==============================
+
+/run/initialize
+
+/run/beamOn 10
