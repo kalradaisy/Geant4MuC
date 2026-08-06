@@ -20,6 +20,11 @@ EventAction::~EventAction() {}
 
 void EventAction::BeginOfEventAction(const G4Event* event)
 {
+  //  secTotalE = 0;
+  // secMeanE = 0;
+  secTrackLength = 0;
+
+
   // ========== BASIC EVENT INITIALIZATION ==========
   eventID = event->GetEventID();
   primaryPDG = 0;
@@ -91,6 +96,8 @@ void EventAction::BeginOfEventAction(const G4Event* event)
   vertexY = 0.0;
   vertexZ = 0.0;
   vertexT = 0.0;
+  eventWeight = 0.0;
+  
   transverseVertexDistance = 0.0;
   vertexDepth = 0.0;
   interactionRecorded = false;
@@ -198,6 +205,8 @@ void EventAction::BeginOfEventAction(const G4Event* event)
   fRunAction->targetZ = -1;
   fRunAction->targetA = -1;
   fRunAction->targetPDG = -1;
+
+   fRunAction->secWeights.clear();
   
   // Get primary particle info
   auto vertex = event->GetPrimaryVertex(0);
@@ -216,8 +225,8 @@ void EventAction::AddStepInfo(int trackID, int parentID,
                               const G4ThreeVector& postMom, double kinE,
                               double edep, double globalTime,
                               double stepLength,
-                              const std::string& processName,const std::string& creatorprocessName,  G4ThreeVector birthPos,
-                              G4double birthKE)
+                              const std::string& processName,const std::string& creatorprocessName) //,  G4ThreeVector birthPos,
+//G4double birthKE)
 {
     StepInfo s;
     s.trackID = trackID;
@@ -233,8 +242,8 @@ void EventAction::AddStepInfo(int trackID, int parentID,
     s.stepLength = stepLength;
     s.processName = processName;
     s.creatorprocessName = creatorprocessName;
-    s.birthPos = birthPos;
-    s.birthKE = birthKE;
+    //  s.birthPos = birthPos;
+    //s.birthKE = birthKE;
 
     steps.push_back(s);   // steps is a std::vector<StepInfo>                                                                                                                                                                        
 }
@@ -257,67 +266,12 @@ void EventAction::EndOfEventAction(const G4Event* event)
     }
   }
     
-  // bool foundLepton = false;
-  // bool foundOutgoingNeutrino = false;
-  // bool foundHadron = false;
-  // bool foundOtherNonNeutrino = false;
   int nPions = 0;
   int nNucleons = 0;
-  
-  // Analyze final-state particles
-  for (size_t i = 0; i < secPDG.size(); ++i) {
-    
-    int pdg  = secPDG[i];
-    int apdg = std::abs(pdg);
-    
-    //     G4cout << "PDG and expected PDG: " << pdg << ", " << expectedLepton << " , " << nuPDG << G4endl;
-    // ========== NEUTRINO CC/NC CLASSIFICATION ==========
-    if (pdg == expectedLepton) {
-      foundLepton = true;
-      //G4cout << "CC Event" << ", " << foundLepton << G4endl;
-    }
-    if (pdg == nuPDG) {
-      foundOutgoingNeutrino = true;
-      //G4cout << "May be NC Event" << G4endl;
-
-    }
-
-    if (apdg != 12 && apdg != 14 && apdg != 16) {
-      foundOtherNonNeutrino = true;
-    }
-
-     if(apdg == 2212 ||   // proton                                                                                                              
-	apdg == 2112 ||   // neutron                                                                                                             
-	apdg == 211  ||   // pi+/-                                                                                                               
-	apdg == 111  ||   // pi0                                                                                                                 
-	apdg == 321  ||   // K+/-                                                                                                                
-	apdg == 311  ||
-	apdg == 22)    // K0
-       {
-	 foundHadron = true;
-
-	 // G4cout << "Not Ass lepton: May be NC Event , " << foundHadron <<  G4endl;
-	 
-	 //foundHadron = true;
-       }
-  }
-  // ========== SET INTERACTION TYPE ==========
-  isCC = foundLepton;
-  isNC = (!foundLepton && (foundOutgoingNeutrino || foundHadron)); // because sometimes neutrinos are not registered among secondaries // foundOtherNonNeutrino);// || foundHadron || foundOtherNonNeutrino));
-  interactionType = isCC ? "CC" : (isNC ? "NC" : "Unknown");
-
-   G4cout << "prefinal check: " << foundLepton << " , CC " << isCC << G4endl;
-  G4cout << "prefinal check NC : " << !foundLepton  << " && " << foundOutgoingNeutrino << " , ||" << foundHadron << "is NC: " << isNC << G4endl;
-
-
-  // interactionType = isCC ? "CC" : "NC";
-  //  hasCCLepton = foundLepton;
-
-  //hasOutNeutrino = foundOutgoingNeutrino;
-  //hasHadron = foundHadron || foundOtherNonNeutrino;
-  
+  /*
+ 
   // ========== NEUTRINO KINEMATICS (CC events) ==========
-  if (isCC && E > 0.0) {
+  if (E > 0.0) {
     double Enu = E;
     G4ThreeVector pNu(px, py, pz);
     double pNuMag = pNu.mag();
@@ -357,7 +311,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
       leptonScatteringAngle = 0.0;
     }
     
-  } else {
+   else {
     q0 = 0.0;
     Q2 = 0.0;
     W = 0.0;
@@ -366,30 +320,9 @@ void EventAction::EndOfEventAction(const G4Event* event)
     inelasticity = 0.0;
     leptonCosTheta = 1.0;
     leptonScatteringAngle = 0.0;
+  } 
   }
-  
-  // ========== INTERACTION MODEL CLASSIFICATION ==========
-  if (interactionType == "CC") {
-    if (nPions == 0 && nNucleons > 0) {
-      interactionModel = "CCQE";
-    } else if (nPions == 1) {
-      interactionModel = "CCRES";
-    } else {
-      interactionModel = "CCDIS";
-    }
-  } else if (interactionType == "NC") {
-    if (nPions == 0 && nNucleons > 0) {
-      interactionModel = "NCQE";
-    } else if (nPions == 1) {
-      interactionModel = "NCRES";
-    } else {
-      interactionModel = "NCDIS";
-    }
-  } else {
-    interactionModel = "Unknown";
-  }
-
- 
+  */
   
   // ========== FILL RUNACTION DATA ==========
   fRunAction->eventID = eventID;
@@ -398,37 +331,20 @@ void EventAction::EndOfEventAction(const G4Event* event)
   
   fRunAction->nuInteractionProcess = nuInteractionProcess;
   fRunAction->allInteractionProcess = allInteractionProcess;
+  fRunAction->secTrackLength = secTrackLength;
   
-  fRunAction->isCC = isCC;
-  fRunAction->isNC = isNC;
-  
-  fRunAction->outgoingLeptonPDG = outgoingLeptonPDG;
-  fRunAction->outgoingLeptonE = outgoingLeptonE;
-  fRunAction->outgoingHadronE = outgoingHadronE;
-  fRunAction->outgoingLeptonPx = outgoingLeptonPx;
-  fRunAction->outgoingLeptonPy = outgoingLeptonPy;
-  fRunAction->outgoingLeptonPz = outgoingLeptonPz;
-  
-  fRunAction->q0 = q0;
+  /*fRunAction->q0 = q0;
   fRunAction->Q2 = Q2;
   fRunAction->W = W;
   fRunAction->xBj = xBj;
   fRunAction->yBj = yBj;
+
   
   fRunAction->leptonScatteringAngle = leptonScatteringAngle;
   fRunAction->leptonCosTheta = leptonCosTheta;
   fRunAction->inelasticity = inelasticity;
-
-  G4cout << "FINAL: "
-       << "foundLepton=" << foundLepton
-       << " foundOutgoingNeutrino=" << foundOutgoingNeutrino
-       << " foundHadron=" << foundHadron
-       << " interactionType=" << interactionType
-       << G4endl;
+  */
   
-  
-  fRunAction->interactionType = interactionType;
-  fRunAction->interactionModel = interactionModel;
   
   fRunAction->nSecondaries = nSecondaries;
   /*  fRunAction->showerNSecondaries = showerNSecondaries;
@@ -454,6 +370,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
   fRunAction->vertexY = vertexY;
   fRunAction->vertexZ = vertexZ;
   fRunAction->vertexT = vertexT;
+  fRunAction->eventWeight = eventWeight;
   
   fRunAction->finalE = finalE;
   fRunAction->finalX = finalX;
@@ -484,10 +401,10 @@ void EventAction::EndOfEventAction(const G4Event* event)
   fRunAction->secEndX = secEndX;
   fRunAction->secEndY = secEndY;
   fRunAction->secEndZ = secEndZ;
-  
-  fRunAction->trackWeight = trackWeight;
-  fRunAction->nuEleTotXscBias = nuEleTotXscBias;
-  fRunAction->eventWeight = eventWeight;
+
+  fRunAction->secPx = secPx;
+  fRunAction->secPy = secPy;
+  fRunAction->secPz = secPz;
   
   fRunAction->nSteps = nSteps_;
   fRunAction->nSecondaries = nSecondaries;

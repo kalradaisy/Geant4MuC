@@ -23,7 +23,7 @@ public:
       TTree* GetTree() { return fTree; }
 
     // Variables for ROOT branches (non-static)                                                                                                                                                                                      
-  double E, x, y, z,vertexX,vertexY,vertexZ, vertexT;
+  double E, x, y, z,vertexX,vertexY,vertexZ, vertexT,eventWeight;
   double finalE, finalX, finalY, finalZ;
   Double_t px, py, pz;
   Double_t theta, phi, finalPhi,finalPhiDeg;
@@ -41,6 +41,11 @@ public:
   //  std::vector<std::string> secNames;
   std::vector<double> secEnergies;
 
+   std::vector<double> secPx;
+  std::vector<double> secPy;
+  std::vector<double> secPz;
+   std::vector<int> secPDG;
+
   std::vector<double> secStartX;
   std::vector<double> secStartY;
   std::vector<double> secStartZ;
@@ -53,7 +58,7 @@ public:
 
 double trackWeight;
 double nuEleTotXscBias;
-double eventWeight;
+  //double eventWeight;
   
   // Secondary info                                                                                                                                                                                                                  
 
@@ -67,7 +72,9 @@ int nPositron;
 double secTotalE;
 double secMeanE;
 double secTrackLength;
-
+  
+  //  std::map<int, double> secTrackLength;
+ std::vector<double> secWeights; 
 
 int nBackward;
 
@@ -169,10 +176,10 @@ std::vector<double> step_postMomZ;
     std::vector<double> step_kinE, step_edep;
     std::vector<std::string> step_proc;
    std::vector<std::string> step_creatorproc;
-  std::vector<double> trk_birthPosX;
-  std::vector<double> trk_birthPosY;
-  std::vector<double> trk_birthPosZ;
-  std::vector<double> trk_birthKE;
+  //  std::vector<double> trk_birthPosX;
+  //std::vector<double> trk_birthPosY;
+  //std::vector<double> trk_birthPosZ;
+  //std::vector<double> trk_birthKE;
 
 private:
  EventAction* fEventAction;

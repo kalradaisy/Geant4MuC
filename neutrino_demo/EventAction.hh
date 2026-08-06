@@ -62,11 +62,14 @@ public:
 int primaryPDG;
 
 std::string nuInteractionProcess;
+
   
 std::vector<std::string> allInteractionProcess;
 bool isCC;
 bool isNC;
-
+double secTrackLength;
+ void AddSecTrackLength(double len) { secTrackLength += len; }
+  
   int outgoingLeptonPDG;
 double outgoingLeptonE;
 double outgoingHadronE;
@@ -93,7 +96,7 @@ double xBj;
 double yBj;
 double trackWeight;
 double nuEleTotXscBias;
-double eventWeight;
+  //double eventWeight;
 
   void SetNeutrinoWeight(double trackWeightIn, double biasFactorIn);
 int primaryTrackID;
@@ -106,8 +109,9 @@ int primaryTrackID;
                    const G4ThreeVector& postPos, const G4ThreeVector& preMom,
                  const G4ThreeVector& postMom, double kineticE,
                    double edep,double globalTime,
-                 double stepLength, const std::string& processName, const std::string& creatorprocessName,G4ThreeVector birthPos,
-                   G4double birthKE);
+		   double stepLength, const std::string& processName, const std::string& creatorprocessName);
+  //,G4ThreeVector birthPos,
+  //               G4double birthKE);
 
   //to reconstruct CC vs NC
   std::vector<int> finalStatePDG;
@@ -120,6 +124,10 @@ int primaryTrackID;
   std::vector<int> secTrackID;
   std::vector<int> secParentID;
   std::vector<double> secEnergies;
+  std::vector<double> secPx;
+  std::vector<double> secPy;
+  std::vector<double> secPz;
+  
   std::vector<std::string> secNames;
   std::vector<int> secPDG;
   std::vector<double> step_preX, step_preY, step_preZ;
@@ -159,7 +167,7 @@ int primaryTrackID;
   double px, py, pz;
   double theta, phi, costh;
 
-  double vertexX, vertexY, vertexZ, vertexT;
+  double vertexX, vertexY, vertexZ, vertexT, eventWeight;
   bool interactionRecorded;
 
   double finalE, finalX, finalY, finalZ;

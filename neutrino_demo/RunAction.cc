@@ -35,7 +35,8 @@ void RunAction::BeginOfRunAction(const G4Run*) {
   fTree->Branch("vertexY", &vertexY, "vertexY/D");
   fTree->Branch("vertexZ", &vertexZ, "vertexZ/D");
   fTree->Branch("vertexT", &vertexT, "vertexT/D");
-
+  fTree->Branch("eventWeight",&eventWeight, "eventWeight/D");
+  fTree->Branch("secWeights", &secWeights);
   fTree->Branch("finalE", &finalE, "finalE/D");
   fTree->Branch("finalX", &finalX, "finalX/D");
   fTree->Branch("finalY", &finalY, "finalY/D");
@@ -57,7 +58,12 @@ void RunAction::BeginOfRunAction(const G4Run*) {
 
   //    fTree->Branch("secNames", &secNames);                                                                                                                             
   fTree->Branch("secEnergies", &secEnergies);
- fTree->Branch("nGamma", &nGamma, "nGamma/I");
+  fTree->Branch("secPDG", &secPDG);
+  fTree->Branch("secPx", &secPx);
+  fTree->Branch("secPy", &secPy);
+  fTree->Branch("secPz", &secPz);
+  
+  fTree->Branch("nGamma", &nGamma, "nGamma/I");
   fTree->Branch("nElectron", &nElectron, "nElectron/I");
   fTree->Branch("nPositron", &nPositron, "nPositron/I");
 
@@ -79,6 +85,7 @@ void RunAction::BeginOfRunAction(const G4Run*) {
   fTree->Branch("secTotalE", &secTotalE, "secTotalE/D");
   fTree->Branch("secMeanE", &secMeanE, "secMeanE/D");
   fTree->Branch("secTrackLength", &secTrackLength, "secTrackLength/D");
+  //  fTree->Branch("secTrackLengthIndividual", &secTrackLengthIndividual, "secTrackLengthIndividual/D");
 
  fTree->Branch("secStartX", &secStartX);
   fTree->Branch("secStartY", &secStartY);
@@ -112,8 +119,8 @@ void RunAction::BeginOfRunAction(const G4Run*) {
   fTree->Branch("step_postMomZ", &step_postMomZ);
   
   
-  fTree->Branch("interactionType", &interactionType);
-  fTree->Branch("interactionModel", &interactionModel);
+  //  fTree->Branch("interactionType", &interactionType);
+  //fTree->Branch("interactionModel", &interactionModel);
   fTree->Branch("step_proc", &step_proc);
   fTree->Branch("step_creatorproc", &step_creatorproc);
   fTree->Branch("step_preX", &step_preX);
@@ -128,11 +135,11 @@ void RunAction::BeginOfRunAction(const G4Run*) {
   fTree->Branch("step_parentID", &step_parentID);
   fTree->Branch("step_PDG", &step_PDG);
   
-  fTree->Branch("trk_birthPosX", &trk_birthPosX);
+  /*  fTree->Branch("trk_birthPosX", &trk_birthPosX);
   fTree->Branch("trk_birthPosY", &trk_birthPosY);
   fTree->Branch("trk_birthPosZ", &trk_birthPosZ);
   fTree->Branch("trk_birthKE", &trk_birthKE);
-  
+  */
 
 
  fTree->Branch("eventID", &eventID, "eventID/I");
@@ -148,9 +155,9 @@ void RunAction::BeginOfRunAction(const G4Run*) {
   fTree->Branch("nuInteractionProcess", &nuInteractionProcess);
   fTree->Branch("allInteractionProcess", &allInteractionProcess);
 
-  fTree->Branch("isCC", &isCC, "isCC/O");
-  fTree->Branch("isNC", &isNC, "isNC/O");
-
+  //  fTree->Branch("isCC", &isCC, "isCC/O");
+  //fTree->Branch("isNC", &isNC, "isNC/O");
+  /*
   fTree->Branch("outgoingLeptonPDG", &outgoingLeptonPDG, "outgoingLeptonPDG/I");
   fTree->Branch("outgoingLeptonE", &outgoingLeptonE, "outgoingLeptonE/D");
   fTree->Branch("outgoingHadronE", &outgoingHadronE, "outgoingHadronE/D");
@@ -164,7 +171,8 @@ void RunAction::BeginOfRunAction(const G4Run*) {
   fTree->Branch("W", &W, "W/D");
   fTree->Branch("xBj", &xBj, "xBj/D");
   fTree->Branch("yBj", &yBj, "yBj/D");
-
+  
+  
  // ========== VALIDATION BRANCHES ==========                                                                                                                            
   // Lepton kinematics                                                                                                                                                    
   fTree->Branch("leptonScatteringAngle", &leptonScatteringAngle, "leptonScatteringAngle/D");
@@ -173,7 +181,7 @@ void RunAction::BeginOfRunAction(const G4Run*) {
   
   // Shower properties (electron specific)                                                                                                                                
   fTree->Branch("showerNSecondaries", &showerNSecondaries, "showerNSecondaries/I");
-
+  */
   
   
 }
@@ -201,10 +209,10 @@ void RunAction::FillEvent(EventAction* evt)
   step_kinE.clear(); step_edep.clear();
   step_proc.clear();
   step_creatorproc.clear();
-  trk_birthPosX.clear();
-  trk_birthPosY.clear();
-  trk_birthPosZ.clear();
-  trk_birthKE.clear();
+  //trk_birthPosX.clear();
+  //trk_birthPosY.clear();
+  //trk_birthPosZ.clear();
+  //trk_birthKE.clear();
   
   
   for(const auto& s : evt->steps)
@@ -237,10 +245,10 @@ void RunAction::FillEvent(EventAction* evt)
 
       step_proc.push_back(s.processName);
       step_creatorproc.push_back(s.creatorprocessName);
-      trk_birthPosX.push_back(s.birthPos.x());
-      trk_birthPosY.push_back(s.birthPos.y());
-      trk_birthPosZ.push_back(s.birthPos.z());
-      trk_birthKE.push_back(s.birthKE);
+      //  trk_birthPosX.push_back(s.birthPos.x());
+      // trk_birthPosY.push_back(s.birthPos.y());
+      //trk_birthPosZ.push_back(s.birthPos.z());
+      //trk_birthKE.push_back(s.birthKE);
       
       //    tree->Fill();  // fill ROOT tree for this event                                                                                                                                                                            
     }

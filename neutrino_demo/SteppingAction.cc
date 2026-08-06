@@ -78,7 +78,6 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
           }
       }
 
-
       
       if(track->GetParentID() == 0 && process && procName != "Transportation"  && !fEventAction->interactionRecorded)
 	{
@@ -86,108 +85,18 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
           fEventAction->vertexY = step->GetPostStepPoint()->GetPosition().y();
           fEventAction->vertexZ = step->GetPostStepPoint()->GetPosition().z();
           fEventAction->vertexT = step->GetPostStepPoint()->GetGlobalTime();
-
+	  fEventAction->eventWeight = track->GetWeight();
+	  
 	  if(isPrimaryNeutrino) {
 	    
 	    G4cout << "******Primary Neutrino: " << G4endl;
             fEventAction->nuInteractionProcess = procName;
             
-            // ========== CAPTURE OUTGOING LEPTON FOR NEUTRINO CC ==========
-            // Look for the lepton produced in the first interaction
 	  }
-	    const auto* secondaries = step->GetSecondaryInCurrentStep();
-            if (secondaries) {
-
-	      // Reset flags for this interaction
-	      bool foundCCLepton   = false;
-	      bool foundOutNu      = false;
-	      bool foundHadron     = false;
-	      int expectedLeptonPDG = 0;
-	
-	      int nuPDG = fEventAction->primaryNuPDG;
-	      //	    	      int expectedLeptonPDG = nuPDG - (nuPDG > 0 ? 1 : -1);
-               if(std::abs(pdg) == 12) expectedLeptonPDG = (pdg > 0) ? 11 : -11;
-	      if(std::abs(pdg) == 14) expectedLeptonPDG = (pdg > 0) ? 13 : -13;
-	      if(std::abs(pdg) == 16) expectedLeptonPDG = (pdg > 0) ? 15 : -15;
-
-              for (auto sec : *secondaries) {
-                int secPDG = sec->GetDefinition()->GetPDGEncoding();
-		//		G4cout << "NuPDG: " << pdg << ", Expected: "<< expectedLeptonPDG << ", secondart pdg: "<< secPDG << G4endl;
-                // ========== CAPTURE CC LEPTON (e, mu, tau) ==========
-
-		if(secPDG == expectedLeptonPDG)
-		  {
-		    foundCCLepton = true;
-		    
-		    fEventAction->outgoingLeptonPDG = secPDG;
-		    fEventAction->outgoingLeptonE =
-		      sec->GetKineticEnergy() +
-		      sec->GetDefinition()->GetPDGMass();
-		    
-		    fEventAction->outgoingLeptonPx =
-		      sec->GetMomentum().x();
-		    
-		    fEventAction->outgoingLeptonPy =
-		      sec->GetMomentum().y();
-		    
-		    fEventAction->outgoingLeptonPz =
-		      sec->GetMomentum().z();
-		    
-		    //  G4cout << "Found CC lepton: "
-		    //	   << secPDG << G4endl;
-		  }
-		if(secPDG == pdg)
-		  {
-		    foundOutNu = true;
-		    
-		    //G4cout << "Found outgoing neutrino"
-		    //	   << G4endl;
-		  }
-		int absPDG = std::abs(secPDG);
-
-            if(absPDG == 2212 ||   // proton
-               absPDG == 2112 ||   // neutron
-               absPDG == 211  ||   // pi+/-
-               absPDG == 111  ||   // pi0
-               absPDG == 321  ||   // K+/-
-               absPDG == 311)      // K0
-            {
-                foundHadron = true;
-
-                fEventAction->outgoingHadronE +=
-                    sec->GetKineticEnergy() +
-                    sec->GetDefinition()->GetPDGMass();
-
-		// G4cout << "Found hadron: "
-		//     << secPDG << G4endl;
-            }
-        }
-	       fEventAction->foundCCLepton   = foundCCLepton;
-        fEventAction->foundOutNeutrino = foundOutNu;
-        fEventAction->foundHadron      = foundHadron;
-
-        // CC: charged lepton observed
-	/*        fEventAction->isCC = foundCCLepton;
-
-        // NC: no charged lepton, outgoing neutrino + hadronic activity
-        fEventAction->isNC =
-            (!foundCCLepton &&
-             foundOutNu &&
-             foundHadron);
-
-        fEventAction->interactionType =
-            fEventAction->isCC ? "CC" :
-            fEventAction->isNC ? "NC" :
-                                 "Unknown";
-
-        G4cout << "Interaction classified as: "
-               << fEventAction->interactionType
-               << G4endl;
-	*/
-	    }
-
-    fEventAction->interactionRecorded = true;
-}
+	  
+	  
+	  fEventAction->interactionRecorded = true;
+	}
       
 	// Update final info only at track end                                                                                                                                         
           if(track->GetTrackStatus() == fStopAndKill) {
@@ -203,8 +112,6 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             //fEventAction->finalCosth = p.z()/pMag; // correct cos(theta)                                                                                                               
             //fEventAction->finalPhi = std::atan2(p.y(), p.x());
             //fEventAction->finalPhiDeg = fEventAction->finalPhi * 180.0 / CLHEP::pi;
-
-
             fEventAction->finalX  = track->GetPosition().x();
             fEventAction->finalY  = track->GetPosition().y();
             fEventAction->finalZ  = track->GetPosition().z();
@@ -236,10 +143,10 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                                     step->GetStepLength(),
 
                                     stepProcess ? stepProcess->GetProcessName() : "None",
-                                    creatorProcess ? creatorProcess->GetProcessName() : "Primary",
+                                    creatorProcess ? creatorProcess->GetProcessName() : "Primary"
 
-                                    track->GetVertexPosition(),
-                                    track->GetVertexKineticEnergy()
+                                    //track->GetVertexPosition(),
+                                    //track->GetVertexKineticEnergy()
                                     );
 
           G4int trackID = track->GetTrackID();
@@ -266,6 +173,8 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
               double Esec = track->GetKineticEnergy();
               if(Esec > 0.01*keV) {
                 fEventAction->totalSecondaryE += Esec;
+		fRunAction->secWeights.push_back(track->GetWeight());
+		
               }//fRunAction->secTotalE += Esec;
 
 	      
@@ -339,7 +248,11 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
               fEventAction->secTrackID.push_back(track->GetTrackID());
               fEventAction->secParentID.push_back(track->GetParentID());
               fEventAction->secPDG.push_back(track->GetDefinition()->GetPDGEncoding());
-
+	      auto p = track->GetMomentum();
+	      fEventAction->secPx.push_back(p.x());
+	      fEventAction->secPy.push_back(p.y());
+	      fEventAction->secPz.push_back(p.z());
+	      
               auto pos = track->GetPosition();
               fEventAction->secStartX.push_back(pos.x());
               fEventAction->secStartY.push_back(pos.y());
@@ -393,18 +306,15 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 }
             }
 
+	   fEventAction->AddSecTrackLength(step->GetStepLength());
 
-	    // Track length accumulation (all tracks); can be used for dE/dx calculation                                                                                         
-          if(track->GetParentID() > 0)
-            {
-              fRunAction->secTrackLength += step->GetStepLength();
-            }
-
+	   
 	  // ***************************************** Neutrino block **********************************************
 	  
+
 	  
 	  //Neutrino interaction debugging : if only one interaction or multiple interactions
-	  if(isPrimaryNeutrino &&  process && process->GetProcessName()!= "Transportation")
+	  /*if(isPrimaryNeutrino &&  process && process->GetProcessName()!= "Transportation")
 	    {
 
 	      //   if(track->GetParentID() > 0) {
@@ -454,82 +364,14 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 		      // G4cout << "Time (ns): "
 		      //<< fEventAction->vertexT/ns << G4endl;
 	    }
+	  */
 
 
 	  
-	  G4double Ein = step->GetPreStepPoint()->GetKineticEnergy()
-	    + track->GetDefinition()->GetPDGMass();
-	  
-	  G4ThreeVector pin = step->GetPreStepPoint()->GetMomentum();
-	  
-	  auto secondaries = step->GetSecondaryInCurrentStep();
-
 	  if ( process->GetProcessName()!= "Transportation")
 	    {
 	      fEventAction->allInteractionProcess.push_back(process->GetProcessName());
-
-	      //	      if only one interaction or multiple interactions , check Process
-	      /*      G4cout << "\n=== Primary particle interaction information ===" << G4endl;
-	      G4cout << "Incoming PDG = " << pdg << G4endl;
-	      G4cout << "Process = " << procName << G4endl;
-	      G4cout << "Track status = " << track->GetTrackStatus() << G4endl;
-	      G4cout << "Pre KE  = " << step->GetPreStepPoint()->GetKineticEnergy()/MeV << " MeV" << G4endl;
-	      G4cout << "Post KE = " << step->GetPostStepPoint()->GetKineticEnergy()/MeV << " MeV" << G4endl;
-	      G4cout << "Number of secondaries = " << secondaries->size() << G4endl;
-	      */
 	    } 
-	  	  // Collect first-interaction outgoing kinematics; classify later in EventAction
-	  if (!fEventAction->decisionMade && isPrimaryNeutrino && process && procName != "Transportation")
-	    {
-	      int expectedLepton = 0;
-	      if (std::abs(pdg) == 12 || std::abs(pdg) == 14 || std::abs(pdg) == 16)
-	        {
-	          expectedLepton = pdg - (pdg > 0 ? 1 : -1);
-	        }
 
-	      int primaryTrackID = track->GetTrackID();
-	      int outgoingPDG = 0;
-	      G4double outgoingLeptonE = 0.0;
-	      G4ThreeVector outgoingLeptonP(0, 0, 0);
-	      G4double outgoingHadronE = 0.0;
-	      //	      std::vector<int> secPDGs;
-
-	      if (secondaries)
-	        {
-	          for (auto sec : *secondaries)
-	            {
-	              if (sec->GetParentID() != primaryTrackID)
-	                continue;
-
-	              int secPDG1 = sec->GetDefinition()->GetPDGEncoding();
-	              int absSecPDG1 = std::abs(secPDG1);
-		      //      secPDGs.push_back(secPDG);
-	              G4double secE = sec->GetKineticEnergy() + sec->GetDefinition()->GetPDGMass();
-
-	              if (secPDG1 == expectedLepton)
-	                {
-	                  outgoingPDG = secPDG1;
-	                  outgoingLeptonE = secE;
-	                  outgoingLeptonP = sec->GetMomentum();
-	                }
-
-	              if (absSecPDG1 == 2212 || absSecPDG1 == 2112 || absSecPDG1 == 211 ||
-	                  absSecPDG1 == 321 || absSecPDG1 == 111 || absSecPDG1 == 311 ||
-	                  absSecPDG1 == 310 || absSecPDG1 == 130)
-	                {
-	                  outgoingHadronE += secE;
-	                }
-	            }
-	        }
-
-	      fEventAction->outgoingLeptonPDG = outgoingPDG;
-	      fEventAction->outgoingLeptonE = outgoingLeptonE;
-	      fEventAction->outgoingLeptonPx = outgoingLeptonP.x();
-	      fEventAction->outgoingLeptonPy = outgoingLeptonP.y();
-	      fEventAction->outgoingLeptonPz = outgoingLeptonP.z();
-	      fEventAction->outgoingHadronE = outgoingHadronE;
-	      // fEventAction->finalStatePDG = secPDGs;
-	      fEventAction->decisionMade = true;
-	    }
 
 }
