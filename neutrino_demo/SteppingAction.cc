@@ -122,7 +122,21 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
         // neutrino-specific sub-branch
         if (isPrimaryNeutrino) {
+            fEventAction->AddNuInteraction();
             fEventAction->nuInteractionProcess = procName; // what process?
+
+            bool isNuNucleus = (procName.find("Nucleus") != std::string::npos || procName.find("Nucl") != std::string::npos);
+            bool isNuElectron = (procName.find("Electron") != std::string::npos || procName.find("e-") != std::string::npos);
+            // 1. Determine CC vs NC directly from the Geant4 Process Name
+            // We use .find() because G4VBiasingOperator prepends "biasWrapper(" to the procName
+            bool isCC = (procName.find("CC") != std::string::npos);
+            bool isNC = (procName.find("NC") != std::string::npos);
+            fEventAction->isCC = isCC ? 1 : 0;
+            fEventAction->isNC = isNC ? 1 : 0;
+
+            if (isCC) fEventAction->interactionType = "CC";
+            else if (isNC) fEventAction->interactionType = "NC";
+            else fEventAction->interactionType = "Unknown";
 
             // Calculate expected charged lepton PDG based on incoming neutrino flavor
             int expectedLepton = 0;
@@ -130,10 +144,8 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             if (std::abs(pdg) == 14) expectedLepton = (pdg > 0) ? 13 : -13; // nu_mu -> mu-
             if (std::abs(pdg) == 16) expectedLepton = (pdg > 0) ? 15 : -15; // nu_tau -> tau-
 
-            // instantiating some flags to default values so they may be set later
-            bool foundCCLepton = false;
-            bool foundOutNu = false;
-            bool foundHadron = false;
+            bool foundOutgoingLepton = false;
+            int outgoingLeptonPDG = 0;
 
             int nPions = 0;
             int nNucleons = 0;
@@ -142,6 +154,9 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             // Those secondaries inform CC/NC classification as well
             const auto* secondaries = step->GetSecondaryInCurrentStep();
             if (secondaries) {
+                /* Recording the number of secondaries from the interaction. */
+                fEventAction->showerNSecondaries = static_cast<G4int>(secondaries->size());
+
                 for (auto sec : *secondaries) { // check through all secondaries
                     
                     // Ensure secondary was born from this specific primary track
@@ -152,9 +167,12 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     int absSecPDG = std::abs(secPDG);
                     G4double secE = sec->GetKineticEnergy() + sec->GetDefinition()->GetPDGMass();
 
-                    // Look for correct lepton for a CC interaction
-                    if (secPDG == expectedLepton) {
-                        foundCCLepton = true;
+                    // In nu-e scattering, we are looking for the outgoing e-, mu-, or tau-
+                    if (isNuElectron &&
+                        absSecPDG == 11 || absSecPDG == 13 || absSecPDG == 15) {
+                        foundOutgoingLepton = true;
+                        outgoingLeptonPDG = absSecPDG;
+                        
                         fEventAction->outgoingLeptonPDG = secPDG;
                         fEventAction->outgoingLeptonE = secE;
                         fEventAction->outgoingLeptonPx = sec->GetMomentum().x();
@@ -162,9 +180,13 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                         fEventAction->outgoingLeptonPz = sec->GetMomentum().z();
                     }
 
-                    // Look for outgoing neutrino for a NC interaction
-                    if (secPDG == pdg) {
-                        foundOutNu = true;
+                    // Look for correct lepton for a CC interaction
+                    else if (isNuNucleus && isCC && secPDG == expectedLepton) {
+                        fEventAction->outgoingLeptonPDG = secPDG;
+                        fEventAction->outgoingLeptonE = secE;
+                        fEventAction->outgoingLeptonPx = sec->GetMomentum().x();
+                        fEventAction->outgoingLeptonPy = sec->GetMomentum().y();
+                        fEventAction->outgoingLeptonPz = sec->GetMomentum().z();
                     }
 
                     // Topology Counters for Interaction Model Classification
@@ -179,25 +201,74 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     if (absSecPDG == 2212 || absSecPDG == 2112 || absSecPDG == 211 ||
                         absSecPDG == 321  || absSecPDG == 111  || absSecPDG == 311 ||
                         absSecPDG == 310  || absSecPDG == 130) {
-                        foundHadron = true;
                         fEventAction->outgoingHadronE += secE;
                     }
                 }
             }
 
-            // classifying interaction model and type
-            if (foundCCLepton) {
-                fEventAction->isCC = 1;
-                fEventAction->isNC = 0;
-                fEventAction->interactionType = "CC"; // Charged Current
-                if (nPions == 0 && nNucleons > 0) { // CC Quasi-Elastic Scattering
-                    fEventAction->interactionModel = "CCQE"; 
-                } else if (nPions == 1) { // CC Resonance
-                    fEventAction->interactionModel = "CCRES";
-                } else { // CC Deep Inelastic Scattering
-                    fEventAction->interactionModel = "CCDIS";
+            // Define the Topological "Model" based on final state counting
+            if (isNuElectron) {
+                if(isNC){
+                        fEventAction->interactionModel = "NuElNCES";
+                        // Neutrino Electro Neutral Current Elastic Scattering
+                    } 
+                else if (isCC) {
+                    if (outgoingLeptonPDG == 13) {
+                        fEventAction->interactionModel = "IMD"; // Inverse Muon Decay
+                    } 
+                    else if (outgoingLeptonPDG == 15) {
+                        fEventAction->interactionModel = "ITD"; // Inverse Tau Decay
+                    } 
+                    else if (outgoingLeptonPDG == 11) {
+                        fEventAction->interactionModel = "NuElCCES";
+                        // Neutrino Electron Charged Current Elastic Scattering
+                    } 
+                    else {
+                        fEventAction->interactionModel = "CC_Unknown_e_Scattering";
+                    }
                 }
+                // 4. Kinematics (Simpler for nu-e since the target is at rest with mass m_e)
+                G4double Enu = step->GetPreStepPoint()->GetTotalEnergy();
+                G4ThreeVector pNu = step->GetPreStepPoint()->GetMomentum();
+                G4double Elep = fEventAction->outgoingLeptonE;
+                G4ThreeVector pLep(fEventAction->outgoingLeptonPx, 
+                                   fEventAction->outgoingLeptonPy, 
+                                   fEventAction->outgoingLeptonPz);
+                
+                G4double qEnergy = Enu - Elep;
+                G4ThreeVector qVec = pNu - pLep;
+                
+                fEventAction->q0 = qEnergy;
+                G4double rawQ2 = qVec.mag2() - (qEnergy * qEnergy);
+                fEventAction->Q2 = std::max(0.0, rawQ2);
+                
+                // W calculation uses electron mass instead of nucleon mass
+                const G4double electronMass = 0.5109989 * CLHEP::MeV;
+                G4double W2 = (electronMass * electronMass) + (2.0 * electronMass * qEnergy) - fEventAction->Q2;
+                fEventAction->W = (W2 > 0.0) ? std::sqrt(W2) : 0.0;
+                
+                // xBj and yBj using electron mass
+                fEventAction->xBj = (2.0 * electronMass * qEnergy > 0.0) ? fEventAction->Q2 / (2.0 * electronMass * qEnergy) : 0.0;
+                fEventAction->yBj = (Enu > 0.0) ? qEnergy / Enu : 0.0;
+                fEventAction->inelasticity = (Enu > 0.0) ? (1.0 - Elep / Enu) : 0.0;
+            }
 
+            /* GEANT4 doesn't actually expose model information. It handles
+            the model it uses internally with G4NuEl/Mu/TauNucleusCc/NcModel,
+            which just gives you output particles but doesn't tell you how it
+            got there. So for the actual model classification, we still have
+            to count.*/
+            std::string prefix = isCC ? "CC" : (isNC ? "NC" : "UNK_");
+            if (nPions == 0 && nNucleons > 0) { 
+                fEventAction->interactionModel = prefix + "QE"; // QE-like / 0Pi
+            } else if (nPions == 1) { 
+                fEventAction->interactionModel = prefix + "RES"; // RES-like / 1pi
+            } else { 
+                fEventAction->interactionModel = prefix + "DIS"; // DIS-like (>1 pion or unusual state)
+            }
+
+            // classifying interaction model and type
+            if (isCC) {
                 // CC neutrino kinematics
 
                 // Neutrino energy, momentum, and momentum magnitude
@@ -245,30 +316,11 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     fEventAction->leptonScatteringAngle = 0.0;
                 }
 
-                /* Recording the number of secondaries from the interaction.
-                NB: This was not implemented in v11.4.1, so it may need to be
-                changed if its original intention was to save other information */
-                if (secondaries) {
-                    fEventAction->showerNSecondaries = static_cast<G4int>(secondaries->size());
-                }
-            } 
-            else if (foundOutNu) { // If it's not CC, it's Neutral Current
-                fEventAction->isCC = 0;
-                fEventAction->isNC = 1;
-                fEventAction->interactionType = "NC";
-                // Neutral current kinematics are generally not fully reconstructible 
-                // in the same way without knowing the outgoing neutrino energy.
-                // Leaving kinematics as 0.0 default.
-
-                if (nPions == 0 && nNucleons > 0) {
-                    fEventAction->interactionModel = "NCQE"; // NC Quasi Elastic
-                } else if (nPions == 1) {
-                    fEventAction->interactionModel = "NCRES"; // Resonance
-                } else {
-                    fEventAction->interactionModel = "NCDIS";
-                } // Neutral Current Deep Inelastic Scattering
-            } 
-            else { // If it's not CC or NC, then something really weird happened
+            }
+            /* else, it's NC, and Neutral current kinematics are generally not fully reconstructible 
+            in the same way without knowing the outgoing neutrino energy, so we 
+            leave kinematics as 0.0 default.*/
+            else if (fEventAction->interactionType == "Unknown") { // If it's not CC or NC, then something really weird happened
                 fEventAction->isCC = 0;
                 fEventAction->isNC = 0;
                 fEventAction->interactionType = "Unknown";
@@ -291,12 +343,12 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 }
                 G4cout << "[DEBUG] ----------------------------------------" << G4endl;
             }
-            // Just a helpful print for neutrino biasing testing
-            // Can be commented out if running a macroscopic number of events
-            // Maybe it's worth gating stuff like this behind a verbosity messenger
-            G4cout << "\n*** NEUTRINO INTERACTION RECORDED ***" << G4endl;
-            G4cout << "Process: " << procName << " | Type: " << fEventAction->interactionType 
-                   << " | Model: " << fEventAction->interactionModel << G4endl;
+        // Just a helpful print for neutrino biasing testing
+        // Can be commented out if running a macroscopic number of events
+        // Maybe it's worth gating stuff like this behind a verbosity messenger
+        G4cout << "\n*** NEUTRINO INTERACTION RECORDED ***" << G4endl;
+        G4cout << "Process: " << procName << " | Type: " << fEventAction->interactionType 
+                << " | Model: " << fEventAction->interactionModel << G4endl;
         } 
         else {
             // Below is if you're firing something other than neutrinos
@@ -388,10 +440,10 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
             G4String pname = proc1->GetProcessName();
             // getting process name and getting the target
 
-            if (pname.find("Nu") != std::string::npos ||
+            /*if (pname.find("Nu") != std::string::npos ||
                 pname.find("nu") != std::string::npos) {
                 fEventAction->AddNuInteraction();
-            }
+            }*/
             // recording if there was a neutrino interaction or not
 
             if(target) // there should always be a target, but still checks

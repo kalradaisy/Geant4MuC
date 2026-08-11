@@ -18,15 +18,23 @@ G4VBiasingOperator(name),
 fSetup(true)
 {
     // Processes to bias:
-    fProcessesToBias.insert("muNuNucleus");
-    fProcessesToBias.insert("elNuNucleus");
+    fProcessesToBias.insert("muNuNucleusCC");
+    fProcessesToBias.insert("muNuNucleusNC");
+    fProcessesToBias.insert("elNuNucleusCC");
+    fProcessesToBias.insert("elNuNucleusNC");
 
-    fProcessesToBias.insert("nuElectron");
+    //fProcessesToBias.insert("nuElectron");
+    // Replace "nuElectron" with split channel names
+    fProcessesToBias.insert("nuElectronCC");
+    fProcessesToBias.insert("nuElectronNC");
 
     // Initialize with default values for the biasing
-    fBiasFactors["muNuNucleus"] = defaultFactor;
-    fBiasFactors["elNuNucleus"] = defaultFactor;
-    fBiasFactors["nuElectron"]  = defaultFactor;
+    fBiasFactors["muNuNucleusCC"] = defaultFactor;
+    fBiasFactors["muNuNucleusNC"] = defaultFactor;
+    fBiasFactors["elNuNucleusCC"] = defaultFactor;
+    fBiasFactors["elNuNucleusNC"] = defaultFactor;
+    fBiasFactors["nuElectronCC"]  = defaultFactor;
+    fBiasFactors["nuElectronNC"]  = defaultFactor;
 
     // Prepare the messenger
     fMessenger = new BiasingMessenger(this);
@@ -74,6 +82,11 @@ const G4Track* track, const G4BiasingProcessInterface* callingProcess)
     /*if (track->GetDefinition() != fParticleToBias)
     {
         return nullptr;
+    }*/
+   //debug
+    /*if (callingProcess) {
+        G4String procName = callingProcess->GetWrappedProcess()->GetProcessName();
+        G4cout << ">>> Biasing operator inspecting process: " << procName << G4endl;
     }*/
 
     auto processName =
@@ -149,8 +162,11 @@ const G4Track* track, const G4BiasingProcessInterface* callingProcess)
         operation->SetBiasedCrossSection(biasedXS);
 
         operation->Sample();
+        /*
+        G4cout << "[DEBUG Resample] Track Particle: " << track->GetDefinition()->GetParticleName() << G4endl;
+        G4cout << "[DEBUG Resample] Material: " << track->GetMaterial()->GetName() << G4endl;
 
-        /*G4cout
+        G4cout
             << "[Biasing] First sample for "
             << processName
             << " analogXS="
@@ -167,6 +183,7 @@ const G4Track* track, const G4BiasingProcessInterface* callingProcess)
             operation->SetBiasedCrossSection(biasedXS);
 
             operation->Sample();
+            
 
             G4cout << "[Biasing] Resampling after interaction" << G4endl;
         }

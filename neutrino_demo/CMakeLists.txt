@@ -22,6 +22,7 @@ set(SOURCES
     PrimaryGenerator.cc
     PrimaryGeneratorMessenger.cc
     MyNeutrinoPhysics.cc
+    MyNeutrinoPhysicsMessenger.cc
     MyPhysicsList.cc
     RunAction.cc
     EventAction.cc
@@ -30,6 +31,7 @@ set(SOURCES
     main.cc
     Biasing.cc
     BiasingMessenger.cc
+    SplitNeutrinoPhysics.cc
     ActionInitialization.cc
 )
 #set(HEADERS

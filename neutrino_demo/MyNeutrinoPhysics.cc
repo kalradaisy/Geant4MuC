@@ -1,12 +1,11 @@
 #include "MyNeutrinoPhysics.hh"
+#include "MyNeutrinoPhysicsMessenger.hh"
+
 #include "G4ParticleDefinition.hh"
 #include "G4ProcessManager.hh"
 
-// Neutrino processes
-#include "G4NeutrinoElectronProcess.hh"
-#include "G4MuNeutrinoNucleusProcess.hh"
-
-// Neutrino particles
+// Particle definitions
+#include "G4Electron.hh"
 #include "G4NeutrinoE.hh"
 #include "G4AntiNeutrinoE.hh"
 #include "G4NeutrinoMu.hh"
@@ -14,60 +13,79 @@
 #include "G4NeutrinoTau.hh"
 #include "G4AntiNeutrinoTau.hh"
 
-#include "MyNeutrinoPhysics.hh"
+// Neutrino-Electron Process, Datasets, and Models
+#include "G4NeutrinoElectronProcess.hh"
+#include "G4NeutrinoElectronTotXsc.hh"
+#include "G4NeutrinoElectronCcModel.hh"
+#include "G4NeutrinoElectronNcModel.hh"
 
 MyNeutrinoPhysics::MyNeutrinoPhysics(const G4String& name)
- : G4VPhysicsConstructor(name)
+  : G4VPhysicsConstructor(name)
 {
-    // constructor body
+    fMessenger = new MyNeutrinoPhysicsMessenger(this);
 }
 
-MyNeutrinoPhysics::~MyNeutrinoPhysics() {}
-
-void MyNeutrinoPhysics::ConstructParticle() {
-    // Ensure all neutrinos exist
-    G4NeutrinoE::NeutrinoEDefinition();
-    G4AntiNeutrinoE::AntiNeutrinoEDefinition();
-    G4NeutrinoMu::NeutrinoMuDefinition();
-    G4AntiNeutrinoMu::AntiNeutrinoMuDefinition();
-    G4NeutrinoTau::NeutrinoTauDefinition();
-    G4AntiNeutrinoTau::AntiNeutrinoTauDefinition();
+MyNeutrinoPhysics::~MyNeutrinoPhysics()
+{
+    delete fMessenger;
 }
 
-void MyNeutrinoPhysics::ConstructProcess() {
-    auto particleIterator = GetParticleIterator();
-    particleIterator->reset();
-
-    while ((*particleIterator)()) {
-        auto particle = particleIterator->value();
-        auto pmanager = particle->GetProcessManager();
-        if (!pmanager) continue; // safety check
-
-	if (!pmanager) {
-    G4cout << "ERROR: no process manager for " << particle->GetParticleName() << G4endl;
-    continue;
+void MyNeutrinoPhysics::SetNuEleCcBias(G4double bf)
+{
+    if (bf > 0.0) fNuEleCcBias = bf;
 }
-        // Unique envelope name for each particle
-        G4String envelopeName = particle->GetParticleName() + "_Envelope";
 
-	G4cout << "Attaching process to particle: " << particle->GetParticleName() << G4endl;
+void MyNeutrinoPhysics::SetNuEleNcBias(G4double bf)
+{
+    if (bf > 0.0) fNuEleNcBias = bf;
+}
 
-        // === Electron neutrino / antineutrino: neutrino-electron scattering ===
-        if (particle == G4NeutrinoE::NeutrinoE() || particle == G4AntiNeutrinoE::AntiNeutrinoE()) {
-            auto nuProc = new G4NeutrinoElectronProcess(envelopeName, "neutrino-electron");
-            pmanager->AddDiscreteProcess(nuProc);
-        }
+void MyNeutrinoPhysics::SetNuDetectorName(const G4String& name)
+{
+    fNuDetectorName = name;
+}
 
-        // === Muon neutrino / antineutrino: neutrino-nucleus scattering ===
-        if (particle == G4NeutrinoMu::NeutrinoMu() || particle == G4AntiNeutrinoMu::AntiNeutrinoMu()) {
-            auto muProc = new G4MuNeutrinoNucleusProcess(envelopeName, "mu-neutrino-nucleus");
-            pmanager->AddDiscreteProcess(muProc);
-        }
+void MyNeutrinoPhysics::ConstructParticle()
+{
+    G4Electron::Electron();
+    G4NeutrinoE::NeutrinoE();
+    G4AntiNeutrinoE::AntiNeutrinoE();
+    G4NeutrinoMu::NeutrinoMu();
+    G4AntiNeutrinoMu::AntiNeutrinoMu();
+    G4NeutrinoTau::NeutrinoTau();
+    G4AntiNeutrinoTau::AntiNeutrinoTau();
+}
 
-        // === Tau neutrino / antineutrino: neutrino-electron scattering ===
-        if (particle == G4NeutrinoTau::NeutrinoTau() || particle == G4AntiNeutrinoTau::AntiNeutrinoTau()) {
-            auto tauProc = new G4NeutrinoElectronProcess(envelopeName, "tau-neutrino-electron");
-            pmanager->AddDiscreteProcess(tauProc);
-        }
+void MyNeutrinoPhysics::ConstructProcess()
+{
+    const G4ParticleDefinition* neutrinos[6] = {
+        G4AntiNeutrinoE::AntiNeutrinoE(),
+        G4NeutrinoE::NeutrinoE(),
+        G4AntiNeutrinoMu::AntiNeutrinoMu(),
+        G4NeutrinoMu::NeutrinoMu(),
+        G4AntiNeutrinoTau::AntiNeutrinoTau(),
+        G4NeutrinoTau::NeutrinoTau()
+    };
+
+    // 1. Create process bound to target detector region name
+    auto nuEleProcess = new G4NeutrinoElectronProcess(fNuDetectorName);
+    auto nuEleTotXsc  = new G4NeutrinoElectronTotXsc();
+
+    // 2. Set CC and NC bias factors on both process and cross-section dataset
+    nuEleProcess->SetBiasingFactors(fNuEleCcBias, fNuEleNcBias);
+    nuEleTotXsc->SetBiasingFactors(fNuEleCcBias, fNuEleNcBias);
+
+    // 3. Register cross-section dataset (Prevents had001 fatal crash)
+    nuEleProcess->AddDataSet(nuEleTotXsc);
+
+    // 4. Register CC and NC interaction models
+    auto ccModel = new G4NeutrinoElectronCcModel();
+    auto ncModel = new G4NeutrinoElectronNcModel();
+    nuEleProcess->RegisterMe(ccModel);
+    nuEleProcess->RegisterMe(ncModel);
+
+    // 5. Attach process to all neutrino particle species
+    for (G4int i = 0; i < 6; ++i) {
+        neutrinos[i]->GetProcessManager()->AddDiscreteProcess(nuEleProcess);
     }
 }

@@ -34,10 +34,14 @@
 #include "G4BiasingProcessInterface.hh"
 #include "G4HadronicProcessStore.hh"
 #include "G4LogicalVolumeStore.hh"
+#include "SplitNeutrinoPhysics.hh"
 
 #include "TROOT.h"
 
 int main(int argc, char** argv) {
+
+    setenv("G4Hadronic_epCheckAbsoluteLevel", "1000000000", 1); // 1000 TeV in MeV
+    setenv("G4Hadronic_epCheckRelativeLevel", "10.0", 1);       // 1000% relative limit
 
     // Tell ROOT to make its global state thread-safe!
     ROOT::EnableThreadSafety();
@@ -67,11 +71,15 @@ int main(int argc, char** argv) {
     benefits but lose the granularity of the other, stay vigilant.*/
     
     physics->RegisterPhysics(new G4NeutrinoPhysics());
+    physics->RegisterPhysics(new SplitNeutrinoPhysics());
     auto biasing = new G4GenericBiasingPhysics();
     std::vector<G4String> processesToBias;
-    processesToBias.push_back("muNuNucleus");
-    processesToBias.push_back("elNuNucleus");
-    processesToBias.push_back("nuElectron");
+    processesToBias.push_back("muNuNucleusCC");
+    processesToBias.push_back("muNuNucleusNC");
+    processesToBias.push_back("elNuNucleusCC");
+    processesToBias.push_back("elNuNucleusNC");
+    processesToBias.push_back("nuElectronCC");
+    processesToBias.push_back("nuElectronNC");
     biasing->PhysicsBias("nu_mu", processesToBias);
     biasing->PhysicsBias("anti_nu_mu", processesToBias);
     biasing->PhysicsBias("nu_e", processesToBias);

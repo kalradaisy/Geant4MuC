@@ -19,9 +19,18 @@ public:
 private:
     Biasing* fBiasing;
     G4UIdirectory* fBiasingDir;
-    G4UIcmdWithADouble* fMuNuNucleusCmd;
-    G4UIcmdWithADouble* fElNuNucleusCmd;
-    G4UIcmdWithADouble* fNuElectronCmd;
+    G4UIcmdWithADouble* fMuNuNucleusCcCmd;
+    G4UIcmdWithADouble* fMuNuNucleusNcCmd;
+    G4UIcmdWithADouble* fMuANuNucleusCcCmd;
+    G4UIcmdWithADouble* fMuANuNucleusNcCmd;
+    G4UIcmdWithADouble* fElNuNucleusCcCmd;
+    G4UIcmdWithADouble* fElNuNucleusNcCmd;
+    G4UIcmdWithADouble* fElANuNucleusCcCmd;
+    G4UIcmdWithADouble* fElANuNucleusNcCmd;
+    //G4UIcmdWithADouble* fNuElectronCmd;
+    // Split CC and NC commands
+    G4UIcmdWithADouble* fNuElectronCcCmd;
+    G4UIcmdWithADouble* fNuElectronNcCmd;
 };
 
 #endif

@@ -3,6 +3,14 @@
 #include "G4RunManager.hh"
 #include "EventAction.hh"
 
+//debug
+#include "G4ProcessManager.hh"
+#include "G4HadronicProcess.hh"
+#include "G4HadronicInteraction.hh"
+#include "G4BiasingProcessInterface.hh"
+#include "G4NeutrinoMu.hh"
+#include "CLHEP/Units/SystemOfUnits.h"
+
 
 RunAction::RunAction() : G4UserRunAction(), fBaseName("")
 {
@@ -180,6 +188,28 @@ RunAction::~RunAction()
 
 void RunAction::BeginOfRunAction(const G4Run* run) 
 {
+    G4ParticleDefinition* nuMu = G4NeutrinoMu::NeutrinoMu();
+    G4ProcessManager* pManager = nuMu->GetProcessManager();
+    G4ProcessVector* pList = pManager->GetProcessList();
+
+    /*for (size_t i = 0; i < pList->size(); ++i) {
+        G4VProcess* proc = (*pList)[i];
+        
+        // Unwrap event biasing if present
+        auto* biasWrapper = dynamic_cast<G4BiasingProcessInterface*>(proc);
+        G4VProcess* targetProc = biasWrapper ? biasWrapper->GetWrappedProcess() : proc;
+
+        auto* hadProc = dynamic_cast<G4HadronicProcess*>(targetProc);
+        if (hadProc && hadProc->GetProcessName() == "nuElectronNC") {
+            
+            // DEBUG PRINT
+            auto procLevels = hadProc->GetEnergyMomentumCheckLevels();
+            G4cout << "=== " << hadProc->GetProcessName() << " ===" << G4endl;
+            G4cout << "BIASED INTERACTION OCCURED!" << G4endl;
+            G4cout << "  [Process Level] Absolute : " << procLevels.second / CLHEP::GeV << " GeV" << G4endl;
+        }
+    }*/
+    //DEBUG ABOVE
     auto analysisManager = G4AnalysisManager::Instance();
     // capture the base name on the very first run (Run 0)
     // We only do this on Run 0 so we don't accidentally grab a name 
