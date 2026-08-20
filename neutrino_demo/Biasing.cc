@@ -78,11 +78,13 @@ void Biasing::StartRun()
 G4VBiasingOperation* Biasing::ProposeOccurenceBiasingOperation(
 const G4Track* track, const G4BiasingProcessInterface* callingProcess)
 {
-    // Only bias nu_mu, which we don't want to do
-    /*if (track->GetDefinition() != fParticleToBias)
+    // Do not apply biasing to secondary particles.
+    // I don't even know if this is necessary tbh, might already be handled
+    if (track->GetParentID() != 0)
     {
         return nullptr;
-    }*/
+    }
+
    //debug
     /*if (callingProcess) {
         G4String procName = callingProcess->GetWrappedProcess()->GetProcessName();

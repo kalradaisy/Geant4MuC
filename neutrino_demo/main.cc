@@ -40,9 +40,6 @@
 
 int main(int argc, char** argv) {
 
-    setenv("G4Hadronic_epCheckAbsoluteLevel", "1000000000", 1); // 1000 TeV in MeV
-    setenv("G4Hadronic_epCheckRelativeLevel", "10.0", 1);       // 1000% relative limit
-
     // Tell ROOT to make its global state thread-safe!
     ROOT::EnableThreadSafety();
 

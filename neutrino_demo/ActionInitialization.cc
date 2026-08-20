@@ -4,9 +4,11 @@
 #include "EventAction.hh"
 #include "SteppingAction.hh"
 #include "TrackingAction.hh"
+#include "MyExceptionHandler.hh"
 
 
 void ActionInitialization::BuildForMaster() const{
+    new MyExceptionHandler();
     /* Master thread handles the higher-level processes, such as the geometry
     and physics setup. So, let's hand it the run action so it knows what the
     worker threads are working with. The master thread won't actually do the
@@ -21,6 +23,7 @@ In this case, they know what to do when the RunAction fires, and they carry out
 that action. When they're done, the master thread will collect their work.*/
 void ActionInitialization::Build() const
 {
+    new MyExceptionHandler();
     /* Then they have what the run action is. Here's what's gonna happen when
     that gun goes off. */
     auto runAction = new RunAction();

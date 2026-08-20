@@ -179,6 +179,11 @@ void EventAction::AddSecEndPos(const G4ThreeVector& pos)
 
 void EventAction::EndOfEventAction(const G4Event*)
 {
+    // If the event was aborted due to unrecoverable resampling, skip writing to Ntuple
+    if (G4RunManager::GetRunManager()->GetCurrentEvent()->IsAborted()) {
+        return;
+    }
+
     // Get the Analysis Manager
     auto analysisManager = G4AnalysisManager::Instance();
 

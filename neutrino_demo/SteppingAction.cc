@@ -16,6 +16,7 @@
 #include "G4Element.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4RunManager.hh"
+#include "G4BiasingProcessInterface.hh"
 #include <algorithm>
 
 SteppingAction::SteppingAction(EventAction* eventAction, RunAction* runAction)
@@ -221,13 +222,14 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     } 
                     else if (outgoingLeptonPDG == 11) {
                         fEventAction->interactionModel = "NuElCCES";
+                        // SEE IF YOU NEED TO MAKE THIS A COMBO OF NC AND CC
                         // Neutrino Electron Charged Current Elastic Scattering
                     } 
                     else {
                         fEventAction->interactionModel = "CC_Unknown_e_Scattering";
                     }
                 }
-                // 4. Kinematics (Simpler for nu-e since the target is at rest with mass m_e)
+                // Kinematics (Simpler for nu-e since the target is at rest with mass m_e)
                 G4double Enu = step->GetPreStepPoint()->GetTotalEnergy();
                 G4ThreeVector pNu = step->GetPreStepPoint()->GetMomentum();
                 G4double Elep = fEventAction->outgoingLeptonE;
@@ -349,6 +351,31 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         G4cout << "\n*** NEUTRINO INTERACTION RECORDED ***" << G4endl;
         G4cout << "Process: " << procName << " | Type: " << fEventAction->interactionType 
                 << " | Model: " << fEventAction->interactionModel << G4endl;
+            if (secondaries && !secondaries->empty()) {
+                G4ThreeVector p_in = step->GetPreStepPoint()->GetMomentum();
+                G4ThreeVector p_out(0, 0, 0);
+
+                G4cout << "\n================ RUNTIME KINEMATIC DIAGNOSTIC ================" << G4endl;
+                G4cout << "Event ID: " << G4RunManager::GetRunManager()->GetCurrentEvent()->GetEventID() << G4endl;
+                G4cout << "Incident "<< track->GetDefinition()->GetParticleName() << " Momentum: " << p_in / CLHEP::GeV << " GeV/c" << G4endl;
+                
+                for (auto sec : *secondaries) {
+                    // Ensure we only sum direct daughters of this neutrino
+                    if (sec->GetParentID() == track->GetTrackID()) {
+                        p_out += sec->GetMomentum();
+                        G4cout << "  -> Daughter: " << sec->GetDefinition()->GetParticleName() 
+                            << " | P: " << sec->GetMomentum() / CLHEP::GeV << " GeV/c" << G4endl;
+                    }
+                }
+                
+                G4ThreeVector p_miss = p_in - p_out;
+                
+                G4cout << "--------------------------------------------------------------" << G4endl;
+                G4cout << "Vector Sum Out:    " << p_out / CLHEP::GeV << " GeV/c" << G4endl;
+                G4cout << "Missing Vector:    " << p_miss / CLHEP::GeV << " GeV/c" << G4endl;
+                G4cout << "Magnitude Missing: " << p_miss.mag() / CLHEP::GeV << " GeV/c" << G4endl;
+                G4cout << "==============================================================\n" << G4endl;
+            }
         } 
         else {
             // Below is if you're firing something other than neutrinos
@@ -431,10 +458,20 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
     // target info
     auto proc1 = step->GetPostStepPoint()->GetProcessDefinedStep();
-    if(proc1)
+    // gets the overall process, but we're going to manipulate it if it exits
+    if(proc1 && isPrimary) // added check to only save primary target
     {
-        auto hadProc = dynamic_cast<const G4HadronicProcess*>(proc1);
-        if(hadProc) // if hadronic process
+        const G4VProcess* actualProc = proc1;
+        // Say that the actual process is the original process, just in case
+        
+        // If the process is biased, unwrap it to get the real physics process
+        if (auto biasProc = dynamic_cast<const G4BiasingProcessInterface*>(proc1)) {
+            actualProc = biasProc->GetWrappedProcess();
+        }
+        // Now we have the actual process without the wrapper
+
+        auto hadProc = dynamic_cast<const G4HadronicProcess*>(actualProc);
+        if(hadProc) // if hadronic process (unwrapped if biased neutrino)
         {
             const G4Nucleus* target = hadProc->GetTargetNucleus();
             G4String pname = proc1->GetProcessName();

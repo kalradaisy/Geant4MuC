@@ -1,12 +1,12 @@
 # information for running the gun but also for naming the file!
 /control/alias PARTICLE nu_mu
-/control/alias ENERGY 50 #GeV
+/control/alias ENERGY 300 #GeV
 /control/alias NSHOTS 50 # How many times the gun is fired in a run
 /control/alias DETECTOR MAIA # name the geoemtry you'd like to use
 
 
 # This doesn't name the file, but it is useful for controlling the biasing
-/control/alias MUNUNUCBIASCC 1e9
+/control/alias MUNUNUCBIASCC 1e11
 /control/alias MUNUNUCBIASNC 1
 /control/alias MUANUNUCBIASCC 1
 /control/alias MUANUNUCBIASNC 1
@@ -14,7 +14,7 @@
 /control/alias ELNUNUCBIASNC 1
 /control/alias ELANUNUCBIASCC 1
 /control/alias ELANUNUCBIASNC 1
-/control/alias NUELECCCBIAS 1e12
+/control/alias NUELECCCBIAS 1
 /control/alias NUELECNCBIAS 1
 
 #______________________________________________________________________________
