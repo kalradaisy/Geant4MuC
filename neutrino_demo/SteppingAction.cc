@@ -345,11 +345,11 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                 }
                 G4cout << "[DEBUG] ----------------------------------------" << G4endl;
             }
-        // Just a helpful print for neutrino biasing testing
-        // Can be commented out if running a macroscopic number of events
-        // Maybe it's worth gating stuff like this behind a verbosity messenger
-        G4cout << "\n*** NEUTRINO INTERACTION RECORDED ***" << G4endl;
-        G4cout << "Process: " << procName << " | Type: " << fEventAction->interactionType 
+            // Just a helpful print for neutrino biasing testing
+            // Can be commented out if running a macroscopic number of events
+            // Maybe it's worth gating stuff like this behind a verbosity messenger
+            G4cout << "\n*** NEUTRINO INTERACTION RECORDED ***" << G4endl;
+            G4cout << "Process: " << procName << " | Type: " << fEventAction->interactionType 
                 << " | Model: " << fEventAction->interactionModel << G4endl;
             if (secondaries && !secondaries->empty()) {
                 G4ThreeVector p_in = step->GetPreStepPoint()->GetMomentum();
@@ -363,8 +363,17 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
                     // Ensure we only sum direct daughters of this neutrino
                     if (sec->GetParentID() == track->GetTrackID()) {
                         p_out += sec->GetMomentum();
+                        
+                        // --- DYNAMIC MASS CHECK ---
+                        G4double pdgMass = sec->GetDefinition()->GetPDGMass();
+                        G4double dynMass = sec->GetDynamicParticle()->GetMass();
+                        G4double massDiff = dynMass - pdgMass;
+
                         G4cout << "  -> Daughter: " << sec->GetDefinition()->GetParticleName() 
-                            << " | P: " << sec->GetMomentum() / CLHEP::GeV << " GeV/c" << G4endl;
+                            << " | P: " << sec->GetMomentum() / CLHEP::GeV << " GeV/c\n"
+                            << "     [Mass Check] PDG: " << pdgMass / CLHEP::GeV 
+                            << " GeV | Dynamic: " << dynMass / CLHEP::GeV 
+                            << " GeV | Diff: " << massDiff / CLHEP::GeV << " GeV" << G4endl;
                     }
                 }
                 
